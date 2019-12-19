@@ -1,7 +1,10 @@
 #include <iostream>
+#include "Game.h"
 
 int main()
 {
-	std::cout << "Let's begin" << std::endl;
+	tetris::Game game;
+	game.run();
+
 	return 0;
 }
