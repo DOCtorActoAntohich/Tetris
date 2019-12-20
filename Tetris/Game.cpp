@@ -1,7 +1,5 @@
 #include "Game.h"
 
-#include <iostream>
-#include <fstream>
 #include "resource.h"
 
 namespace tetris {
@@ -10,7 +8,6 @@ namespace tetris {
 		this->isInputAllowed = true;
 		
 	}
-
 
 
 	void Game::run() {
@@ -104,14 +101,16 @@ namespace tetris {
 		delete this->menuScreenTexture;
 	}
 
-#pragma endregion
+#pragma /* Resource Management */ endregion
 
 
 #pragma region Main Loop
 
 
 	void Game::exit() {
-		this->window.close();
+		if (this->window.isOpen()) {
+			this->window.close();
+		}
 	}
 
 
@@ -175,7 +174,8 @@ namespace tetris {
 		return result;
 	}
 
-#pragma region Updaters and Drawers
+#pragma region Scene Handlers
+
 
 #pragma region Splash Screen
 
@@ -199,7 +199,7 @@ namespace tetris {
 	}
 
 
-#pragma endregion
+#pragma /* Splash Screen */ endregion
 
 
 #pragma region Controls Screen
@@ -225,7 +225,7 @@ namespace tetris {
 		this->window.display();
 	}
 
-#pragma endregion
+#pragma /* Controls Screen */ endregion
 
 
 #pragma region Menu
@@ -250,7 +250,7 @@ namespace tetris {
 	}
 
 
-#pragma endregion
+#pragma /* Menu */ endregion
 
 
 #pragma region Game
@@ -268,10 +268,10 @@ namespace tetris {
 	}
 
 
-#pragma endregion
+#pragma /* Game */ endregion
 
-#pragma endregion
+#pragma /* Scene Handlers */ endregion
 
 
-#pragma endregion
+#pragma /* Main Loop */ endregion
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SFML/Window.hpp>
+#include <SFML/Window/Keyboard.hpp>
 
 #include <map>
 #include <vector>
@@ -28,12 +28,19 @@ namespace tetris {
 		// Returns the list of sensitive keys (that should be checked).
 		std::vector<sf::Keyboard::Key> getKeysList();
 
+
 		std::map<ControlKey, sf::Keyboard::Key> keysMap_;
+
+		// Defines a default map from "ControlKey" to "sf::Keyboard::Key".
 		std::map<ControlKey, sf::Keyboard::Key> defineKeyMap();
+
+		// Transforms input key using defined map.
 		sf::Keyboard::Key transformKey(ControlKey key);
+
 
 		// Saves current state of pressed keys to previous state.
 		void saveState();
+
 
 		std::map<sf::Keyboard::Key, bool> currentState_;
 		std::map<sf::Keyboard::Key, bool> previousState_;

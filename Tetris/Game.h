@@ -31,7 +31,7 @@ namespace tetris {
 		void loadContent();
 		void unloadContent();
 
-#pragma endregion
+#pragma /* Resource Management */ endregion
 		
 
 #pragma region Main Loop
@@ -57,7 +57,7 @@ namespace tetris {
 		// First handler is updater, second is drawer.
 		std::pair<void(Game::*)(), void(Game::*)()> chooseUpdaters(Scene scene);
 
-#pragma region Updaters and Drawers
+#pragma region Scene Handlers
 
 #pragma region Splash Screen
 
@@ -67,7 +67,7 @@ namespace tetris {
 		void update_SplashScreen();
 		void draw_SplashScreen();
 
-#pragma endregion
+#pragma /* Splash Screen */ endregion
 
 #pragma region Controls Screen
 
@@ -77,7 +77,7 @@ namespace tetris {
 		void update_ControlsScreen();
 		void draw_ControlsScreen();
 
-#pragma endregion
+#pragma /* Controls Screen */ endregion 
 
 #pragma region Menu
 
@@ -87,19 +87,19 @@ namespace tetris {
 		void update_Menu();
 		void draw_Menu();
 
-#pragma endregion
+#pragma /* Menu */ endregion
 
 #pragma region Game
 
 		void update_Game();
 		void draw_Game();
 
-#pragma endregion
+#pragma /* Game */ endregion
 
-#pragma endregion
+#pragma /* Scene Handlers */ endregion
 
 
-#pragma endregion
+#pragma /* Main Loop */ endregion
 		
 	};
 }
