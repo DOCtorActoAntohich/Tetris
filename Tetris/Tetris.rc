@@ -51,15 +51,21 @@ END
 // RCDATA
 //
 
-SPLASH_SCREEN_BMP       RCDATA                  "Resources\\Bitmaps\\SPLASH_SCREEN.bmp"
+SPLASH_SCREEN_BMP			RCDATA          "Resources\\Bitmaps\\SPLASH_SCREEN.bmp"
 
-CONTROLS_SCREEN_BMP     RCDATA                  "Resources\\Bitmaps\\CONTROLS_SCREEN.bmp"
+CONTROLS_SCREEN_BMP			RCDATA          "Resources\\Bitmaps\\CONTROLS_SCREEN.bmp"
 
-MENU_SCREEN_BMP         RCDATA                  "Resources\\Bitmaps\\MENU_SCREEN.bmp"
+LEVEL_SELECT_SCREEN_BMP		RCDATA          "Resources\\Bitmaps\\MENU_SCREEN.bmp"
 
 
 
-MENU_CLICK_MAJOR_WAV    RCDATA                  "Resources\\Sounds\\MENU_CLICK.wav"
+MENU_CLICK_MAJOR_WAV		RCDATA          "Resources\\Sounds\\MENU_CLICK_MAJOR.wav"
+
+MENU_CLICK_MINOR_WAV		RCDATA			"Resources\\Sounds\\MENU_CLICK_MINOR.wav"
+
+
+
+GAME_FONT					RCDATA			"Resources\\Fonts\\PressStart2P.ttf"
 
 #endif    // Russian (Russia) resources
 /////////////////////////////////////////////////////////////////////////////

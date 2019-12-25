@@ -4,9 +4,12 @@
 //
 #define SPLASH_SCREEN_BMP               103
 #define CONTROLS_SCREEN_BMP             104
-#define MENU_SCREEN_BMP                 105
+#define LEVEL_SELECT_SCREEN_BMP         105
 
 #define MENU_CLICK_MAJOR_WAV            203
+#define MENU_CLICK_MINOR_WAV			204
+
+#define GAME_FONT						303
 
 // Next default values for new objects
 // 

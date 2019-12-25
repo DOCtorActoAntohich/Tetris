@@ -1,12 +1,14 @@
 #include "Game.h"
 
 #include "resource.h"
-#include <fstream>
-#include <algorithm>
+
 namespace tetris {
 	Game::Game() {
 		changeScene(Scene::SPLASH_SCREEN);
 		this->isInputAllowed = true;
+
+		this->startLevel = 0;
+		this->musicType = 0;
 	}
 
 
@@ -36,18 +38,18 @@ namespace tetris {
 #pragma region Loading Resources
 
 
-	std::vector<byte> Game::loadEmbeddedResource(int32_t id, LPCTSTR resourceType) {
+	std::vector<byte> Game::loadEmbeddedResource(int32_t id) {
 		// Took code from link bellow and rewrote a bit.
 		// https://smacdo.com/programming/embedding-user-defined-resources-in-visual-c-binaries/
 
 		std::vector<byte> output;
 
 		HMODULE module = nullptr;
-
 		LPCTSTR name = MAKEINTRESOURCE(id);
+		LPCTSTR type = RT_RCDATA;
 
-		// Raw data is used here because BMP fails to be read otherwise.
-		HRSRC resourceHandle = ::FindResource(module, name, resourceType);
+		// Raw data is used here because resource fails to be read otherwise.
+		HRSRC resourceHandle = ::FindResource(module, name, type);
 		if (resourceHandle == nullptr) {
 			return output;
 		}
@@ -93,8 +95,17 @@ namespace tetris {
 
 
 
+	sf::Font* Game::loadFont(int32_t id) {
+		std::vector<byte> bytes = this->loadEmbeddedResource(id);
+		sf::Font* font = new sf::Font;
+		(*font).loadFromMemory(&bytes[0], bytes.size());
+		return font;
+	}
+
+
+
 	void Game::openMusic(int32_t id, std::vector<byte>& musicBytes,
-		sf::Music& music) {
+						 sf::Music& music) {
 		musicBytes = this->loadEmbeddedResource(id);
 		music.openFromMemory(&musicBytes[0], musicBytes.size());
 	}
@@ -111,11 +122,16 @@ namespace tetris {
 		this->controlsScreen_texture = this->loadTexture(CONTROLS_SCREEN_BMP);
 		this->controlsScreen_sprite.setTexture(*this->controlsScreen_texture);
 
-		this->menuScreen_texture = this->loadTexture(MENU_SCREEN_BMP);
+		this->menuScreen_texture = this->loadTexture(LEVEL_SELECT_SCREEN_BMP);
 		this->menuScreen_sprite.setTexture(*this->menuScreen_texture);
+
+
 
 		this->menuClickMajor_soundBuffer = this->loadSound(MENU_CLICK_MAJOR_WAV);
 		this->menuClickMajor_sound.setBuffer(*this->menuClickMajor_soundBuffer);
+
+		this->menuClickMinor_soundBuffer = this->loadSound(MENU_CLICK_MINOR_WAV);
+		this->menuClickMinor_sound.setBuffer(*this->menuClickMinor_soundBuffer);
 
 		this->initializeWindow();
 	}
@@ -128,6 +144,7 @@ namespace tetris {
 		delete this->menuScreen_texture;
 
 		delete this->menuClickMajor_soundBuffer;
+		delete this->menuClickMinor_soundBuffer;
 	}
 
 #pragma /* Resource Management */ endregion
@@ -162,9 +179,12 @@ namespace tetris {
 
 
 	void Game::changeScene(Scene scene) {
+		this->menuClickMajor_sound.play();
+
 		auto [update, draw] = this->chooseUpdaters(scene);
 		this->update = update;
 		this->draw = draw;
+
 		this->scene = scene;
 	}
 
@@ -211,7 +231,6 @@ namespace tetris {
 
 	void Game::update_SplashScreen() {
 		if (keyboard.isKeyPushed(ControlKey::START)) {
-			this->menuClickMajor_sound.play();
 			this->changeScene(Scene::CONTROLS_SCREEN);
 		}
 		else if (keyboard.isKeyPushed(ControlKey::EXIT)) {
@@ -239,7 +258,6 @@ namespace tetris {
 			this->changeScene(Scene::MENU);
 		}
 		else if (keyboard.isKeyPushed(ControlKey::B)) {
-			this->menuClickMajor_sound.play();
 			this->changeScene(Scene::SPLASH_SCREEN);
 		}
 		else if (keyboard.isKeyPushed(ControlKey::EXIT)) {
@@ -263,13 +281,54 @@ namespace tetris {
 
 
 	void Game::update_Menu() {
-		if (keyboard.isKeyPushed(ControlKey::B)) {
+		if (keyboard.isKeyPushed(ControlKey::START)) {
+			//this->changeScene(Scene::GAME);
+		}
+		else if (keyboard.isKeyPushed(ControlKey::B)) {
 			this->changeScene(Scene::CONTROLS_SCREEN);
 		}
 		else if (keyboard.isKeyPushed(ControlKey::EXIT)) {
 			this->window.close();
 		}
+
+		this->update_Menu_LevelSelection();
+		this->update_Menu_MusicSelection();
 	}
+
+
+
+	void Game::update_Menu_LevelSelection() {
+		if (keyboard.isKeyPushed(ControlKey::LEFT)) {
+			this->menuClickMinor_sound.play();
+			if (this->startLevel > MINIMAL_LEVEL) {
+				--this->startLevel;
+			}
+		}
+		else if (keyboard.isKeyPushed(ControlKey::RIGHT)) {
+			this->menuClickMinor_sound.play();
+			if (this->startLevel < MAXIMAL_LEVEL) {
+				++this->startLevel;
+			}
+		}
+	}
+
+
+
+	void Game::update_Menu_MusicSelection() {
+		if (keyboard.isKeyPushed(ControlKey::UP)) {
+			this->menuClickMinor_sound.play();
+			if (this->musicType > MINIMAL_MUSIC_TYPE) {
+				--this->musicType;
+			}
+		}
+		else if (keyboard.isKeyPushed(ControlKey::DOWN)) {
+			this->menuClickMinor_sound.play();
+			if (this->musicType < MAXIMAL_MUSIC_TYPE) {
+				++this->musicType;
+			}
+		}
+	}
+
 
 
 	void Game::draw_Menu() {

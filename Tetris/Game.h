@@ -30,15 +30,16 @@ namespace tetris {
 #pragma region Loading Resources
 
 		// Loads resources embedded into EXE.
-		std::vector<byte> loadEmbeddedResource(
-			int32_t id, LPCTSTR resourceType = RT_RCDATA
-		);
+		std::vector<byte> loadEmbeddedResource(int32_t id);
 
 		// Returns a texture loaded from embedded resources.
 		sf::Texture* loadTexture(int32_t id);
 
 		// Returns a sound loaded from embedded resourves.
 		sf::SoundBuffer* loadSound(int32_t id);
+
+		// Returns a font loaded from embedded resources.
+		sf::Font* loadFont(int32_t id);
 
 		// Opens a music file from embedded resources.
 		// Music data is saved in musicBytes which MUST NOT be changed.
@@ -65,6 +66,9 @@ namespace tetris {
 
 		sf::SoundBuffer* menuClickMajor_soundBuffer;
 		sf::Sound		 menuClickMajor_sound;
+
+		sf::SoundBuffer* menuClickMinor_soundBuffer;
+		sf::Sound		 menuClickMinor_sound;
 
 #pragma /* Sounds */ endregion
 
@@ -121,7 +125,21 @@ namespace tetris {
 
 #pragma region Menu
 
+		// Boundaries only for level and music select in menu.
+
+		const int32_t MINIMAL_LEVEL = 0;
+		const int32_t MAXIMAL_LEVEL = 9;
+		int32_t startLevel;
+
+		const int32_t MINIMAL_MUSIC_TYPE = 0;
+		const int32_t MAXIMAL_MUSIC_TYPE = 3;
+		int32_t musicType;
+
+
 		void update_Menu();
+		void update_Menu_LevelSelection();
+		void update_Menu_MusicSelection();
+
 		void draw_Menu();
 
 #pragma /* Menu */ endregion

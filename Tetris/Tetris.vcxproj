@@ -88,6 +88,8 @@
       <SubSystem>Console</SubSystem>
       <AdditionalLibraryDirectories>$(SolutionDir)\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;sfml-audio-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)SFML-2.5.1\bin\openal32.dll" "$(OutDir)" /Y
@@ -166,12 +168,16 @@ xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-window-2.dll" "$(OutDir)" /Y</Command>
     <ResourceCompile Include="Tetris.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Media Include="Resources\Sounds\MENU_CLICK.wav" />
+    <Media Include="Resources\Sounds\MENU_CLICK_MAJOR.wav" />
+    <Media Include="Resources\Sounds\MENU_CLICK_MINOR.wav" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\Bitmaps\CONTROLS_SCREEN.bmp" />
     <Image Include="Resources\Bitmaps\MENU_SCREEN.bmp" />
     <Image Include="Resources\Bitmaps\SPLASH_SCREEN.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Resources\Fonts\PressStart2P.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

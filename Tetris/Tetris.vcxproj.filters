@@ -48,7 +48,10 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Media Include="Resources\Sounds\MENU_CLICK.wav">
+    <Media Include="Resources\Sounds\MENU_CLICK_MINOR.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="Resources\Sounds\MENU_CLICK_MAJOR.wav">
       <Filter>Resource Files</Filter>
     </Media>
   </ItemGroup>
@@ -56,11 +59,16 @@
     <Image Include="Resources\Bitmaps\CONTROLS_SCREEN.bmp">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Resources\Bitmaps\MENU_SCREEN.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="Resources\Bitmaps\SPLASH_SCREEN.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Resources\Bitmaps\MENU_SCREEN.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Resources\Fonts\PressStart2P.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
   </ItemGroup>
 </Project>
