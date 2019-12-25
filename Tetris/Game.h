@@ -39,7 +39,7 @@ namespace tetris {
 		sf::SoundBuffer* loadSound(int32_t id);
 
 		// Returns a font loaded from embedded resources.
-		sf::Font* loadFont(int32_t id);
+		sf::Font* loadFont(int32_t id); // TODO: Use size 18.
 
 		// Opens a music file from embedded resources.
 		// Music data is saved in musicBytes which MUST NOT be changed.
@@ -89,6 +89,12 @@ namespace tetris {
 		Scene scene;
 		bool isInputAllowed;
 		Keyboard keyboard;
+
+		// How many frames have passed.
+		// Used to check timed events.
+		// Set to 0 upon scene changes.
+		int32_t frames;
+		const int32_t FPS = 60;
 
 		// Runs the game loop.
 		void runMainLoop();

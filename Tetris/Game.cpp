@@ -9,6 +9,8 @@ namespace tetris {
 
 		this->startLevel = 0;
 		this->musicType = 0;
+
+		this->frames = 0;
 	}
 
 
@@ -28,9 +30,9 @@ namespace tetris {
 	void Game::initializeWindow() {
 		this->window.create(
 			sf::VideoMode(800, 600), "Tetris",
-			sf::Style::Titlebar | sf::Style::Close //TODO: add "sf::Style::Fullscreen"
+			sf::Style::Titlebar | sf::Style::Close //TODO: | sf::Style::Fullscreen
 		);
-		this->window.setFramerateLimit(60);
+		this->window.setFramerateLimit(this->FPS);
 	}
 
 
@@ -172,6 +174,8 @@ namespace tetris {
 
 			this->keyboard.update();
 
+			++frames;
+
 			(this->*update)();
 			(this->*draw)();
 		}
@@ -179,13 +183,12 @@ namespace tetris {
 
 
 	void Game::changeScene(Scene scene) {
-		this->menuClickMajor_sound.play();
-
 		auto [update, draw] = this->chooseUpdaters(scene);
 		this->update = update;
 		this->draw = draw;
 
 		this->scene = scene;
+		this->frames = 0;
 	}
 
 
@@ -231,6 +234,7 @@ namespace tetris {
 
 	void Game::update_SplashScreen() {
 		if (keyboard.isKeyPushed(ControlKey::START)) {
+			this->menuClickMajor_sound.play();
 			this->changeScene(Scene::CONTROLS_SCREEN);
 		}
 		else if (keyboard.isKeyPushed(ControlKey::EXIT)) {
@@ -255,9 +259,11 @@ namespace tetris {
 
 	void Game::update_ControlsScreen() {
 		if (keyboard.isKeyPushed(ControlKey::START)) {
+			this->menuClickMajor_sound.play();
 			this->changeScene(Scene::MENU);
 		}
 		else if (keyboard.isKeyPushed(ControlKey::B)) {
+			this->menuClickMajor_sound.play();
 			this->changeScene(Scene::SPLASH_SCREEN);
 		}
 		else if (keyboard.isKeyPushed(ControlKey::EXIT)) {
@@ -282,9 +288,11 @@ namespace tetris {
 
 	void Game::update_Menu() {
 		if (keyboard.isKeyPushed(ControlKey::START)) {
+			this->menuClickMajor_sound.play();
 			//this->changeScene(Scene::GAME);
 		}
 		else if (keyboard.isKeyPushed(ControlKey::B)) {
+			this->menuClickMajor_sound.play();
 			this->changeScene(Scene::CONTROLS_SCREEN);
 		}
 		else if (keyboard.isKeyPushed(ControlKey::EXIT)) {
