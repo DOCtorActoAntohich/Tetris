@@ -1,12 +1,12 @@
 #include "Game.h"
 
 #include "resource.h"
-
+#include <fstream>
+#include <algorithm>
 namespace tetris {
 	Game::Game() {
 		changeScene(Scene::SPLASH_SCREEN);
 		this->isInputAllowed = true;
-		
 	}
 
 
@@ -32,7 +32,11 @@ namespace tetris {
 	}
 
 
-	std::vector<byte> Game::LoadEmbeddedResource(int32_t id) {
+
+#pragma region Loading Resources
+
+
+	std::vector<byte> Game::loadEmbeddedResource(int32_t id, LPCTSTR resourceType) {
 		// Took code from link bellow and rewrote a bit.
 		// https://smacdo.com/programming/embedding-user-defined-resources-in-visual-c-binaries/
 
@@ -41,9 +45,9 @@ namespace tetris {
 		HMODULE module = nullptr;
 
 		LPCTSTR name = MAKEINTRESOURCE(id);
-		
+
 		// Raw data is used here because BMP fails to be read otherwise.
-		HRSRC resourceHandle = ::FindResource(module, name, RT_RCDATA);
+		HRSRC resourceHandle = ::FindResource(module, name, resourceType);
 		if (resourceHandle == nullptr) {
 			return output;
 		}
@@ -52,7 +56,7 @@ namespace tetris {
 		if (dataHandle == nullptr) {
 			return output;
 		}
-		
+
 		DWORD resourceSize = ::SizeofResource(module, resourceHandle);
 		if (resourceSize == 0) {
 			return output;
@@ -71,24 +75,47 @@ namespace tetris {
 
 
 
-	sf::Texture* Game::LoadTexture(int32_t id) {
-		std::vector<byte> bytes = this->LoadEmbeddedResource(id);
-		sf::Texture *texture = new sf::Texture;
+	sf::Texture* Game::loadTexture(int32_t id) {
+		std::vector<byte> bytes = this->loadEmbeddedResource(id);
+		sf::Texture* texture = new sf::Texture;
 		(*texture).loadFromMemory(&bytes[0], bytes.size());
 		return texture;
 	}
 
 
 
-	void Game::loadContent() {
-		this->splashScreenTexture = this->LoadTexture(SPLASH_SCREEN_BMP);
-		this->splashScreenSprite.setTexture(*this->splashScreenTexture);
+	sf::SoundBuffer* Game::loadSound(int32_t id) {
+		std::vector<byte> bytes = this->loadEmbeddedResource(id);
+		sf::SoundBuffer* soundBuffer = new sf::SoundBuffer;
+		(*soundBuffer).loadFromMemory(&bytes[0], bytes.size());
+		return soundBuffer;
+	}
 
-		this->controlsScreenTexture = this->LoadTexture(CONTROLS_SCREEN_BMP);
-		this->controlsScreenSprite.setTexture(*this->controlsScreenTexture);
-		
-		this->menuScreenTexture = this->LoadTexture(MENU_SCREEN_BMP);
-		this->menuScreenSprite.setTexture(*this->menuScreenTexture);
+
+
+	void Game::openMusic(int32_t id, std::vector<byte>& musicBytes,
+		sf::Music& music) {
+		musicBytes = this->loadEmbeddedResource(id);
+		music.openFromMemory(&musicBytes[0], musicBytes.size());
+	}
+
+
+#pragma /* Loading Resources */ endregion
+
+
+
+	void Game::loadContent() {
+		this->splashScreen_texture = this->loadTexture(SPLASH_SCREEN_BMP);
+		this->splashScreen_sprite.setTexture(*this->splashScreen_texture);
+
+		this->controlsScreen_texture = this->loadTexture(CONTROLS_SCREEN_BMP);
+		this->controlsScreen_sprite.setTexture(*this->controlsScreen_texture);
+
+		this->menuScreen_texture = this->loadTexture(MENU_SCREEN_BMP);
+		this->menuScreen_sprite.setTexture(*this->menuScreen_texture);
+
+		this->menuClickMajor_soundBuffer = this->loadSound(MENU_CLICK_MAJOR_WAV);
+		this->menuClickMajor_sound.setBuffer(*this->menuClickMajor_soundBuffer);
 
 		this->initializeWindow();
 	}
@@ -96,9 +123,11 @@ namespace tetris {
 
 
 	void Game::unloadContent() {
-		delete this->splashScreenTexture;
-		delete this->controlsScreenTexture;
-		delete this->menuScreenTexture;
+		delete this->splashScreen_texture;
+		delete this->controlsScreen_texture;
+		delete this->menuScreen_texture;
+
+		delete this->menuClickMajor_soundBuffer;
 	}
 
 #pragma /* Resource Management */ endregion
@@ -146,30 +175,30 @@ namespace tetris {
 		std::pair<voidfunc, voidfunc> result;
 		switch (scene)
 		{
-			case Scene::SPLASH_SCREEN :
-				result = std::make_pair<voidfunc, voidfunc>(
-					&Game::update_SplashScreen, &Game::draw_SplashScreen
-				);
-				break;
+		case Scene::SPLASH_SCREEN :
+			result = std::make_pair<voidfunc, voidfunc>(
+				&Game::update_SplashScreen, &Game::draw_SplashScreen
+			);
+			break;
 
-			case Scene::CONTROLS_SCREEN:
-				result = std::make_pair<voidfunc, voidfunc>(
-					&Game::update_ControlsScreen, &Game::draw_ControlsScreen
-				);
-				break;
+		case Scene::CONTROLS_SCREEN :
+			result = std::make_pair<voidfunc, voidfunc>(
+				&Game::update_ControlsScreen, &Game::draw_ControlsScreen
+			);
+			break;
 
-			case Scene::MENU :
-				result = std::make_pair<voidfunc, voidfunc>(
-					&Game::update_Menu, &Game::draw_Menu
-				);
-				break;
+		case Scene::MENU :
+			result = std::make_pair<voidfunc, voidfunc>(
+				&Game::update_Menu, &Game::draw_Menu
+			);
+			break;
 
-			case Scene::GAME :
-			default : // No other options left, "default" is here for compiler's sake.
-				result = std::make_pair<voidfunc, voidfunc>(
-					&Game::update_Game, &Game::draw_Game
-				);
-				break;
+		case Scene::GAME :
+		default : // No other options left, "default" is here for safety.
+			result = std::make_pair<voidfunc, voidfunc>(
+				&Game::update_Game, &Game::draw_Game
+			);
+			break;
 		}
 		return result;
 	}
@@ -182,6 +211,7 @@ namespace tetris {
 
 	void Game::update_SplashScreen() {
 		if (keyboard.isKeyPushed(ControlKey::START)) {
+			this->menuClickMajor_sound.play();
 			this->changeScene(Scene::CONTROLS_SCREEN);
 		}
 		else if (keyboard.isKeyPushed(ControlKey::EXIT)) {
@@ -193,7 +223,7 @@ namespace tetris {
 	void Game::draw_SplashScreen() {
 		this->window.clear(sf::Color::Black);
 
-		this->window.draw(this->splashScreenSprite);
+		this->window.draw(this->splashScreen_sprite);
 
 		this->window.display();
 	}
@@ -209,6 +239,7 @@ namespace tetris {
 			this->changeScene(Scene::MENU);
 		}
 		else if (keyboard.isKeyPushed(ControlKey::B)) {
+			this->menuClickMajor_sound.play();
 			this->changeScene(Scene::SPLASH_SCREEN);
 		}
 		else if (keyboard.isKeyPushed(ControlKey::EXIT)) {
@@ -220,7 +251,7 @@ namespace tetris {
 	void Game::draw_ControlsScreen() {
 		this->window.clear(sf::Color::Black);
 
-		this->window.draw(this->controlsScreenSprite);
+		this->window.draw(this->controlsScreen_sprite);
 
 		this->window.display();
 	}
@@ -244,7 +275,7 @@ namespace tetris {
 	void Game::draw_Menu() {
 		this->window.clear(sf::Color::Black);
 
-		this->window.draw(this->menuScreenSprite);
+		this->window.draw(this->menuScreen_sprite);
 
 		this->window.display();
 	}

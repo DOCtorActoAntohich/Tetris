@@ -48,14 +48,19 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\CONTROLS_SCREEN_BMP.bin">
+    <Media Include="Resources\Sounds\MENU_CLICK.wav">
       <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Resources\MENU_SCREEN_BMP.bin">
+    </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Bitmaps\CONTROLS_SCREEN.bmp">
       <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Resources\SPLASH_SCREEN_BMP.bin">
+    </Image>
+    <Image Include="Resources\Bitmaps\MENU_SCREEN.bmp">
       <Filter>Resource Files</Filter>
-    </None>
+    </Image>
+    <Image Include="Resources\Bitmaps\SPLASH_SCREEN.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
