@@ -5,6 +5,7 @@
 
 #include <string>
 #include <vector>
+#include <filesystem>
 #include <ResourceIndexer.h>
 
 #include "Scene.h"
@@ -29,9 +30,6 @@ namespace tetris {
 
 #pragma region Loading Resources
 
-		// Loads resources embedded into EXE.
-		std::vector<byte> loadEmbeddedResource(int32_t id);
-
 		// Returns a texture loaded from embedded resources.
 		sf::Texture* loadTexture(int32_t id);
 
@@ -39,11 +37,15 @@ namespace tetris {
 		sf::SoundBuffer* loadSound(int32_t id);
 
 		// Returns a font loaded from embedded resources.
-		sf::Font* loadFont(int32_t id); // TODO: Use size 18.
+		// Font data is saved in fontBytes which MUST NOT be changed. 
+		void loadFont(int32_t id, std::vector<byte>& fontbytes, sf::Font& font);// TODO: Use size 18.
 
 		// Opens a music file from embedded resources.
 		// Music data is saved in musicBytes which MUST NOT be changed.
 		void openMusic(int32_t id, std::vector<byte>& musicBytes, sf::Music& music);
+
+		// Returns path to the game folder
+		std::filesystem::path getGameFolderPath();
 
 #pragma /* Loading Resources */ endregion
 
@@ -60,6 +62,47 @@ namespace tetris {
 		sf::Sprite   menuScreen_sprite;
 
 #pragma /* Textures */ endregion
+
+
+#pragma region Other Data
+
+		const std::string GAME_DATA_FOLDER = "Tetris by DOCtorActoAntohich";
+
+		std::vector<byte> fontBytes;
+		sf::Font font;
+		const int32_t FONT_SIZE = 24;
+
+		sf::Text pressEnter_text;
+		bool pressEnter_text_isVisible;
+		void pressEnter_text_initialize();
+
+		
+
+		static const int32_t DIGITS = 10;
+		std::vector<sf::Vector2f> predefinedLevelDigitPositions;
+		void predefinedDigitPositions_initialize();
+
+		sf::RectangleShape menu_levelHighlighter;
+		bool menu_isLevelHighlighterVisible;
+		void menu_levelHighlighter_initialize();
+		void menu_levelHighlighter_update();
+
+		sf::Text menu_levelDigits[DIGITS];
+		void menu_levelDigits_initialize();
+
+
+
+		static const int32_t MUSIC_HIGHLIGHTERS = 2;
+		std::vector<float> predefinedMusicHighlightersPositionsX;
+		std::vector<float> predefinedMusicHighlightersPositionsY;
+		void predefinedMusicHighlightersPositions_initialize();
+
+		sf::Text menu_musicHighlighters[MUSIC_HIGHLIGHTERS];
+		bool menu_areMusicHighlightersVisible;
+		void menu_musicHighlighters_initialize();
+		void menu_musicHighlighters_update();
+
+#pragma /* Other Data */ endregion
 
 
 #pragma region Sounds

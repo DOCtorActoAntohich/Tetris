@@ -2,6 +2,9 @@
 
 #include "resource.h"
 
+#include "Helper.h"
+#include <iostream>
+
 namespace tetris {
 	Game::Game() {
 		changeScene(Scene::SPLASH_SCREEN);
@@ -14,6 +17,7 @@ namespace tetris {
 	}
 
 
+
 	void Game::run() {
 		this->loadContent();
 
@@ -23,9 +27,8 @@ namespace tetris {
 	}
 
 
-
 #pragma region Resource Management
-
+	
 
 	void Game::initializeWindow() {
 		this->window.create(
@@ -40,47 +43,8 @@ namespace tetris {
 #pragma region Loading Resources
 
 
-	std::vector<byte> Game::loadEmbeddedResource(int32_t id) {
-		// Took code from link bellow and rewrote a bit.
-		// https://smacdo.com/programming/embedding-user-defined-resources-in-visual-c-binaries/
-
-		std::vector<byte> output;
-
-		HMODULE module = nullptr;
-		LPCTSTR name = MAKEINTRESOURCE(id);
-		LPCTSTR type = RT_RCDATA;
-
-		// Raw data is used here because resource fails to be read otherwise.
-		HRSRC resourceHandle = ::FindResource(module, name, type);
-		if (resourceHandle == nullptr) {
-			return output;
-		}
-
-		HGLOBAL dataHandle = ::LoadResource(module, resourceHandle);
-		if (dataHandle == nullptr) {
-			return output;
-		}
-
-		DWORD resourceSize = ::SizeofResource(module, resourceHandle);
-		if (resourceSize == 0) {
-			return output;
-		}
-
-		auto firstByte = reinterpret_cast<const char*>(::LockResource(dataHandle));
-		if (firstByte == nullptr) {
-			return output;
-		}
-
-		output.resize(resourceSize);
-		std::copy(firstByte, firstByte + resourceSize, output.begin());
-
-		return output;
-	}
-
-
-
 	sf::Texture* Game::loadTexture(int32_t id) {
-		std::vector<byte> bytes = this->loadEmbeddedResource(id);
+		std::vector<byte> bytes = Helper::loadEmbeddedResource(id);
 		sf::Texture* texture = new sf::Texture;
 		(*texture).loadFromMemory(&bytes[0], bytes.size());
 		return texture;
@@ -89,7 +53,7 @@ namespace tetris {
 
 
 	sf::SoundBuffer* Game::loadSound(int32_t id) {
-		std::vector<byte> bytes = this->loadEmbeddedResource(id);
+		std::vector<byte> bytes = Helper::loadEmbeddedResource(id);
 		sf::SoundBuffer* soundBuffer = new sf::SoundBuffer;
 		(*soundBuffer).loadFromMemory(&bytes[0], bytes.size());
 		return soundBuffer;
@@ -97,36 +61,159 @@ namespace tetris {
 
 
 
-	sf::Font* Game::loadFont(int32_t id) {
-		std::vector<byte> bytes = this->loadEmbeddedResource(id);
-		sf::Font* font = new sf::Font;
-		(*font).loadFromMemory(&bytes[0], bytes.size());
-		return font;
+	void Game::loadFont(int32_t id, std::vector<byte>& bytes, sf::Font& font) {
+		bytes = Helper::loadEmbeddedResource(id);
+		font.loadFromMemory(&bytes[0], bytes.size());
 	}
 
 
 
 	void Game::openMusic(int32_t id, std::vector<byte>& musicBytes,
 						 sf::Music& music) {
-		musicBytes = this->loadEmbeddedResource(id);
+		musicBytes = Helper::loadEmbeddedResource(id);
 		music.openFromMemory(&musicBytes[0], musicBytes.size());
+	}
+
+
+
+	std::filesystem::path Game::getGameFolderPath() {
+		auto path = Helper::getProgramDataPath();
+		path /= this->GAME_DATA_FOLDER;
+		return path;
 	}
 
 
 #pragma /* Loading Resources */ endregion
 
 
+#pragma region Other Data
+
+
+	void Game::pressEnter_text_initialize() {
+		this->pressEnter_text.setFont(this->font);
+		this->pressEnter_text.setString("PRESS ENTER");
+		this->pressEnter_text.setCharacterSize(this->FONT_SIZE);
+		this->pressEnter_text.setFillColor(sf::Color::White);
+		this->pressEnter_text.setStyle(sf::Text::Regular);
+		this->pressEnter_text.setPosition(256, 326);
+		this->pressEnter_text_isVisible = true;
+	}
+
+
+
+	void Game::predefinedDigitPositions_initialize() {
+		// Looks like crapcode :(.
+		this->predefinedLevelDigitPositions = {
+			sf::Vector2f(144, 152),
+			sf::Vector2f(192, 152),
+			sf::Vector2f(240, 152),
+			sf::Vector2f(288, 152),
+			sf::Vector2f(336, 152),
+			sf::Vector2f(144, 201),
+			sf::Vector2f(192, 201),
+			sf::Vector2f(240, 201),
+			sf::Vector2f(288, 201),
+			sf::Vector2f(336, 201)
+		};
+	}
+
+
+
+	void Game::menu_levelHighlighter_initialize() {
+		predefinedDigitPositions_initialize();
+		this->menu_levelHighlighter.setSize(sf::Vector2f(42, 45));
+		this->menu_levelHighlighter.setFillColor(sf::Color::Yellow);
+		this->menu_isLevelHighlighterVisible = true;
+		this->menu_levelHighlighter_update();
+	}
+
+
+
+	void Game::menu_levelHighlighter_update() {
+		this->menu_levelHighlighter.setPosition(
+			predefinedLevelDigitPositions[this->startLevel]
+		);
+	}
+
+
+
+	void Game::menu_levelDigits_initialize() {
+		predefinedDigitPositions_initialize();
+		sf::Vector2f offset(10, 12); // To center positions.
+		for (int32_t digit = 0; digit < this->DIGITS; ++digit) {
+			this->menu_levelDigits[digit].setFont(this->font);
+			this->menu_levelDigits[digit].setString(std::to_string(digit));
+			this->menu_levelDigits[digit].setCharacterSize(this->FONT_SIZE);
+			this->menu_levelDigits[digit].setFillColor(sf::Color(216, 40, 0));
+			this->menu_levelDigits[digit].setStyle(sf::Text::Regular);
+			this->menu_levelDigits[digit].setPosition(
+				this->predefinedLevelDigitPositions[digit] + offset
+			);
+		}
+	}
+
+
+
+	void Game::predefinedMusicHighlightersPositions_initialize() {
+		this->predefinedMusicHighlightersPositionsX = {
+			435, 641
+		};
+		this->predefinedMusicHighlightersPositionsY = {
+			164, 212, 260, 308
+		};
+	}
+
+
+
+	void Game::menu_musicHighlighters_initialize() {
+		// Crapcode again :(.
+		this->predefinedMusicHighlightersPositions_initialize();
+		std::string strings[this->MUSIC_HIGHLIGHTERS] = { ">", "<" };
+		for (int32_t i = 0; i < this->MUSIC_HIGHLIGHTERS; ++i) {
+			this->menu_musicHighlighters[i].setFont(this->font);
+			this->menu_musicHighlighters[i].setString(strings[i]);
+			this->menu_musicHighlighters[i].setCharacterSize(this->FONT_SIZE);
+			this->menu_musicHighlighters[i].setFillColor(sf::Color::Yellow);
+			this->menu_musicHighlighters[i].setStyle(sf::Text::Regular);
+		}
+		this->menu_areMusicHighlightersVisible = true;
+		this->menu_musicHighlighters_update();
+	}
+
+
+
+	void Game::menu_musicHighlighters_update() {
+		for (int i = 0; i < this->MUSIC_HIGHLIGHTERS; ++i) {
+			this->menu_musicHighlighters[i].setPosition(
+				this->predefinedMusicHighlightersPositionsX[i],
+				this->predefinedMusicHighlightersPositionsY[this->musicType]
+			);
+		}
+	}
+
+
+#pragma /* Other Data */ endregion
+
+
 
 	void Game::loadContent() {
+		loadFont(GAME_FONT, this->fontBytes, this->font);
+
+
 		this->splashScreen_texture = this->loadTexture(SPLASH_SCREEN_BMP);
 		this->splashScreen_sprite.setTexture(*this->splashScreen_texture);
+		this->pressEnter_text_initialize();
+
 
 		this->controlsScreen_texture = this->loadTexture(CONTROLS_SCREEN_BMP);
 		this->controlsScreen_sprite.setTexture(*this->controlsScreen_texture);
 
+		
 		this->menuScreen_texture = this->loadTexture(LEVEL_SELECT_SCREEN_BMP);
 		this->menuScreen_sprite.setTexture(*this->menuScreen_texture);
-
+		this->menu_levelHighlighter_initialize();
+		this->menu_levelDigits_initialize();
+		this->menu_musicHighlighters_initialize();
 
 
 		this->menuClickMajor_soundBuffer = this->loadSound(MENU_CLICK_MAJOR_WAV);
@@ -134,6 +221,7 @@ namespace tetris {
 
 		this->menuClickMinor_soundBuffer = this->loadSound(MENU_CLICK_MINOR_WAV);
 		this->menuClickMinor_sound.setBuffer(*this->menuClickMinor_soundBuffer);
+
 
 		this->initializeWindow();
 	}
@@ -165,19 +253,20 @@ namespace tetris {
 
 	void Game::runMainLoop() {
 		while (this->window.isOpen()) {
-			sf::Event event;
-			while (window.pollEvent(event)) {
-				if (event.type == sf::Event::Closed) {
-					this->exit();
+			if (this->window.hasFocus()) {
+				sf::Event event;
+				while (window.pollEvent(event)) {
+					if (event.type == sf::Event::Closed) {
+						this->exit();
+					}
 				}
+
+				this->keyboard.update();
+				++frames;
+
+				(this->*update)();
+				(this->*draw)();
 			}
-
-			this->keyboard.update();
-
-			++frames;
-
-			(this->*update)();
-			(this->*draw)();
 		}
 	}
 
@@ -233,6 +322,11 @@ namespace tetris {
 
 
 	void Game::update_SplashScreen() {
+		this->frames %= (this->FPS / 2);
+		if (this->frames == 0) {
+			this->pressEnter_text_isVisible = !this->pressEnter_text_isVisible;
+		}
+
 		if (keyboard.isKeyPushed(ControlKey::START)) {
 			this->menuClickMajor_sound.play();
 			this->changeScene(Scene::CONTROLS_SCREEN);
@@ -247,6 +341,9 @@ namespace tetris {
 		this->window.clear(sf::Color::Black);
 
 		this->window.draw(this->splashScreen_sprite);
+		if (this->pressEnter_text_isVisible) {
+			this->window.draw(this->pressEnter_text);
+		}
 
 		this->window.display();
 	}
@@ -258,6 +355,8 @@ namespace tetris {
 #pragma region Controls Screen
 
 	void Game::update_ControlsScreen() {
+		this->frames %= this->FPS;
+
 		if (keyboard.isKeyPushed(ControlKey::START)) {
 			this->menuClickMajor_sound.play();
 			this->changeScene(Scene::MENU);
@@ -287,6 +386,8 @@ namespace tetris {
 
 
 	void Game::update_Menu() {
+		this->frames %= (this->FPS / 3);
+
 		if (keyboard.isKeyPushed(ControlKey::START)) {
 			this->menuClickMajor_sound.play();
 			//this->changeScene(Scene::GAME);
@@ -306,16 +407,23 @@ namespace tetris {
 
 
 	void Game::update_Menu_LevelSelection() {
+		if (this->frames == 0) {
+			this->menu_isLevelHighlighterVisible = 
+				!this->menu_isLevelHighlighterVisible;
+		}
+
 		if (keyboard.isKeyPushed(ControlKey::LEFT)) {
 			this->menuClickMinor_sound.play();
 			if (this->startLevel > MINIMAL_LEVEL) {
 				--this->startLevel;
+				this->menu_levelHighlighter_update();
 			}
 		}
 		else if (keyboard.isKeyPushed(ControlKey::RIGHT)) {
 			this->menuClickMinor_sound.play();
 			if (this->startLevel < MAXIMAL_LEVEL) {
 				++this->startLevel;
+				this->menu_levelHighlighter_update();
 			}
 		}
 	}
@@ -323,16 +431,23 @@ namespace tetris {
 
 
 	void Game::update_Menu_MusicSelection() {
+		if (this->frames == 0) {
+			this->menu_areMusicHighlightersVisible =
+				!this->menu_areMusicHighlightersVisible;
+		}
+
 		if (keyboard.isKeyPushed(ControlKey::UP)) {
 			this->menuClickMinor_sound.play();
 			if (this->musicType > MINIMAL_MUSIC_TYPE) {
 				--this->musicType;
+				this->menu_musicHighlighters_update();
 			}
 		}
 		else if (keyboard.isKeyPushed(ControlKey::DOWN)) {
 			this->menuClickMinor_sound.play();
 			if (this->musicType < MAXIMAL_MUSIC_TYPE) {
 				++this->musicType;
+				this->menu_musicHighlighters_update();
 			}
 		}
 	}
@@ -343,6 +458,20 @@ namespace tetris {
 		this->window.clear(sf::Color::Black);
 
 		this->window.draw(this->menuScreen_sprite);
+
+		if (this->menu_isLevelHighlighterVisible) {
+			this->window.draw(this->menu_levelHighlighter);
+		}
+
+		for (int32_t digit = 0; digit < this->DIGITS; ++digit) {
+			this->window.draw(this->menu_levelDigits[digit]);
+		}
+
+		if (this->menu_areMusicHighlightersVisible) {
+			for (int32_t i = 0; i < this->MUSIC_HIGHLIGHTERS; ++i) {
+				this->window.draw(this->menu_musicHighlighters[i]);
+			}
+		}
 
 		this->window.display();
 	}
@@ -367,6 +496,7 @@ namespace tetris {
 
 
 #pragma /* Game */ endregion
+
 
 #pragma /* Scene Handlers */ endregion
 
