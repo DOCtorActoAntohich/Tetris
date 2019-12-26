@@ -104,16 +104,16 @@ namespace tetris {
 	void Game::predefinedDigitPositions_initialize() {
 		// Looks like crapcode :(.
 		this->predefinedLevelDigitPositions = {
-			sf::Vector2f(144, 152),
-			sf::Vector2f(192, 152),
-			sf::Vector2f(240, 152),
-			sf::Vector2f(288, 152),
-			sf::Vector2f(336, 152),
-			sf::Vector2f(144, 201),
-			sf::Vector2f(192, 201),
-			sf::Vector2f(240, 201),
-			sf::Vector2f(288, 201),
-			sf::Vector2f(336, 201)
+			sf::Vector2f(140, 152),
+			sf::Vector2f(188, 152),
+			sf::Vector2f(236, 152),
+			sf::Vector2f(284, 152),
+			sf::Vector2f(332, 152),
+			sf::Vector2f(140, 201),
+			sf::Vector2f(188, 201),
+			sf::Vector2f(236, 201),
+			sf::Vector2f(284, 201),
+			sf::Vector2f(332, 201)
 		};
 	}
 
