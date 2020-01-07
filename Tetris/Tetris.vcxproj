@@ -154,33 +154,34 @@ xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-window-2.dll" "$(OutDir)" /Y</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CounterUI.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameField.cpp" />
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Record.cpp" />
+    <ClCompile Include="Score.cpp" />
+    <ClCompile Include="SoundWrapper.cpp" />
+    <ClCompile Include="SpriteWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ControlKey.h" />
+    <ClInclude Include="CounterUI.h" />
+    <ClInclude Include="FigureColor.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameField.h" />
     <ClInclude Include="Helper.h" />
     <ClInclude Include="Keyboard.h" />
+    <ClInclude Include="Record.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Score.h" />
+    <ClInclude Include="SoundWrapper.h" />
+    <ClInclude Include="SpriteWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Tetris.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Media Include="Resources\Sounds\MENU_CLICK_MAJOR.wav" />
-    <Media Include="Resources\Sounds\MENU_CLICK_MINOR.wav" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Resources\Bitmaps\CONTROLS_SCREEN.bmp" />
-    <Image Include="Resources\Bitmaps\MENU_SCREEN.bmp" />
-    <Image Include="Resources\Bitmaps\SPLASH_SCREEN.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Font Include="Resources\Fonts\PressStart2P.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

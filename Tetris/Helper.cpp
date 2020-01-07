@@ -1,5 +1,3 @@
-#pragma once
-
 #include "Helper.h"
 
 #include <fstream>
@@ -59,6 +57,15 @@ namespace tetris {
 
 
 
+	std::filesystem::path Helper::getGameFolderPath() {
+		static const std::string GAME_DATA_FOLDER = "Tetris by DOCtorActoAntohich";
+		auto path = Helper::getProgramDataPath();
+		path /= GAME_DATA_FOLDER;
+		return path;
+	}
+
+
+
 	void Helper::writeToBinaryFile(const std::filesystem::path& path, const std::vector<byte>& bytes) {
 		std::ofstream file(path, std::fstream::out | std::fstream::binary | std::fstream::trunc);
 		file.write((char*)&bytes[0], bytes.size());
@@ -75,5 +82,40 @@ namespace tetris {
 
 	void Helper::createDirectory(const std::filesystem::path& path) {
 		std::filesystem::create_directories(path);
+	}
+
+
+
+	std::string Helper::replace(std::string string, const std::string& from, const std::string& to) {
+		size_t index = 0;
+		while (true) {
+			index = string.find(from, index);
+			if (index == std::string::npos) {
+				break;
+			}
+			string.replace(index, from.size(), to);
+			index += to.size();
+		}
+		return string;
+	}
+
+
+
+	std::string Helper::tuUpperCase(std::string string) {
+		for (auto& chr : string) {
+			chr = std::toupper(chr);
+		}
+		return string;
+	}
+
+
+
+	size_t Helper::countDigits(uint32_t number) {
+		size_t digits = 0;
+		while (number != 0) {
+			number /= 10;
+			++digits;
+		}
+		return digits;
 	}
 }

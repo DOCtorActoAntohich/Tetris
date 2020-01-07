@@ -2,14 +2,26 @@
 // Microsoft Visual C++ generated include file.
 // Used by Tetris.rc
 //
-#define SPLASH_SCREEN_BMP               103
-#define CONTROLS_SCREEN_BMP             104
-#define LEVEL_SELECT_SCREEN_BMP         105
 
+// In-game screens.
+#define SPLASH_SCREEN_BMP               103
+#define CONTROLS_SCREEN_BMP		        104
+#define MENU_SCREEN_BMP					105
+#define GAME_SCREEN_BMP					106
+#define PAUSE_SCREEN_BMP				107
+
+// Sprites (relatively small).
+#define DROUGHT_INDICATOR_BMP			150
+
+// Wave sounds.
 #define MENU_CLICK_MAJOR_WAV            203
 #define MENU_CLICK_MINOR_WAV			204
+#define PAUSE_WAV						205
 
+// Fonts.
 #define GAME_FONT						303
+
+
 
 // Next default values for new objects
 // 

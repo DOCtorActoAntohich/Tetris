@@ -1,10 +1,13 @@
 #pragma once
 
+#include <cstdint>
+
 namespace tetris {
-	enum class Scene {
+	enum class Scene : int32_t {
 		SPLASH_SCREEN = 0,
 		CONTROLS_SCREEN = 1,
 	    MENU = 2,
-		GAME = 3
+		GAME = 3,
+		PAUSE_SCREEN = 4
 	};
 }

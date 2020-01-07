@@ -10,9 +10,18 @@
 
 #include "Scene.h"
 #include "Keyboard.h"
+#include "GameField.h"
+#include "Score.h"
+#include "SpriteWrapper.h"
+#include "SoundWrapper.h"
+#include "CounterUI.h"
 
 
 namespace tetris {
+	using Sound = SoundWrapper;
+	using Sprite = SpriteWrapper;
+
+
 	class Game {
 	public:
 		Game();
@@ -30,12 +39,6 @@ namespace tetris {
 
 #pragma region Loading Resources
 
-		// Returns a texture loaded from embedded resources.
-		sf::Texture* loadTexture(int32_t id);
-
-		// Returns a sound loaded from embedded resourves.
-		sf::SoundBuffer* loadSound(int32_t id);
-
 		// Returns a font loaded from embedded resources.
 		// Font data is saved in fontBytes which MUST NOT be changed. 
 		void loadFont(int32_t id, std::vector<byte>& fontbytes, sf::Font& font);// TODO: Use size 18.
@@ -44,29 +47,23 @@ namespace tetris {
 		// Music data is saved in musicBytes which MUST NOT be changed.
 		void openMusic(int32_t id, std::vector<byte>& musicBytes, sf::Music& music);
 
-		// Returns path to the game folder
-		std::filesystem::path getGameFolderPath();
-
 #pragma /* Loading Resources */ endregion
 
 
 #pragma region Textures
 
-		sf::Texture* splashScreen_texture;
-		sf::Sprite   splashScreen_sprite;
+		Sprite splash_background;
+		Sprite controls_background;
+		Sprite menu_background;
+		Sprite game_background;
+		Sprite pause_background;
 
-		sf::Texture* controlsScreen_texture;
-		sf::Sprite   controlsScreen_sprite;
-
-		sf::Texture* menuScreen_texture;
-		sf::Sprite   menuScreen_sprite;
+		Sprite droughtIndicator;
 
 #pragma /* Textures */ endregion
 
 
 #pragma region Other Data
-
-		const std::string GAME_DATA_FOLDER = "Tetris by DOCtorActoAntohich";
 
 		std::vector<byte> fontBytes;
 		sf::Font font;
@@ -102,16 +99,26 @@ namespace tetris {
 		void menu_musicHighlighters_initialize();
 		void menu_musicHighlighters_update();
 
+
+
+		CounterUI game_tetrisesCounter;
+		CounterUI game_burnCounter;
+		CounterUI game_tetrisRateCounter;
+		CounterUI game_linesCounter;
+		CounterUI game_topScoreCounter;
+		CounterUI game_currentScoreCounter;
+		CounterUI game_levelCounter;
+		CounterUI game_droughtCounter;
+
 #pragma /* Other Data */ endregion
 
 
 #pragma region Sounds
 
-		sf::SoundBuffer* menuClickMajor_soundBuffer;
-		sf::Sound		 menuClickMajor_sound;
+		Sound menuClickMajor_sound;
+		Sound menuClickMinor_sound;
 
-		sf::SoundBuffer* menuClickMinor_soundBuffer;
-		sf::Sound		 menuClickMinor_sound;
+		Sound pause_sound;
 
 #pragma /* Sounds */ endregion
 
@@ -176,9 +183,9 @@ namespace tetris {
 
 		// Boundaries only for level and music select in menu.
 
-		const int32_t MINIMAL_LEVEL = 0;
-		const int32_t MAXIMAL_LEVEL = 9;
-		int32_t startLevel;
+		const uint8_t MINIMAL_LEVEL = 0;
+		const uint8_t MAXIMAL_LEVEL = 9;
+		uint8_t startLevel;
 
 		const int32_t MINIMAL_MUSIC_TYPE = 0;
 		const int32_t MAXIMAL_MUSIC_TYPE = 3;
@@ -195,10 +202,19 @@ namespace tetris {
 
 #pragma region Game
 
+		GameField field;
+
 		void update_Game();
 		void draw_Game();
 
 #pragma /* Game */ endregion
+
+#pragma region Pause Screen
+
+		void update_PauseScreen();
+		void draw_PauseScreen();
+
+#pragma /* Pause Screen */ endregion
 
 #pragma /* Scene Handlers */ endregion
 

@@ -43,24 +43,6 @@ namespace tetris {
 #pragma region Loading Resources
 
 
-	sf::Texture* Game::loadTexture(int32_t id) {
-		std::vector<byte> bytes = Helper::loadEmbeddedResource(id);
-		sf::Texture* texture = new sf::Texture;
-		(*texture).loadFromMemory(&bytes[0], bytes.size());
-		return texture;
-	}
-
-
-
-	sf::SoundBuffer* Game::loadSound(int32_t id) {
-		std::vector<byte> bytes = Helper::loadEmbeddedResource(id);
-		sf::SoundBuffer* soundBuffer = new sf::SoundBuffer;
-		(*soundBuffer).loadFromMemory(&bytes[0], bytes.size());
-		return soundBuffer;
-	}
-
-
-
 	void Game::loadFont(int32_t id, std::vector<byte>& bytes, sf::Font& font) {
 		bytes = Helper::loadEmbeddedResource(id);
 		font.loadFromMemory(&bytes[0], bytes.size());
@@ -72,14 +54,6 @@ namespace tetris {
 						 sf::Music& music) {
 		musicBytes = Helper::loadEmbeddedResource(id);
 		music.openFromMemory(&musicBytes[0], musicBytes.size());
-	}
-
-
-
-	std::filesystem::path Game::getGameFolderPath() {
-		auto path = Helper::getProgramDataPath();
-		path /= this->GAME_DATA_FOLDER;
-		return path;
 	}
 
 
@@ -200,28 +174,56 @@ namespace tetris {
 		loadFont(GAME_FONT, this->fontBytes, this->font);
 
 
-		this->splashScreen_texture = this->loadTexture(SPLASH_SCREEN_BMP);
-		this->splashScreen_sprite.setTexture(*this->splashScreen_texture);
+		this->splash_background.loadFromResource(SPLASH_SCREEN_BMP);
 		this->pressEnter_text_initialize();
 
+		this->controls_background.loadFromResource(CONTROLS_SCREEN_BMP);
 
-		this->controlsScreen_texture = this->loadTexture(CONTROLS_SCREEN_BMP);
-		this->controlsScreen_sprite.setTexture(*this->controlsScreen_texture);
-
-		
-		this->menuScreen_texture = this->loadTexture(LEVEL_SELECT_SCREEN_BMP);
-		this->menuScreen_sprite.setTexture(*this->menuScreen_texture);
+		this->menu_background.loadFromResource(MENU_SCREEN_BMP);
 		this->menu_levelHighlighter_initialize();
 		this->menu_levelDigits_initialize();
 		this->menu_musicHighlighters_initialize();
 
+		this->game_background.loadFromResource(GAME_SCREEN_BMP);
+		this->pause_background.loadFromResource(PAUSE_SCREEN_BMP);
 
-		this->menuClickMajor_soundBuffer = this->loadSound(MENU_CLICK_MAJOR_WAV);
-		this->menuClickMajor_sound.setBuffer(*this->menuClickMajor_soundBuffer);
 
-		this->menuClickMinor_soundBuffer = this->loadSound(MENU_CLICK_MINOR_WAV);
-		this->menuClickMinor_sound.setBuffer(*this->menuClickMinor_soundBuffer);
+		this->droughtIndicator.loadFromResource(DROUGHT_INDICATOR_BMP);
+		this->droughtIndicator.setPosition({ 640, 490 });
 
+
+		this->menuClickMajor_sound.loadFromResource(MENU_CLICK_MAJOR_WAV);
+		this->menuClickMinor_sound.loadFromResource(MENU_CLICK_MINOR_WAV);
+		this->pause_sound.loadFromResource(PAUSE_WAV);
+
+		CounterUI::setDefaultDisplayOptions(
+			this->font, this->FONT_SIZE,
+			sf::Color::White, sf::Text::Style::Regular
+		);
+		this->game_tetrisesCounter.setMaximalValue(GameField::MAX_TETRISES);
+		this->game_tetrisesCounter.setPosition(177, 419);
+
+		this->game_burnCounter.setMaximalValue(GameField::MAX_BURN);
+		this->game_burnCounter.setPosition(177, 464);
+
+		this->game_tetrisRateCounter.setMaximalValue(GameField::MAX_TETRIS_RATE);
+		this->game_tetrisRateCounter.setWidth(2);
+		this->game_tetrisRateCounter.setPosition(177, 510);
+
+		this->game_linesCounter.setMaximalValue(GameField::MAX_LINES);
+		this->game_linesCounter.setPosition(482, 43);
+
+		this->game_topScoreCounter.setMaximalValue(Record::MAX_SCORE);
+		this->game_topScoreCounter.setPosition(608, 86);
+
+		this->game_currentScoreCounter.setMaximalValue(Record::MAX_SCORE);
+		this->game_currentScoreCounter.setPosition(608, 166);
+
+		this->game_levelCounter.setMaximalValue(Record::MAX_LEVEL);
+		this->game_levelCounter.setPosition(642, 431);
+
+		this->game_droughtCounter.setMaximalValue(99);
+		this->game_droughtCounter.setPosition(642, 519);
 
 		this->initializeWindow();
 	}
@@ -229,12 +231,7 @@ namespace tetris {
 
 
 	void Game::unloadContent() {
-		delete this->splashScreen_texture;
-		delete this->controlsScreen_texture;
-		delete this->menuScreen_texture;
 
-		delete this->menuClickMajor_soundBuffer;
-		delete this->menuClickMinor_soundBuffer;
 	}
 
 #pragma /* Resource Management */ endregion
@@ -253,14 +250,14 @@ namespace tetris {
 
 	void Game::runMainLoop() {
 		while (this->window.isOpen()) {
-			if (this->window.hasFocus()) {
-				sf::Event event;
-				while (window.pollEvent(event)) {
-					if (event.type == sf::Event::Closed) {
-						this->exit();
-					}
+			sf::Event event;
+			while (window.pollEvent(event)) {
+				if (event.type == sf::Event::Closed) {
+					this->exit();
 				}
+			}
 
+			if (this->window.hasFocus()) {
 				this->keyboard.update();
 				++frames;
 
@@ -283,36 +280,24 @@ namespace tetris {
 
 	std::pair<void(Game::*)(), void(Game::*)()> Game::chooseUpdaters(Scene scene) {
 		using voidfunc = void(Game::*)();
+		static std::map<Scene, std::pair<voidfunc, voidfunc>> handlers = {
+			{ Scene::SPLASH_SCREEN,
+			{ &Game::update_SplashScreen, &Game::draw_SplashScreen }},
 
-		std::pair<voidfunc, voidfunc> result;
-		switch (scene)
-		{
-		case Scene::SPLASH_SCREEN :
-			result = std::make_pair<voidfunc, voidfunc>(
-				&Game::update_SplashScreen, &Game::draw_SplashScreen
-			);
-			break;
+			{ Scene::CONTROLS_SCREEN,
+			{ &Game::update_ControlsScreen, &Game::draw_ControlsScreen }},
 
-		case Scene::CONTROLS_SCREEN :
-			result = std::make_pair<voidfunc, voidfunc>(
-				&Game::update_ControlsScreen, &Game::draw_ControlsScreen
-			);
-			break;
+			{ Scene::MENU,
+			{ &Game::update_Menu, &Game::draw_Menu }},
 
-		case Scene::MENU :
-			result = std::make_pair<voidfunc, voidfunc>(
-				&Game::update_Menu, &Game::draw_Menu
-			);
-			break;
+			{ Scene::GAME,
+			{ &Game::update_Game, &Game::draw_Game }},
 
-		case Scene::GAME :
-		default : // No other options left, "default" is here for safety.
-			result = std::make_pair<voidfunc, voidfunc>(
-				&Game::update_Game, &Game::draw_Game
-			);
-			break;
-		}
-		return result;
+			{ Scene::PAUSE_SCREEN,
+			{ &Game::update_PauseScreen, &Game::draw_PauseScreen }},
+		};
+
+		return handlers[scene];
 	}
 
 #pragma region Scene Handlers
@@ -340,7 +325,7 @@ namespace tetris {
 	void Game::draw_SplashScreen() {
 		this->window.clear(sf::Color::Black);
 
-		this->window.draw(this->splashScreen_sprite);
+		this->splash_background.draw(this->window);
 		if (this->pressEnter_text_isVisible) {
 			this->window.draw(this->pressEnter_text);
 		}
@@ -374,7 +359,7 @@ namespace tetris {
 	void Game::draw_ControlsScreen() {
 		this->window.clear(sf::Color::Black);
 
-		this->window.draw(this->controlsScreen_sprite);
+		this->controls_background.draw(this->window);
 
 		this->window.display();
 	}
@@ -390,7 +375,7 @@ namespace tetris {
 
 		if (keyboard.isKeyPushed(ControlKey::START)) {
 			this->menuClickMajor_sound.play();
-			//this->changeScene(Scene::GAME);
+			this->changeScene(Scene::GAME);
 		}
 		else if (keyboard.isKeyPushed(ControlKey::B)) {
 			this->menuClickMajor_sound.play();
@@ -457,7 +442,7 @@ namespace tetris {
 	void Game::draw_Menu() {
 		this->window.clear(sf::Color::Black);
 
-		this->window.draw(this->menuScreen_sprite);
+		this->menu_background.draw(this->window);
 
 		if (this->menu_isLevelHighlighterVisible) {
 			this->window.draw(this->menu_levelHighlighter);
@@ -484,18 +469,83 @@ namespace tetris {
 
 
 	void Game::update_Game() {
+		if (keyboard.isKeyPushed(ControlKey::START)) {
+			this->pause_sound.play();
+			this->changeScene(Scene::PAUSE_SCREEN);
+		}
 
+		if (keyboard.isKeyPushed(ControlKey::B)) {
+			this->field.rotateFigure(Rotation::COUNTERCLOCKWISE);
+		}
+		else if (keyboard.isKeyPushed(ControlKey::A)) {
+			this->field.rotateFigure(Rotation::CLOCKWISE);
+		}
+
+		if (keyboard.isKeyPushed(ControlKey::DOWN)) {
+			this->field.dropFigureDown();
+		}
+		else if (keyboard.isKeyPushed(ControlKey::LEFT)) {
+			this->field.moveFigure(Direction::LEFT);
+		}
+		else if (keyboard.isKeyPushed(ControlKey::RIGHT)) {
+			this->field.moveFigure(Direction::RIGHT);
+		}
 	}
 
 
 	void Game::draw_Game() {
 		this->window.clear(sf::Color::Black);
 
+		this->game_background.draw(this->window);
+		this->droughtIndicator.draw(this->window);
+
+		this->game_tetrisesCounter.draw(this->window);
+		this->game_burnCounter.draw(this->window);
+		this->game_tetrisRateCounter.draw(this->window);
+		this->game_linesCounter.draw(this->window);
+		this->game_topScoreCounter.draw(this->window);
+		auto a = game_topScoreCounter.getString();
+		this->game_currentScoreCounter.draw(this->window);
+		this->game_levelCounter.draw(this->window);
+		this->game_droughtCounter.draw(this->window);
+
+		auto blocks = this->field.getBlocks();
+		for (uint32_t y = 0; y < blocks.size(); ++y) {
+			for (uint32_t x = 0; x < blocks[y].size(); ++x) {
+
+			}
+		}
+
 		this->window.display();
 	}
 
 
 #pragma /* Game */ endregion
+
+
+
+#pragma region Pause Screen
+
+	void Game::update_PauseScreen() {
+		if (keyboard.isKeyPushed(ControlKey::START)) {
+			this->changeScene(Scene::GAME);
+		}
+		else if (keyboard.isKeyPushed(ControlKey::EXIT)) {
+			this->exit();
+		}
+	}
+
+
+
+	void Game::draw_PauseScreen() {
+		this->window.clear(sf::Color::Black);
+
+		this->pause_background.draw(this->window);
+
+		this->window.display();
+	}
+
+#pragma /* Pause Screen */ endregion
 
 
 #pragma /* Scene Handlers */ endregion
