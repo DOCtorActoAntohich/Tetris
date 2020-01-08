@@ -6,179 +6,190 @@
 
 #include "Helper.h"
 
-namespace tetris {
-	bool CounterUI::areDefaultsSet = false;
-	sf::Font		CounterUI::default_font			 = sf::Font();
-	size_t			CounterUI::default_characterSize = 0;
-	sf::Color		CounterUI::default_color		 = sf::Color::White;
-
-#pragma warning(push)
-	// I can do nothing with this warning since it's caused by SFML.
-#pragma warning(disable : 26812)
-	sf::Text::Style CounterUI::default_textStyle     = sf::Text::Style::Regular;
-#pragma warning(pop)
+using namespace tetris;
 
 
-	CounterUI::CounterUI() {
-		this->game_levelCounter = 0;
-		this->maximalValue = SIZE_MAX;
-		this->textWidth = 3;
-
-		this->areOptionsAssigned = false;
-
-		this->applyDefaults();
-	}
-
-
-
-	size_t CounterUI::getWidth() {
-		return this->textWidth;
-	}
-
-
-
-	void CounterUI::setWidth(size_t width) {
-		this->textWidth = width;
-		this->applyDefaults();
-		this->updateText();
-	}
-
-
-
-	int32_t CounterUI::getMaximalValue() {
-		return this->maximalValue;
-	}
-
-
-
-	void CounterUI::setMaximalValue(int32_t maxValue) {
-		this->maximalValue = maxValue;
-		size_t digits = Helper::countDigits(maxValue);
-		this->validateCounterValue();
-		this->setWidth(digits);
-	}
-
-
-
-	void CounterUI::increment(int32_t value) {
-		this->game_levelCounter += std::abs(value);
-		this->validateCounterValue();
-		this->updateText();
-	}
-
-
-
-	void CounterUI::decrement(int32_t value) {
-		this->game_levelCounter -= std::abs(value);
-		this->validateCounterValue();
-		this->updateText();
-	}
-
-
-
-	int32_t CounterUI::getNumericValue() {
-		return this->game_levelCounter;
-	}
-
-
-
-	void CounterUI::setNumericValue(int32_t value) {
-		this->game_levelCounter = value;
-		this->validateCounterValue();
-		this->updateText();
-	}
-
+#pragma region Static Members Initialization
 
 
 #pragma warning(push)
-	// I can do nothing with this warning since it's caused by SFML.
+// I can do nothing with this warning since it's caused by SFML.
 #pragma warning(disable : 26812)
-	void CounterUI::setDefaultDisplayOptions(
-			const sf::Font& font, size_t charSize,
-			const sf::Color& color, sf::Text::Style style) {
-		CounterUI::default_font = font;
-		CounterUI::default_characterSize = charSize;
-		CounterUI::default_color = color;
-		CounterUI::default_textStyle = style;
-		CounterUI::areDefaultsSet = true;
-	}
 
+bool CounterUI::areDefaultsSet = false;
 
+sf::Font		CounterUI::default_font			 = sf::Font();
+size_t			CounterUI::default_characterSize = 24;
+sf::Color		CounterUI::default_color		 = sf::Color::White;
+sf::Text::Style CounterUI::default_textStyle     = sf::Text::Style::Regular;
 
-	void CounterUI::setDisplayOptions(
-		    const sf::Font& font, size_t charSize,
-		    const sf::Color& color, sf::Text::Style style) {
-		this->text.setFont(font);
-		this->text.setCharacterSize(charSize);
-		this->text.setFillColor(color);
-		this->text.setStyle(style);
-		this->areOptionsAssigned = true;
-		this->updateText();
-	}
 #pragma warning(pop)
 
 
-	sf::Vector2f CounterUI::getPosition() {
-		return this->text.getPosition();
+#pragma /* Static Members Initialization */ endregion
+
+
+CounterUI::CounterUI() {
+	this->counter = 0;
+	this->maximalValue = INT32_MAX;
+	this->textWidth = 3;
+
+	this->areDisplayOptionsAssigned = false;
+
+	this->applyDefaultDisplayOptions();
+}
+
+
+#pragma region Data Members Access
+
+
+int32_t CounterUI::getMaximalValue() {
+	return this->maximalValue;
+}
+
+void CounterUI::setMaximalValue(int32_t maxValue) {
+	this->maximalValue = maxValue;
+	this->validateCounterValue();
+
+	size_t digits = Helper::countDigits(maxValue);
+	this->setWidth(digits); // Text is updated here.
+}
+
+
+
+void CounterUI::increment(int32_t value) {
+	this->counter += std::abs(value);
+	this->validateCounterValue();
+	this->updateText();
+}
+
+void CounterUI::decrement(int32_t value) {
+	this->counter -= std::abs(value);
+	this->validateCounterValue();
+	this->updateText();
+}
+
+
+
+int32_t CounterUI::getNumericValue() {
+	return this->counter;
+}
+
+void CounterUI::setNumericValue(int32_t value) {
+	this->counter = value;
+	this->validateCounterValue();
+	this->updateText();
+}
+
+
+
+std::string CounterUI::getString() {
+	return this->text.getString();
+}
+
+
+#pragma /* Data Members Access */ endregion
+
+
+#pragma region Text and Screen
+
+
+size_t CounterUI::getWidth() {
+	return this->textWidth;
+}
+
+void CounterUI::setWidth(size_t width) {
+	if (width > this->MAX_WIDTH) {
+		width = this->MAX_WIDTH;
 	}
+	this->textWidth = width;
+	this->updateText();
+}
 
 
-	void CounterUI::setPosition(const sf::Vector2f& position) {
-		this->text.setPosition(position);
+
+#pragma warning(push)
+// I can do nothing with this warning since it's caused by SFML.
+#pragma warning(disable : 26812)
+void CounterUI::setDefaultDisplayOptions(const sf::Font& font,
+										 size_t charSize,
+										 const sf::Color& color,
+										 sf::Text::Style style) {
+	CounterUI::default_font = font;
+	CounterUI::default_characterSize = charSize;
+	CounterUI::default_color = color;
+	CounterUI::default_textStyle = style;
+	CounterUI::areDefaultsSet = true;
+}
+
+void CounterUI::setDisplayOptions(const sf::Font& font,
+								  size_t charSize,
+								  const sf::Color& color,
+								  sf::Text::Style style) {
+	this->text.setFont(font);
+	this->text.setCharacterSize(charSize);
+	this->text.setFillColor(color);
+	this->text.setStyle(style);
+	this->areDisplayOptionsAssigned = true;
+}
+#pragma warning(pop)
+
+
+void CounterUI::applyDefaultDisplayOptions() {
+	if (this->areDefaultsSet && !this->areDisplayOptionsAssigned) {
+		this->setDisplayOptions(
+			this->default_font,
+			this->default_characterSize,
+			this->default_color,
+			this->default_textStyle
+		);
 	}
+}
 
 
-	void CounterUI::setPosition(float x, float y) {
-		this->text.setPosition({x, y});
+
+sf::Vector2f CounterUI::getPosition() {
+	return this->text.getPosition();
+}
+
+void CounterUI::setPosition(const sf::Vector2f& position) {
+	this->text.setPosition(position);
+}
+
+void CounterUI::setPosition(float x, float y) {
+	this->text.setPosition({ x, y });
+}
+
+
+
+void CounterUI::draw(sf::RenderWindow& window) {
+	window.draw(this->text);
+}
+
+
+#pragma /* Text and Screen */ endregion
+
+
+
+void CounterUI::validateCounterValue() {
+	if (this->counter < 0) {
+		this->counter = 0;
 	}
-
-
-
-	std::string CounterUI::getString() {
-		return this->text.getString();
+	else if (this->counter > this->maximalValue) {
+		this->counter = this->maximalValue;
 	}
+}
 
 
 
-	void CounterUI::draw(sf::RenderWindow& window) {
-		window.draw(this->text);
+void CounterUI::updateText() {
+	std::string string = std::to_string(this->counter);
+	if (string.size() < this->textWidth) {
+		std::string zeros(this->textWidth - string.size(), '0');
+		string = zeros + string;
 	}
-
-
-
-	void CounterUI::validateCounterValue() {
-		if (this->game_levelCounter < 0) {
-			this->game_levelCounter = 0;
-		}
-		else if (this->game_levelCounter > this->maximalValue) {
-			this->game_levelCounter = this->maximalValue;
-		}
+	else if (string.size() > this->textWidth) {
+		string = string.substr(string.size() - this->textWidth, this->textWidth);
 	}
-
-
-
-	void CounterUI::updateText() {
-		std::string string = std::to_string(this->game_levelCounter);
-		if (string.size() < this->textWidth) {
-			std::string zeros(this->textWidth - string.size(), '0');
-			string = zeros + string;
-		}
-		else if (string.size() > this->textWidth) {
-			string = string.substr(string.size() - this->textWidth, this->textWidth);
-		}
-		this->text.setString(string);
-	}
-
-
-
-	void CounterUI::applyDefaults() {
-		if (this->areDefaultsSet && !this->areOptionsAssigned) {
-			this->setDisplayOptions(
-				this->default_font,
-				this->default_characterSize,
-				this->default_color,
-				this->default_textStyle
-			);
-		}
-	}
+	this->text.setString(string);
 }

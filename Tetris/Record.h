@@ -32,6 +32,6 @@ namespace tetris {
 		friend std::istream& operator>>(std::istream& input, Record& record);
 	};
 
-	std::ostream& operator<<(std::ostream& output, Record& record);
-	std::istream& operator>>(std::istream& input,  Record& record);
+	//std::ostream& operator<<(std::ostream& output, Record& record);
+	//std::istream& operator>>(std::istream& input,  Record& record);
 }

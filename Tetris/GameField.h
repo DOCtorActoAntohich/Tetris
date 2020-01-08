@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "FigureColor.h"
+#include "Tetromino.h"
 
 namespace tetris {
 	enum class Rotation : int32_t {
@@ -38,11 +38,13 @@ namespace tetris {
 		
 		// Moves figure 1 block down.
 		void dropFigureDown();
-		const std::vector<std::vector<FigureType>>& getBlocks();
+		const std::vector<std::vector<TetrominoType>>& getBlocks();
+
+		void clear();
 	private:
 		static const int32_t FIELD_X_SIZE = 10;
 		static const int32_t FIELD_Y_SIZE = 22;
-		std::vector<std::vector<FigureType>> field;
+		std::vector<std::vector<TetrominoType>> field;
 
 		// Coordinates of every new figure matrix center.
 		sf::Vector2<int32_t> FIGURE_SPAWN;

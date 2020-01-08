@@ -2,28 +2,30 @@
 
 #include "Helper.h"
 
-namespace tetris {
-	void SpriteWrapper::loadFromResource(int32_t id) {
-		std::vector<byte> bytes = Helper::loadEmbeddedResource(id);
-		this->texture.loadFromMemory(&bytes[0], bytes.size());
-		this->sprite.setTexture(this->texture);
-	}
+using namespace tetris;
 
 
 
-	sf::Vector2f SpriteWrapper::getPosition() {
-		return this->sprite.getPosition();
-	}
+void SpriteWrapper::loadFromResource(int32_t id) {
+	std::vector<byte> bytes = Helper::loadEmbeddedResource(id);
+	this->texture.loadFromMemory(&bytes[0], bytes.size());
+	this->sprite.setTexture(this->texture);
+}
 
 
 
-	void SpriteWrapper::setPosition(sf::Vector2f position) {
-		this->sprite.setPosition(position);
-	}
+sf::Vector2f SpriteWrapper::getPosition() {
+	return this->sprite.getPosition();
+}
 
 
 
-	void SpriteWrapper::draw(sf::RenderWindow& window) {
-		window.draw(this->sprite);
-	}
+void SpriteWrapper::setPosition(sf::Vector2f position) {
+	this->sprite.setPosition(position);
+}
+
+
+
+void SpriteWrapper::draw(sf::RenderWindow& window) {
+	window.draw(this->sprite);
 }

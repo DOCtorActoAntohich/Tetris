@@ -4,8 +4,8 @@ namespace tetris {
 	GameField::GameField() {
 		this->FIGURE_SPAWN = sf::Vector2<int32_t>(5, 2);
 
-		this->field = std::vector<std::vector<FigureType>>(
-			FIELD_Y_SIZE, std::vector<FigureType>(FIELD_X_SIZE)
+		this->field = std::vector<std::vector<TetrominoType>>(
+			FIELD_Y_SIZE, std::vector<TetrominoType>(FIELD_X_SIZE)
 		);
 	}
 
@@ -29,8 +29,13 @@ namespace tetris {
 
 
 
-	const std::vector<std::vector<FigureType>>& GameField::getBlocks()
-	{
+	const std::vector<std::vector<TetrominoType>>& GameField::getBlocks() {
 		return this->field;
+	}
+
+
+
+	void GameField::clear() {
+
 	}
 }

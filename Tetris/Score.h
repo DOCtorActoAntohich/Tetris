@@ -9,12 +9,11 @@
 namespace tetris {
 	class Score {
 	public:
-		Score();
-
 		static const int32_t RECORDS = 3;
 
 
-		void setDefaultScore();
+		// Creates default table with scores.
+		void setDefaultScores();
 
 		// Opens a record file.
 		void loadFromFile(std::string path);

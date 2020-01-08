@@ -107,8 +107,10 @@ namespace tetris {
 		CounterUI game_linesCounter;
 		CounterUI game_topScoreCounter;
 		CounterUI game_currentScoreCounter;
-		CounterUI game_levelCounter;
+		CounterUI counter;
 		CounterUI game_droughtCounter;
+
+		void initializeCounters();
 
 #pragma /* Other Data */ endregion
 
@@ -193,8 +195,8 @@ namespace tetris {
 
 
 		void update_Menu();
-		void update_Menu_LevelSelection();
-		void update_Menu_MusicSelection();
+		void updateLevelSelection_Menu();
+		void updateMusicSelection_Menu();
 
 		void draw_Menu();
 
@@ -205,6 +207,8 @@ namespace tetris {
 		GameField field;
 
 		void update_Game();
+
+		void drawCounters_Game();
 		void draw_Game();
 
 #pragma /* Game */ endregion
