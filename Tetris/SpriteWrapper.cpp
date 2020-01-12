@@ -26,6 +26,26 @@ void SpriteWrapper::setPosition(sf::Vector2f position) {
 
 
 
+void SpriteWrapper::setColor(const sf::Color& color) {
+	this->sprite.setColor(color);
+}
+
+
+
+void SpriteWrapper::setTextureRect(const sf::IntRect& rectangle) {
+	this->sprite.setTextureRect(rectangle);
+}
+
+
+
+void SpriteWrapper::resetTextureRect() {
+	auto textureSize = this->texture.getSize();
+	sf::IntRect rectangle(0, 0, textureSize.x, textureSize.y);
+	this->sprite.setTextureRect(rectangle);
+}
+
+
+
 void SpriteWrapper::draw(sf::RenderWindow& window) {
 	window.draw(this->sprite);
 }

@@ -1,6 +1,7 @@
 #include "Helper.h"
 
 #include <fstream>
+#include <random>
 
 using namespace tetris;
 
@@ -119,4 +120,28 @@ size_t Helper::countDigits(uint32_t number) {
 		++digits;
 	}
 	return digits;
+}
+
+
+
+int32_t Helper::mod(int32_t number, int32_t module)
+{
+	return ((number % module) + module) % module;
+}
+
+
+
+int32_t Helper::getRandomNumber(int32_t lowerBound, int32_t upperBound) {
+	if (lowerBound < 0) {
+		lowerBound = 0;
+	}
+	if (upperBound < 0) {
+		upperBound = 0;
+	}
+
+	static std::random_device devive;
+	static std::mt19937 rng(devive());
+	std::uniform_int_distribution<std::mt19937::result_type> distribution(lowerBound, upperBound);
+
+	return distribution(rng);
 }

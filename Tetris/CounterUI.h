@@ -75,7 +75,7 @@ namespace tetris {
 #pragma /* Text and Screen */ endregion
 
 	private:
-		int32_t counter;
+		int32_t game_levelCounter;
 		int32_t maximalValue;
 
 		size_t textWidth;

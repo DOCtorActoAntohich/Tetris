@@ -30,7 +30,7 @@ sf::Text::Style CounterUI::default_textStyle     = sf::Text::Style::Regular;
 
 
 CounterUI::CounterUI() {
-	this->counter = 0;
+	this->game_levelCounter = 0;
 	this->maximalValue = INT32_MAX;
 	this->textWidth = 3;
 
@@ -58,13 +58,13 @@ void CounterUI::setMaximalValue(int32_t maxValue) {
 
 
 void CounterUI::increment(int32_t value) {
-	this->counter += std::abs(value);
+	this->game_levelCounter += std::abs(value);
 	this->validateCounterValue();
 	this->updateText();
 }
 
 void CounterUI::decrement(int32_t value) {
-	this->counter -= std::abs(value);
+	this->game_levelCounter -= std::abs(value);
 	this->validateCounterValue();
 	this->updateText();
 }
@@ -72,11 +72,11 @@ void CounterUI::decrement(int32_t value) {
 
 
 int32_t CounterUI::getNumericValue() {
-	return this->counter;
+	return this->game_levelCounter;
 }
 
 void CounterUI::setNumericValue(int32_t value) {
-	this->counter = value;
+	this->game_levelCounter = value;
 	this->validateCounterValue();
 	this->updateText();
 }
@@ -172,18 +172,18 @@ void CounterUI::draw(sf::RenderWindow& window) {
 
 
 void CounterUI::validateCounterValue() {
-	if (this->counter < 0) {
-		this->counter = 0;
+	if (this->game_levelCounter < 0) {
+		this->game_levelCounter = 0;
 	}
-	else if (this->counter > this->maximalValue) {
-		this->counter = this->maximalValue;
+	else if (this->game_levelCounter > this->maximalValue) {
+		this->game_levelCounter = this->maximalValue;
 	}
 }
 
 
 
 void CounterUI::updateText() {
-	std::string string = std::to_string(this->counter);
+	std::string string = std::to_string(this->game_levelCounter);
 	if (string.size() < this->textWidth) {
 		std::string zeros(this->textWidth - string.size(), '0');
 		string = zeros + string;

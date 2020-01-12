@@ -35,6 +35,27 @@ namespace tetris {
 
 		// Counts how many digits are there in number.
 		static size_t countDigits(uint32_t number);
+
+		static int32_t mod(int32_t number, int32_t module);
+
+		template <class ArrayType>
+		static void rotateArray(ArrayType& array) {
+			size_t n = array.size();
+			size_t x = n / 2;
+			size_t y = n - 1;
+			for (size_t i = 0; i < x; ++i) {
+				for (size_t j = i; j < y - i; ++j) {
+					auto k = array[i][j];
+					array[i][j] = array[y - j][i];
+					array[y - j][i] = array[y - i][y - j];
+					array[y - i][y - j] = array[j][y - i];
+					array[j][y - i] = k;
+				}
+			}
+		}
+
+		static int32_t getRandomNumber(int32_t lowerBound, int32_t upperBound);
+
 	private:
 		// Haha, this class is static.
 		Helper();

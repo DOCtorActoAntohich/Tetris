@@ -63,6 +63,7 @@ PAUSE_SCREEN_BMP			RCDATA          "Resources\\Bitmaps\\Screens\\PAUSE.bmp"
 
 // Sprites (relatively small).
 DROUGHT_INDICATOR_BMP		RCDATA			"Resources\\Bitmaps\\Sprites\\DROUGHT_INDICATOR.bmp"
+BLOCKS_BMP					RCDATA			"Resources\\Bitmaps\\Sprites\\BLOCKS.bmp"
 
 
 
@@ -70,6 +71,11 @@ DROUGHT_INDICATOR_BMP		RCDATA			"Resources\\Bitmaps\\Sprites\\DROUGHT_INDICATOR.
 MENU_CLICK_MAJOR_WAV		RCDATA          "Resources\\Sounds\\MENU_CLICK_MAJOR.wav"
 MENU_CLICK_MINOR_WAV		RCDATA			"Resources\\Sounds\\MENU_CLICK_MINOR.wav"
 PAUSE_WAV					RCDATA			"Resources\\Sounds\\PAUSE.wav"
+
+TETROMINO_MOVE_WAV			RCDATA			"Resources\\Sounds\\TETROMINO_MOVE.wav"
+TETROMINO_ROTATE_WAV		RCDATA			"Resources\\Sounds\\TETROMINO_ROTATE.wav"
+TETROMINO_LAND_WAV			RCDATA			"Resources\\Sounds\\TETROMINO_LAND.wav"
+
 
 
 

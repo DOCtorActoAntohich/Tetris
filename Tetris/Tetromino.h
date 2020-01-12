@@ -1,37 +1,80 @@
 #pragma once
 
+#include <SFML/System/Vector2.hpp>
+
 #include <vector>
 #include <array>
 
 
 namespace tetris {
-	enum class TetrominoType : int32_t {
-		// No figure.
-		None = 0,
-
-		// Bright figure (for J and S pieces).
-		Bright = 1,
-
-		// Dark figure (for L and Z pieces).
-		Dark = 2,
-
-		// Neutral white figure (for O, T and I pieces).
-		White = 3,
-	};
-
-	
-
 	class Tetromino {
 	public:
-		static const size_t MATRIX_SIZE = 5;
-		using Matrix = std::array<std::array<TetrominoType, MATRIX_SIZE>, MATRIX_SIZE>;
+		enum class Type : int32_t {
+			// Empty block (does not collide).
+			E = -1,
 
+			// First color (for J and S pieces).
+			B = 0,
+
+			// Second color (for L and Z pieces).
+			D = 1,
+
+			// White color (for O, T and I pieces).
+			W = 2,
+		};
+
+
+
+		class Matrix {
+		public:
+			static const size_t SIZE = 5;
+			static sf::Vector2i CENTER;
+
+			using Array = std::array<std::array<Type, SIZE>, SIZE>;
+
+			static const Array EMPTY;
+
+			// Constructs empty matrix.
+			Matrix();
+
+			// Constructs matrix from 1 dimensional array on integers.
+			// Transforms given numbers into Tetromino::Type.
+			Matrix(std::vector<Type>& matrix);
+
+			// Constructs matrix from 1 dimensional array on integers.
+			// Transforms given numbers into Tetromino::Type.
+			Matrix(Array& matrix);
+
+			// Transforms given 1D array into 2D matrix
+			void setArray(std::vector<Type>& array);
+
+			void setArray(Array& array);
+
+			// Returns curent matrix;
+			const Array& getArray() const;
+		private:
+			Array matrix;
+		};
+
+
+		static const size_t MAX_MATRICES = 4;
+
+		Tetromino();
 
 		// Adds given matrix to the list of matrices.
 		// If given matrix exceeds capacity of internal storage, this matrix is ignored.
-		void addMatrix(Matrix matrix);
+		void addMatrix(std::vector<Type>& array);
+
+		// Adds given matrix to the list of matrices.
+		// If given matrix exceeds capacity of internal storage, this matrix is ignored.
+		void addMatrix(Matrix& array);
+
+		// Adds given matrix to the list of matrices.
+		// If given matrix exceeds capacity of internal storage, this matrix is ignored.
+		void addMatrix(Matrix::Array& array);
 
 		// Removes matrix of given index from a list.
+		// Next matrices are shifted to the left.
 		// If index if greater than MAX_MATRICES, this function will not cause effects.
 		void removeMatrix(size_t index);
 
@@ -40,8 +83,12 @@ namespace tetris {
 
 		// Switches current active matrix to the previous one. Matrices are cycled.
 		void switchToPreviousMatrix();
+
+		// Returns the current matrix of tetromino.
+		const Matrix::Array& getCurrentMatrix() const;
+
+		Tetromino& operator=(const Tetromino& otherTetromino);
 	private:
-		static const size_t MAX_MATRICES = 4;
 		std::vector<Matrix> matrices;
 		size_t currentMatrixIndex;
 	};

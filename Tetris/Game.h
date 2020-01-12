@@ -58,7 +58,19 @@ namespace tetris {
 		Sprite game_background;
 		Sprite pause_background;
 
-		Sprite droughtIndicator;
+		Sprite game_droughtIndicator;
+
+		Sprite game_blocks;
+
+		// Actual block size (in pixels).
+		static const uint32_t BLOCK_SIZE = 19;
+
+		// Distance between blocks (in pixels).
+		static const uint32_t BLOCK_GAP = 2;
+
+		// Block size needed for calculating screen positions.
+		static const uint32_t BLOCK_SIZE_WITH_GAP = Game::BLOCK_SIZE + Game::BLOCK_GAP;
+
 
 #pragma /* Textures */ endregion
 
@@ -107,10 +119,12 @@ namespace tetris {
 		CounterUI game_linesCounter;
 		CounterUI game_topScoreCounter;
 		CounterUI game_currentScoreCounter;
-		CounterUI counter;
+		CounterUI game_levelCounter;
 		CounterUI game_droughtCounter;
 
 		void initializeCounters();
+
+		bool shouldCallDrawer;
 
 #pragma /* Other Data */ endregion
 
@@ -121,6 +135,10 @@ namespace tetris {
 		Sound menuClickMinor_sound;
 
 		Sound pause_sound;
+
+		Sound tetrominoMove_sound;
+		Sound tetrominoRotate_sound;
+		Sound tetrominoLand_sound;
 
 #pragma /* Sounds */ endregion
 
@@ -134,12 +152,11 @@ namespace tetris {
 
 
 #pragma region Main Loop
-
+		
 		// Closes the game window.
 		void exit();
 
 		Scene scene;
-		bool isInputAllowed;
 		Keyboard keyboard;
 
 		// How many frames have passed.
@@ -169,15 +186,15 @@ namespace tetris {
 #pragma region Splash Screen
 
 
-		void update_SplashScreen();
-		void draw_SplashScreen();
+		void splashScreen_update();
+		void splashScreen_draw();
 
 #pragma /* Splash Screen */ endregion
 
 #pragma region Controls Screen
 
-		void update_ControlsScreen();
-		void draw_ControlsScreen();
+		void controlsScreen_update();
+		void controlsScreen_draw();
 
 #pragma /* Controls Screen */ endregion 
 
@@ -185,38 +202,56 @@ namespace tetris {
 
 		// Boundaries only for level and music select in menu.
 
-		const uint8_t MINIMAL_LEVEL = 0;
-		const uint8_t MAXIMAL_LEVEL = 9;
-		uint8_t startLevel;
+		static const uint32_t MINIMAL_LEVEL = 0;
+		static const uint32_t MAXIMAL_LEVEL = 9;
 
-		const int32_t MINIMAL_MUSIC_TYPE = 0;
-		const int32_t MAXIMAL_MUSIC_TYPE = 3;
-		int32_t musicType;
+		// Defines how many levels to add if player wants "hard mode".
+		static const uint32_t LEVEL_INCREMENT_HARD_MODE = 10;
+
+		// Controls from which level the game will start.
+		uint32_t menu_startLevel;
+
+		static const int32_t MINIMAL_MUSIC_TYPE = 0;
+		static const int32_t MAXIMAL_MUSIC_TYPE = 3;
+
+		// Controls the music type to be played.
+		uint32_t menu_musicType;
 
 
-		void update_Menu();
-		void updateLevelSelection_Menu();
-		void updateMusicSelection_Menu();
+		void menu_update();
 
-		void draw_Menu();
+		void menu_updateLevelSelection();
+		void menu_updateMusicSelection();
+
+		// Sets start level to a level counter.
+		void menu_setStartLevel();
+
+		void menu_draw();
 
 #pragma /* Menu */ endregion
 
 #pragma region Game
 
-		GameField field;
+		GameField game_field;
 
-		void update_Game();
+		sf::Vector2f game_BlocksDrawingOffset;
 
-		void drawCounters_Game();
-		void draw_Game();
+		void game_update();
+		void game_updateFigureControls();
+
+		void game_drawCounters();
+		void game_drawBlocks();
+		void game_drawField();
+		void game_drawCurrentPiece();
+		void game_drawSingleBlock(const sf::Vector2f& position, Tetromino::Type type);
+		void game_draw();
 
 #pragma /* Game */ endregion
 
 #pragma region Pause Screen
 
-		void update_PauseScreen();
-		void draw_PauseScreen();
+		void pauseScreen_update();
+		void pauseScreen_draw();
 
 #pragma /* Pause Screen */ endregion
 
