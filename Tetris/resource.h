@@ -19,9 +19,9 @@
 #define MENU_CLICK_MINOR_WAV			204
 #define PAUSE_WAV						205
 
-#define TETROMINO_MOVE_WAV				206
-#define TETROMINO_ROTATE_WAV			207
-#define TETROMINO_LAND_WAV				208
+#define TETRIMINO_MOVE_WAV				206
+#define TETRIMINO_ROTATE_WAV			207
+#define TETRIMINO_LAND_WAV				208
 
 // Fonts.
 #define GAME_FONT						303

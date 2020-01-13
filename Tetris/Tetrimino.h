@@ -7,7 +7,7 @@
 
 
 namespace tetris {
-	class Tetromino {
+	class Tetrimino {
 	public:
 		enum class Type : int32_t {
 			// Empty block (does not collide).
@@ -38,11 +38,11 @@ namespace tetris {
 			Matrix();
 
 			// Constructs matrix from 1 dimensional array on integers.
-			// Transforms given numbers into Tetromino::Type.
+			// Transforms given numbers into Tetrimino::Type.
 			Matrix(std::vector<Type>& matrix);
 
 			// Constructs matrix from 1 dimensional array on integers.
-			// Transforms given numbers into Tetromino::Type.
+			// Transforms given numbers into Tetrimino::Type.
 			Matrix(Array& matrix);
 
 			// Transforms given 1D array into 2D matrix
@@ -59,7 +59,7 @@ namespace tetris {
 
 		static const size_t MAX_MATRICES = 4;
 
-		Tetromino();
+		Tetrimino();
 
 		// Adds given matrix to the list of matrices.
 		// If given matrix exceeds capacity of internal storage, this matrix is ignored.
@@ -84,10 +84,10 @@ namespace tetris {
 		// Switches current active matrix to the previous one. Matrices are cycled.
 		void switchToPreviousMatrix();
 
-		// Returns the current matrix of tetromino.
+		// Returns the current matrix of tetrimino.
 		const Matrix::Array& getCurrentMatrix() const;
 
-		Tetromino& operator=(const Tetromino& otherTetromino);
+		Tetrimino& operator=(const Tetrimino& otherTetrimino);
 	private:
 		std::vector<Matrix> matrices;
 		size_t currentMatrixIndex;

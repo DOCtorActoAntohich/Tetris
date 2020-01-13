@@ -16,9 +16,9 @@ GameField::GameField() {
 
 
 
-void GameField::moveFigure(Direction direction) {
-	if (!this->currentPieceExists) {
-		return;
+bool GameField::moveFigure(Direction direction) {
+	if (!this->currentPieceExists || direction == Direction::NONE) {
+		return false;
 	}
 
 	sf::Vector2i newCenter(
@@ -29,14 +29,16 @@ void GameField::moveFigure(Direction direction) {
 	bool isCollisionFound = doesFigureCollide(this->currentPiece.getCurrentMatrix(), newCenter);
 	if (isPositionCorrect & !isCollisionFound) {
 		this->currentPieceCenter = newCenter;
+		return true;
 	}
+	return false;
 }
 
 
 
-void GameField::rotateFigure(Rotation rotation) {
+bool GameField::rotateFigure(Rotation rotation) {
 	if (!this->currentPieceExists) {
-		return;
+		return false;
 	}
 
 	bool isCollisionFound;
@@ -51,8 +53,9 @@ void GameField::rotateFigure(Rotation rotation) {
 		);
 		if (isCollisionFound) {
 			this->currentPiece.switchToPreviousMatrix();
+			return false;
 		}
-		break;
+		return true; // We don't need break here.
 
 	case Rotation::COUNTERCLOCKWISE :
 		this->currentPiece.switchToPreviousMatrix();
@@ -62,10 +65,11 @@ void GameField::rotateFigure(Rotation rotation) {
 		);
 		if (isCollisionFound) {
 			this->currentPiece.switchToNextMatrix();
+			return false;
 		}
-		break;
+		return true; // We don't need break here.
 	default:
-		break;
+		return false;
 	}
 }
 
@@ -92,15 +96,15 @@ void GameField::dropFigureDown() {
 
 
 
-const std::vector<std::vector<Tetromino::Type>>& GameField::getBlocks() const {
+const std::vector<std::vector<Tetrimino::Type>>& GameField::getBlocks() const {
 	return this->game_field;
 }
 
 
 
 void GameField::clear() {
-	this->game_field = std::vector<std::vector<Tetromino::Type>>(
-		FIELD_Y_SIZE, std::vector<Tetromino::Type>(FIELD_X_SIZE, Tetromino::Type::E)
+	this->game_field = std::vector<std::vector<Tetrimino::Type>>(
+		FIELD_Y_SIZE, std::vector<Tetrimino::Type>(FIELD_X_SIZE, Tetrimino::Type::E)
 	);
 	this->currentPieceExists = false;
 	this->canClearLines = false;
@@ -111,7 +115,7 @@ void GameField::clear() {
 void GameField::clearUpperLines() {
 	for (size_t y = 0; y < this->UPPER_LINES_TO_CLEAR; ++y) {
 		for (size_t x = 0; x < this->FIELD_X_SIZE; ++x) {
-			this->game_field[y][x] = Tetromino::Type::E;
+			this->game_field[y][x] = Tetrimino::Type::E;
 		}
 	}
 }
@@ -130,22 +134,22 @@ bool GameField::isCenterPositionCorrect(const sf::Vector2i& center) const {
 
 
 
-bool GameField::doesFigureCollide(const Tetromino::Matrix::Array& figureMatrix,
+bool GameField::doesFigureCollide(const Tetrimino::Matrix::Array& figureMatrix,
 								  const sf::Vector2i& figureCenter) const {
 
-	sf::Vector2i fieldStartPosition = figureCenter - Tetromino::Matrix::CENTER;
+	sf::Vector2i fieldStartPosition = figureCenter - Tetrimino::Matrix::CENTER;
 
-	for (int32_t y = 0; y < Tetromino::Matrix::SIZE; ++y) {
-		for (int32_t x = 0; x < Tetromino::Matrix::SIZE; ++x) {
+	for (int32_t y = 0; y < Tetrimino::Matrix::SIZE; ++y) {
+		for (int32_t x = 0; x < Tetrimino::Matrix::SIZE; ++x) {
 			auto posToCheck = sf::Vector2i(
 				fieldStartPosition.x + x,
 				fieldStartPosition.y + y
 			);
 			bool xOut = posToCheck.x < 0 || posToCheck.x >= this->FIELD_X_SIZE;
 			bool yOut = posToCheck.y < 0 || posToCheck.y >= this->FIELD_Y_SIZE;
-			bool currentBlockCollides = figureMatrix[y][x] != Tetromino::Type::E;
+			bool currentBlockCollides = figureMatrix[y][x] != Tetrimino::Type::E;
 			if (!(xOut || yOut)) {
-				bool collidesWithBlock = this->game_field[posToCheck.y][posToCheck.x] != Tetromino::Type::E;
+				bool collidesWithBlock = this->game_field[posToCheck.y][posToCheck.x] != Tetrimino::Type::E;
 				if (currentBlockCollides && collidesWithBlock) {
 					return true;
 				}
@@ -161,17 +165,17 @@ bool GameField::doesFigureCollide(const Tetromino::Matrix::Array& figureMatrix,
 
 
 void GameField::placeCurrentPiece() {
-	sf::Vector2i fieldStartPosition = currentPieceCenter - Tetromino::Matrix::CENTER;
+	sf::Vector2i fieldStartPosition = currentPieceCenter - Tetrimino::Matrix::CENTER;
 
 	const auto& matrix = this->currentPiece.getCurrentMatrix();
 
-	for (int32_t y = 0; y < Tetromino::Matrix::SIZE; ++y) {
-		for (int32_t x = 0; x < Tetromino::Matrix::SIZE; ++x) {
+	for (int32_t y = 0; y < Tetrimino::Matrix::SIZE; ++y) {
+		for (int32_t x = 0; x < Tetrimino::Matrix::SIZE; ++x) {
 			auto pos = sf::Vector2i(
 				fieldStartPosition.x + x,
 				fieldStartPosition.y + y
 			);
-			if (matrix[y][x] != Tetromino::Type::E) {
+			if (matrix[y][x] != Tetrimino::Type::E) {
 				this->game_field[pos.y][pos.x] = matrix[y][x];
 			}
 		}
@@ -188,13 +192,13 @@ void GameField::checkFullLines() {
 		return;
 	}
 	
-	int32_t startPos = this->currentPieceCenter.y - Tetromino::Matrix::CENTER.y;
-	int32_t endPos   = this->currentPieceCenter.y + Tetromino::Matrix::CENTER.y;
+	int32_t startPos = this->currentPieceCenter.y - Tetrimino::Matrix::CENTER.y;
+	int32_t endPos   = this->currentPieceCenter.y + Tetrimino::Matrix::CENTER.y;
 	for (int32_t y = startPos; y <= endPos; ++y) {
 		if (y >= 0 && y < FIELD_Y_SIZE) {
 			bool isLineFull = true;
 			for (int32_t x = 0; x < this->FIELD_X_SIZE; ++x) {
-				if (this->game_field[y][x] == Tetromino::Type::E) {
+				if (this->game_field[y][x] == Tetrimino::Type::E) {
 					isLineFull = false;
 					break;
 				}
@@ -239,7 +243,7 @@ bool GameField::spawnNewFigure() {
 		return false;
 	}
 
-	static std::vector<Tetromino*> tetrominoes = {
+	static std::vector<Tetrimino*> tetriminoes = {
 		&this->piece_T,
 		&this->piece_J,
 		&this->piece_Z,
@@ -249,9 +253,9 @@ bool GameField::spawnNewFigure() {
 		&this->piece_I
 	};
 
-	size_t index = Helper::getRandomNumber(0, tetrominoes.size() - 1);
+	size_t index = Helper::getRandomNumber(0, tetriminoes.size() - 1);
 
-	this->currentPiece = *(tetrominoes[index]);
+	this->currentPiece = *(tetriminoes[index]);
 	this->currentPieceCenter = this->FIGURE_SPAWN;
 
 	this->currentPieceExists = true;
@@ -271,7 +275,7 @@ bool GameField::doesActivePieceExist() const {
 
 
 
-const Tetromino::Matrix::Array& GameField::getCurrentPieceMatrix() const {
+const Tetrimino::Matrix::Array& GameField::getCurrentPieceMatrix() const {
 	return this->currentPiece.getCurrentMatrix();
 }
 
@@ -284,7 +288,7 @@ const sf::Vector2i& GameField::getCurrentPieceCenter() const {
 
 
 void GameField::initializePiece_T() {
-	using T = Tetromino::Type;
+	using T = Tetrimino::Type;
 	std::vector<T> array{
 		T::E, T::E, T::E, T::E, T::E,
 		T::E, T::E, T::E, T::E, T::E,
@@ -292,8 +296,8 @@ void GameField::initializePiece_T() {
 		T::E, T::E, T::W, T::E, T::E,
 		T::E, T::E, T::E, T::E, T::E,
 	};
-	Tetromino::Matrix matrix(array);
-	Tetromino::Matrix::Array matrixArray = matrix.getArray();
+	Tetrimino::Matrix matrix(array);
+	Tetrimino::Matrix::Array matrixArray = matrix.getArray();
 
 	this->piece_T.addMatrix(matrixArray); // T down.
 
@@ -311,7 +315,7 @@ void GameField::initializePiece_T() {
 }
 
 void GameField::initializePiece_J() {
-	using T = Tetromino::Type;
+	using T = Tetrimino::Type;
 	std::vector<T> array{
 		T::E, T::E, T::E, T::E, T::E,
 		T::E, T::E, T::E, T::E, T::E,
@@ -319,8 +323,8 @@ void GameField::initializePiece_J() {
 		T::E, T::E, T::E, T::B, T::E,
 		T::E, T::E, T::E, T::E, T::E,
 	};
-	Tetromino::Matrix matrix(array);
-	Tetromino::Matrix::Array matrixArray = matrix.getArray();
+	Tetrimino::Matrix matrix(array);
+	Tetrimino::Matrix::Array matrixArray = matrix.getArray();
 
 	this->piece_J.addMatrix(matrixArray); // J down.
 
@@ -340,7 +344,7 @@ void GameField::initializePiece_J() {
 
 
 void GameField::initializePiece_Z() {
-	using T = Tetromino::Type;
+	using T = Tetrimino::Type;
 	std::vector<T> array{
 		T::E, T::E, T::E, T::E, T::E,
 		T::E, T::E, T::E, T::E, T::E,
@@ -348,7 +352,7 @@ void GameField::initializePiece_Z() {
 		T::E, T::E, T::D, T::D, T::E,
 		T::E, T::E, T::E, T::E, T::E,
 	};
-	Tetromino::Matrix matrix(array);
+	Tetrimino::Matrix matrix(array);
 	this->piece_Z.addMatrix(matrix); // Z horizontal.
 
 	array = {
@@ -365,7 +369,7 @@ void GameField::initializePiece_Z() {
 
 
 void GameField::initializePiece_O() {
-	using T = Tetromino::Type;
+	using T = Tetrimino::Type;
 	std::vector<T> array{
 		T::E, T::E, T::E, T::E, T::E,
 		T::E, T::E, T::E, T::E, T::E,
@@ -373,14 +377,14 @@ void GameField::initializePiece_O() {
 		T::E, T::W, T::W, T::E, T::E,
 		T::E, T::E, T::E, T::E, T::E,
 	};
-	Tetromino::Matrix matrix(array);
+	Tetrimino::Matrix matrix(array);
 	this->piece_O.addMatrix(matrix);
 }
 
 
 
 void GameField::initializePiece_S() {
-	using T = Tetromino::Type;
+	using T = Tetrimino::Type;
 	std::vector<T> array{
 		T::E, T::E, T::E, T::E, T::E,
 		T::E, T::E, T::E, T::E, T::E,
@@ -388,7 +392,7 @@ void GameField::initializePiece_S() {
 		T::E, T::B, T::B, T::E, T::E,
 		T::E, T::E, T::E, T::E, T::E,
 	};
-	Tetromino::Matrix matrix(array);
+	Tetrimino::Matrix matrix(array);
 	this->piece_S.addMatrix(matrix); // S horizontal.
 
 	array = {
@@ -405,7 +409,7 @@ void GameField::initializePiece_S() {
 
 
 void GameField::initializePiece_L() {
-	using T = Tetromino::Type;
+	using T = Tetrimino::Type;
 	std::vector<T> array{
 		T::E, T::E, T::E, T::E, T::E,
 		T::E, T::E, T::E, T::E, T::E,
@@ -413,8 +417,8 @@ void GameField::initializePiece_L() {
 		T::E, T::D, T::E, T::E, T::E,
 		T::E, T::E, T::E, T::E, T::E,
 	};
-	Tetromino::Matrix matrix(array);
-	Tetromino::Matrix::Array matrixArray = matrix.getArray();
+	Tetrimino::Matrix matrix(array);
+	Tetrimino::Matrix::Array matrixArray = matrix.getArray();
 
 	this->piece_L.addMatrix(matrixArray); // L down.
 
@@ -434,7 +438,7 @@ void GameField::initializePiece_L() {
 
 
 void GameField::initializePiece_I() {
-	using T = Tetromino::Type;
+	using T = Tetrimino::Type;
 	std::vector<T> array{
 		T::E, T::E, T::E, T::E, T::E,
 		T::E, T::E, T::E, T::E, T::E,
@@ -442,7 +446,7 @@ void GameField::initializePiece_I() {
 		T::E, T::E, T::E, T::E, T::E,
 		T::E, T::E, T::E, T::E, T::E,
 	};
-	Tetromino::Matrix matrix(array);
+	Tetrimino::Matrix matrix(array);
 	this->piece_I.addMatrix(matrix); // I horizontal.
 
 	array = {

@@ -164,7 +164,7 @@ xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-window-2.dll" "$(OutDir)" /Y</Command>
     <ClCompile Include="Score.cpp" />
     <ClCompile Include="SoundWrapper.cpp" />
     <ClCompile Include="SpriteWrapper.cpp" />
-    <ClCompile Include="Tetromino.cpp" />
+    <ClCompile Include="Tetrimino.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ControlKey.h" />
@@ -179,7 +179,7 @@ xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-window-2.dll" "$(OutDir)" /Y</Command>
     <ClInclude Include="Score.h" />
     <ClInclude Include="SoundWrapper.h" />
     <ClInclude Include="SpriteWrapper.h" />
-    <ClInclude Include="Tetromino.h" />
+    <ClInclude Include="Tetrimino.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Tetris.rc" />

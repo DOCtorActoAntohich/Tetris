@@ -79,7 +79,7 @@ namespace tetris {
 
 		std::vector<byte> fontBytes;
 		sf::Font font;
-		const int32_t FONT_SIZE = 24;
+		static const int32_t FONT_SIZE = 24;
 
 		sf::Text pressEnter_text;
 		bool pressEnter_text_isVisible;
@@ -136,9 +136,9 @@ namespace tetris {
 
 		Sound pause_sound;
 
-		Sound tetrominoMove_sound;
-		Sound tetrominoRotate_sound;
-		Sound tetrominoLand_sound;
+		Sound tetriminoMove_sound;
+		Sound tetriminoRotate_sound;
+		Sound tetriminoLand_sound;
 
 #pragma /* Sounds */ endregion
 
@@ -163,7 +163,7 @@ namespace tetris {
 		// Used to check timed events.
 		// Set to 0 upon scene changes.
 		int32_t frames;
-		const int32_t FPS = 60;
+		static const int32_t FPS = 60;
 
 		// Runs the game loop.
 		void runMainLoop();
@@ -222,6 +222,7 @@ namespace tetris {
 
 		void menu_updateLevelSelection();
 		void menu_updateMusicSelection();
+		void menu_prepareForGame();
 
 		// Sets start level to a level counter.
 		void menu_setStartLevel();
@@ -232,18 +233,38 @@ namespace tetris {
 
 #pragma region Game
 
+		enum class DasState {
+			NONE = 0,
+			LONG_DELAYED_MOVE = 1,
+			SHORT_DELAYED_MOVE = 2
+		};
+		DasState game_dasState;
+
+		// Delay for 1st tetrimino moves.
+		static const int32_t DAS_DELAY_LONG = 16;
+
+		// Delay for 2nd and other tetrimino moves.
+		static const int32_t DAS_DELAY_SHORT = 6;
+
+		// Frames counter for DAS (delayed auto shift).
+		int32_t game_dasFrames;
+
+
 		GameField game_field;
 
 		sf::Vector2f game_BlocksDrawingOffset;
 
+		
+
 		void game_update();
 		void game_updateFigureControls();
+		void game_updateDas();
 
 		void game_drawCounters();
 		void game_drawBlocks();
 		void game_drawField();
 		void game_drawCurrentPiece();
-		void game_drawSingleBlock(const sf::Vector2f& position, Tetromino::Type type);
+		void game_drawSingleBlock(const sf::Vector2f& position, Tetrimino::Type type);
 		void game_draw();
 
 #pragma /* Game */ endregion

@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "Tetromino.h"
+#include "Tetrimino.h"
 
 namespace tetris {
 	enum class Rotation : int32_t {
@@ -16,7 +16,9 @@ namespace tetris {
 
 	enum class Direction : int32_t {
 		LEFT = -1,
-		RIGHT = 1
+		RIGHT = 1,
+
+		NONE = 0
 	};
 
 
@@ -32,14 +34,16 @@ namespace tetris {
 		GameField();
 
 		// Moves figure 1 block left of right.
-		void moveFigure(Direction direction);
+		// Returns true if successfully moved.
+		bool moveFigure(Direction direction);
 
 		// Rotates figure clockwise or counterclockwise.
-		void rotateFigure(Rotation rotation);
+		// Returns true if successfully rotated.
+		bool rotateFigure(Rotation rotation);
 		
 		// Moves figure 1 block down.
 		void dropFigureDown();
-		const std::vector<std::vector<Tetromino::Type>>& getBlocks() const;
+		const std::vector<std::vector<Tetrimino::Type>>& getBlocks() const;
 
 		void clear();
 		void clearUpperLines();
@@ -50,7 +54,7 @@ namespace tetris {
 
 		bool doesActivePieceExist() const;
 
-		const Tetromino::Matrix::Array& getCurrentPieceMatrix() const;
+		const Tetrimino::Matrix::Array& getCurrentPieceMatrix() const;
 		const sf::Vector2i& getCurrentPieceCenter() const;
 
 		void checkFullLines();
@@ -62,7 +66,7 @@ namespace tetris {
 		static const int32_t FIELD_X_SIZE = 10;
 		static const int32_t FIELD_Y_SIZE = 22;
 	private:
-		std::vector<std::vector<Tetromino::Type>> game_field;
+		std::vector<std::vector<Tetrimino::Type>> game_field;
 
 
 		static const int32_t CENTER_X_POSITION_MIN = -2;
@@ -74,11 +78,11 @@ namespace tetris {
 
 
 		bool currentPieceExists;
-		Tetromino currentPiece;
+		Tetrimino currentPiece;
 		sf::Vector2i currentPieceCenter;
 		bool isCenterPositionCorrect(const sf::Vector2i& center) const;
 		bool doesFigureCollide(
-			const Tetromino::Matrix::Array& figureMatrix,
+			const Tetrimino::Matrix::Array& figureMatrix,
 			const sf::Vector2i& figureCenter
 		) const;
 
@@ -87,13 +91,13 @@ namespace tetris {
 		std::vector<int32_t> linesToClear;
 		bool canClearLines;
 
-		Tetromino piece_T;
-		Tetromino piece_J;
-		Tetromino piece_Z;
-		Tetromino piece_O;
-		Tetromino piece_S;
-		Tetromino piece_L;
-		Tetromino piece_I;
+		Tetrimino piece_T;
+		Tetrimino piece_J;
+		Tetrimino piece_Z;
+		Tetrimino piece_O;
+		Tetrimino piece_S;
+		Tetrimino piece_L;
+		Tetrimino piece_I;
 		void initializePiece_T();
 		void initializePiece_J();
 		void initializePiece_Z();

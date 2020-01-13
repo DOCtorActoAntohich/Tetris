@@ -246,9 +246,9 @@ void Game::loadContent() {
 	this->menuClickMinor_sound.loadFromResource(MENU_CLICK_MINOR_WAV);
 	this->pause_sound.loadFromResource(PAUSE_WAV);
 
-	this->tetrominoMove_sound.loadFromResource(TETROMINO_MOVE_WAV);
-	this->tetrominoRotate_sound.loadFromResource(TETROMINO_ROTATE_WAV);
-	this->tetrominoLand_sound.loadFromResource(TETROMINO_LAND_WAV);
+	this->tetriminoMove_sound.loadFromResource(TETRIMINO_MOVE_WAV);
+	this->tetriminoRotate_sound.loadFromResource(TETRIMINO_ROTATE_WAV);
+	this->tetriminoLand_sound.loadFromResource(TETRIMINO_LAND_WAV);
 
 	this->initializeCounters();
 
@@ -408,9 +408,7 @@ void Game::menu_update() {
 	this->frames %= (this->FPS / 3);
 
 	if (keyboard.isKeyPushed(ControlKey::START)) {
-		this->menu_setStartLevel();
-		this->game_field.clear();
-		this->game_field.spawnNewFigure();
+		this->menu_prepareForGame();
 		this->menuClickMajor_sound.play();
 		this->changeScene(Scene::GAME);
 	}
@@ -476,6 +474,15 @@ void Game::menu_updateMusicSelection() {
 
 
 
+void Game::menu_prepareForGame() {
+	this->menu_setStartLevel();
+	this->game_field.clear();
+	this->game_field.spawnNewFigure();
+	this->game_dasState = DasState::NONE;
+}
+
+
+
 void Game::menu_setStartLevel() {
 	int32_t newLevel = int32_t(this->menu_startLevel);
 	if (keyboard.isKeyHeld(ControlKey::A)) {
@@ -522,7 +529,7 @@ void Game::game_update() {
 	}
 
 	if (!this->game_field.doesActivePieceExist()) {
-		this->tetrominoLand_sound.play();
+		this->tetriminoLand_sound.play();
 		bool spawned = this->game_field.spawnNewFigure();
 		if (!spawned) {
 			this->changeScene(Scene::SPLASH_SCREEN);
@@ -543,24 +550,64 @@ void Game::game_update() {
 
 void Game::game_updateFigureControls() {
 	if (keyboard.isKeyPushed(ControlKey::B)) {
-		this->tetrominoRotate_sound.play();
+		this->tetriminoRotate_sound.play();
 		this->game_field.rotateFigure(Rotation::COUNTERCLOCKWISE);
 	}
 	else if (keyboard.isKeyPushed(ControlKey::A)) {
-		this->tetrominoRotate_sound.play();
+		this->tetriminoRotate_sound.play();
 		this->game_field.rotateFigure(Rotation::CLOCKWISE);
 	}
 
 	if (keyboard.isKeyPushed(ControlKey::DOWN)) {
 		this->game_field.dropFigureDown();
 	}
-	else if (keyboard.isKeyPushed(ControlKey::LEFT)) {
-		this->tetrominoMove_sound.play();
+	/*else if (keyboard.isKeyPushed(ControlKey::LEFT)) {
+		this->tetriminoMove_sound.play();
 		this->game_field.moveFigure(Direction::LEFT);
 	}
 	else if (keyboard.isKeyPushed(ControlKey::RIGHT)) {
-		this->tetrominoMove_sound.play();
+		this->tetriminoMove_sound.play();
 		this->game_field.moveFigure(Direction::RIGHT);
+	}*/
+	this->game_updateDas();
+}
+
+
+
+void Game::game_updateDas() {
+	Direction moveDirection = Direction::NONE;
+	if (keyboard.isKeyHeld(ControlKey::LEFT)) {
+		moveDirection = Direction::LEFT;
+	}
+	else if (keyboard.isKeyHeld(ControlKey::RIGHT)) {
+		moveDirection = Direction::RIGHT;
+	}
+	
+
+	if (moveDirection == Direction::NONE) {
+		this->game_dasState = DasState::NONE;
+		return;
+	}
+
+
+	if (this->game_dasState == DasState::NONE) {
+		this->game_dasFrames = 0;
+		this->game_dasState = DasState::LONG_DELAYED_MOVE;
+	}
+	else if (this->game_dasState == DasState::LONG_DELAYED_MOVE) {
+		this->game_dasFrames = (this->game_dasFrames + 1) % this->DAS_DELAY_LONG;
+		if (this->game_dasFrames == 0) {
+			this->game_dasState = DasState::SHORT_DELAYED_MOVE;
+		}
+	}
+	else if (this->game_dasState == DasState::SHORT_DELAYED_MOVE) {
+		this->game_dasFrames = (this->game_dasFrames + 1) % this->DAS_DELAY_SHORT;
+	}
+
+	if (this->game_dasFrames == 0) {
+		if (this->game_field.moveFigure(moveDirection)) {
+			this->tetriminoMove_sound.play();
+		}
 	}
 }
 
@@ -610,9 +657,9 @@ void Game::game_drawField() {
 
 void Game::game_drawCurrentPiece() {
 	auto& pieceMatrix = this->game_field.getCurrentPieceMatrix();
-	auto drawStartPos = this->game_field.getCurrentPieceCenter() - Tetromino::Matrix::CENTER;
-	for (int32_t y = 0; y < Tetromino::Matrix::SIZE; ++y) {
-		for (int32_t x = 0; x < Tetromino::Matrix::SIZE; ++x) {
+	auto drawStartPos = this->game_field.getCurrentPieceCenter() - Tetrimino::Matrix::CENTER;
+	for (int32_t y = 0; y < Tetrimino::Matrix::SIZE; ++y) {
+		for (int32_t x = 0; x < Tetrimino::Matrix::SIZE; ++x) {
 			sf::Vector2i currentPos = sf::Vector2i(
 				drawStartPos.x + x,
 				drawStartPos.y + y
@@ -624,7 +671,7 @@ void Game::game_drawCurrentPiece() {
 
 			if (!(xOut || yOut)) {
 				bool isDrawPositionSuitable = currentPos.y >= GameField::UPPER_LINES_TO_CLEAR;
-				bool isBlockVisible = pieceMatrix[y][x] != Tetromino::Type::E;
+				bool isBlockVisible = pieceMatrix[y][x] != Tetrimino::Type::E;
 				if (isDrawPositionSuitable && isBlockVisible) {
 					auto drawPos = sf::Vector2f(
 						this->game_BlocksDrawingOffset.x + float(currentPos.x * this->BLOCK_SIZE_WITH_GAP),
@@ -640,10 +687,10 @@ void Game::game_drawCurrentPiece() {
 
 
 
-void Game::game_drawSingleBlock(const sf::Vector2f& position, Tetromino::Type type) {
+void Game::game_drawSingleBlock(const sf::Vector2f& position, Tetrimino::Type type) {
 	this->game_blocks.setPosition(position);
 
-	if (type == Tetromino::Type::E) {
+	if (type == Tetrimino::Type::E) {
 		this->game_blocks.setColor(sf::Color::Black);
 	}
 	else {
