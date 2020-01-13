@@ -397,9 +397,9 @@ void GameField::initializePiece_S() {
 
 	array = {
 		T::E, T::E, T::E, T::E, T::E,
-		T::E, T::B, T::E, T::E, T::E,
-		T::E, T::B, T::B, T::E, T::E,
 		T::E, T::E, T::B, T::E, T::E,
+		T::E, T::E, T::B, T::B, T::E,
+		T::E, T::E, T::E, T::B, T::E,
 		T::E, T::E, T::E, T::E, T::E,
 	};
 	matrix.setArray(array);

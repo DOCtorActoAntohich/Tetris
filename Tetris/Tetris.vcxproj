@@ -155,6 +155,7 @@ xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-window-2.dll" "$(OutDir)" /Y</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CounterUI.cpp" />
+    <ClCompile Include="FrameTimer.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameField.cpp" />
     <ClCompile Include="Helper.cpp" />
@@ -169,6 +170,7 @@ xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-window-2.dll" "$(OutDir)" /Y</Command>
   <ItemGroup>
     <ClInclude Include="ControlKey.h" />
     <ClInclude Include="CounterUI.h" />
+    <ClInclude Include="FrameTimer.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameField.h" />
     <ClInclude Include="Helper.h" />

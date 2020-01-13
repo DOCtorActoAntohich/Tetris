@@ -15,6 +15,7 @@
 #include "SpriteWrapper.h"
 #include "SoundWrapper.h"
 #include "CounterUI.h"
+#include "FrameTimer.h"
 
 
 namespace tetris {
@@ -159,10 +160,6 @@ namespace tetris {
 		Scene scene;
 		Keyboard keyboard;
 
-		// How many frames have passed.
-		// Used to check timed events.
-		// Set to 0 upon scene changes.
-		int32_t frames;
 		static const int32_t FPS = 60;
 
 		// Runs the game loop.
@@ -185,6 +182,11 @@ namespace tetris {
 
 #pragma region Splash Screen
 
+		// How often splash screen text will blink (in frames).
+		static const int32_t SPLASH_TEXT_BLINK_TIMING = 30;
+
+		// Frames counter for blinking text.
+		FrameTimer splashScreen_textBlinkTimer;
 
 		void splashScreen_update();
 		void splashScreen_draw();
@@ -199,6 +201,12 @@ namespace tetris {
 #pragma /* Controls Screen */ endregion 
 
 #pragma region Menu
+
+		// How often menu highlighters will blink (in frames).
+		static const int32_t MENU_HIGHLIGHTERS_BLINK_TIMING = 15;
+
+		// Frames counter for blinking menu highlighters.
+		FrameTimer menu_highlightersBlinkTimer;
 
 		// Boundaries only for level and music select in menu.
 
@@ -233,6 +241,7 @@ namespace tetris {
 
 #pragma region Game
 
+		// States for DAS (Delayed Auto Shift).
 		enum class DasState {
 			NONE = 0,
 			LONG_DELAYED_MOVE = 1,
@@ -240,25 +249,32 @@ namespace tetris {
 		};
 		DasState game_dasState;
 
+		// Controls DAS.
+		FrameTimer game_dasTimer;
+
 		// Delay for 1st tetrimino moves.
 		static const int32_t DAS_DELAY_LONG = 16;
 
 		// Delay for 2nd and other tetrimino moves.
 		static const int32_t DAS_DELAY_SHORT = 6;
 
-		// Frames counter for DAS (delayed auto shift).
-		int32_t game_dasFrames;
+
+		// How fast figures fall on soft drop.
+		static const int32_t SOFT_DROP_DELAY = 2;
+		FrameTimer game_softDropTimer;
 
 
 		GameField game_field;
 
+		// Offset from (0, 0) for drawing game field.
 		sf::Vector2f game_BlocksDrawingOffset;
 
 		
-
 		void game_update();
 		void game_updateFigureControls();
+		void game_updateFigureDrop();
 		void game_updateDas();
+		void game_moveFigure(Direction direction);
 
 		void game_drawCounters();
 		void game_drawBlocks();

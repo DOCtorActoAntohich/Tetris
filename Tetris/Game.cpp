@@ -12,10 +12,14 @@ using namespace tetris;
 Game::Game() {
 	changeScene(Scene::SPLASH_SCREEN);
 
+	this->splashScreen_textBlinkTimer.setTimingFrames(this->SPLASH_TEXT_BLINK_TIMING);
+
+	this->menu_highlightersBlinkTimer.setTimingFrames(this->MENU_HIGHLIGHTERS_BLINK_TIMING);
+
 	this->menu_startLevel = 0;
 	this->menu_musicType = 0;
 
-	this->frames = 0;
+	this->game_softDropTimer.setTimingFrames(this->SOFT_DROP_DELAY);
 
 	this->shouldCallDrawer = true;
 }
@@ -286,7 +290,6 @@ void Game::runMainLoop() {
 
 		if (this->window.hasFocus()) {
 			this->keyboard.update();
-			++frames;
 
 			(this->*update)();
 			if (this->shouldCallDrawer) {
@@ -306,7 +309,6 @@ void Game::changeScene(Scene scene) {
 	this->draw = draw;
 
 	this->scene = scene;
-	this->frames = 0;
 
 	this->shouldCallDrawer = false;
 }
@@ -341,8 +343,9 @@ std::pair<void(Game::*)(), void(Game::*)()> Game::chooseUpdaters(Scene scene) {
 
 
 void Game::splashScreen_update() {
-	this->frames %= (this->FPS / 2);
-	if (this->frames == 0) {
+	this->splashScreen_textBlinkTimer.update();
+
+	if (this->splashScreen_textBlinkTimer.isTriggered()) {
 		this->pressEnter_text_isVisible = !this->pressEnter_text_isVisible;
 	}
 
@@ -374,13 +377,13 @@ void Game::splashScreen_draw() {
 #pragma region Controls Screen
 
 void Game::controlsScreen_update() {
-	this->frames %= this->FPS;
-
 	if (keyboard.isKeyPushed(ControlKey::START)) {
+		this->menu_highlightersBlinkTimer.reset();
 		this->menuClickMajor_sound.play();
 		this->changeScene(Scene::MENU);
 	}
 	else if (keyboard.isKeyPushed(ControlKey::B)) {
+		this->splashScreen_textBlinkTimer.reset();
 		this->menuClickMajor_sound.play();
 		this->changeScene(Scene::SPLASH_SCREEN);
 	}
@@ -405,7 +408,7 @@ void Game::controlsScreen_draw() {
 
 
 void Game::menu_update() {
-	this->frames %= (this->FPS / 3);
+	this->menu_highlightersBlinkTimer.update();
 
 	if (keyboard.isKeyPushed(ControlKey::START)) {
 		this->menu_prepareForGame();
@@ -427,7 +430,7 @@ void Game::menu_update() {
 
 
 void Game::menu_updateLevelSelection() {
-	if (this->frames == 0) {
+	if (this->menu_highlightersBlinkTimer.isTriggered()) {
 		this->menu_isLevelHighlighterVisible = 
 			!this->menu_isLevelHighlighterVisible;
 	}
@@ -451,7 +454,7 @@ void Game::menu_updateLevelSelection() {
 
 
 void Game::menu_updateMusicSelection() {
-	if (this->frames == 0) {
+	if (this->menu_highlightersBlinkTimer.isTriggered()) {
 		this->menu_areMusicHighlightersVisible =
 			!this->menu_areMusicHighlightersVisible;
 	}
@@ -550,26 +553,37 @@ void Game::game_update() {
 
 void Game::game_updateFigureControls() {
 	if (keyboard.isKeyPushed(ControlKey::B)) {
-		this->tetriminoRotate_sound.play();
-		this->game_field.rotateFigure(Rotation::COUNTERCLOCKWISE);
+		if (this->game_field.rotateFigure(Rotation::COUNTERCLOCKWISE)) {
+			this->tetriminoRotate_sound.play();
+		}
 	}
 	else if (keyboard.isKeyPushed(ControlKey::A)) {
-		this->tetriminoRotate_sound.play();
-		this->game_field.rotateFigure(Rotation::CLOCKWISE);
+		if (this->game_field.rotateFigure(Rotation::CLOCKWISE)) {
+			this->tetriminoRotate_sound.play();
+		}
 	}
 
-	if (keyboard.isKeyPushed(ControlKey::DOWN)) {
+	bool down = keyboard.isKeyHeld(ControlKey::DOWN);
+	bool left = keyboard.isKeyHeld(ControlKey::LEFT);
+	bool right = keyboard.isKeyHeld(ControlKey::RIGHT);
+	if (down && (left || right)) {
+		return;
+	}
+	else if (down) {
+		this->game_updateFigureDrop();
+	}
+	else {
+		this->game_updateDas();
+	}
+}
+
+
+
+void Game::game_updateFigureDrop() {
+	this->game_softDropTimer.update();
+	if (this->game_softDropTimer.isTriggered()) {
 		this->game_field.dropFigureDown();
 	}
-	/*else if (keyboard.isKeyPushed(ControlKey::LEFT)) {
-		this->tetriminoMove_sound.play();
-		this->game_field.moveFigure(Direction::LEFT);
-	}
-	else if (keyboard.isKeyPushed(ControlKey::RIGHT)) {
-		this->tetriminoMove_sound.play();
-		this->game_field.moveFigure(Direction::RIGHT);
-	}*/
-	this->game_updateDas();
 }
 
 
@@ -591,23 +605,33 @@ void Game::game_updateDas() {
 
 
 	if (this->game_dasState == DasState::NONE) {
-		this->game_dasFrames = 0;
+		this->game_moveFigure(moveDirection);
 		this->game_dasState = DasState::LONG_DELAYED_MOVE;
+		this->game_dasTimer.setTimingFrames(this->DAS_DELAY_LONG);
+		this->game_dasTimer.reset();
 	}
 	else if (this->game_dasState == DasState::LONG_DELAYED_MOVE) {
-		this->game_dasFrames = (this->game_dasFrames + 1) % this->DAS_DELAY_LONG;
-		if (this->game_dasFrames == 0) {
+		this->game_dasTimer.update();
+		if (this->game_dasTimer.isTriggered()) {
+			this->game_moveFigure(moveDirection);
 			this->game_dasState = DasState::SHORT_DELAYED_MOVE;
+			this->game_dasTimer.setTimingFrames(this->DAS_DELAY_SHORT);
+			this->game_dasTimer.reset();
 		}
 	}
 	else if (this->game_dasState == DasState::SHORT_DELAYED_MOVE) {
-		this->game_dasFrames = (this->game_dasFrames + 1) % this->DAS_DELAY_SHORT;
-	}
-
-	if (this->game_dasFrames == 0) {
-		if (this->game_field.moveFigure(moveDirection)) {
-			this->tetriminoMove_sound.play();
+		this->game_dasTimer.update();
+		if (this->game_dasTimer.isTriggered()) {
+			this->game_moveFigure(moveDirection);
 		}
+	}
+}
+
+
+
+void Game::game_moveFigure(Direction direction) {
+	if (this->game_field.moveFigure(direction)) {
+		this->tetriminoMove_sound.play();
 	}
 }
 
