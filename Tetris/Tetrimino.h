@@ -52,6 +52,10 @@ namespace tetris {
 
 			// Returns curent matrix;
 			const Array& getArray() const;
+
+
+			friend bool operator==(const Matrix& firstMatrix, const Matrix& secondMatrix);
+			friend bool operator!=(const Matrix& firstMatrix, const Matrix& secondMatrix);
 		private:
 			Array matrix;
 		};
@@ -88,8 +92,12 @@ namespace tetris {
 		const Matrix::Array& getCurrentMatrix() const;
 
 		Tetrimino& operator=(const Tetrimino& otherTetrimino);
+		friend bool operator==(const Tetrimino& firstTetrimino, const Tetrimino& secondTetrimino);
+		friend bool operator!=(const Tetrimino& firstTetrimino, const Tetrimino& secondTetrimino);
 	private:
 		std::vector<Matrix> matrices;
 		size_t currentMatrixIndex;
 	};
+
+	
 }

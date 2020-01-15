@@ -148,4 +148,28 @@ Tetrimino& Tetrimino::operator=(const Tetrimino& otherTetrimino) {
 }
 
 
+
+bool tetris::operator==(const Tetrimino::Matrix& firstMatrix, const Tetrimino::Matrix& secondMatrix) {
+	return firstMatrix.matrix == secondMatrix.matrix;
+}
+
+
+
+bool tetris::operator!=(const Tetrimino::Matrix& firstMatrix, const Tetrimino::Matrix& secondMatrix) {
+	return firstMatrix.matrix != secondMatrix.matrix;
+}
+
+
+
+bool tetris::operator==(const Tetrimino& firstTetrimino, const Tetrimino& secondTetrimino) {
+	return firstTetrimino.matrices == secondTetrimino.matrices;
+}
+
+
+
+bool tetris::operator!=(const Tetrimino& firstTetrimino, const Tetrimino& secondTetrimino) {
+	return firstTetrimino.matrices != secondTetrimino.matrices;
+}
+
+
 #pragma /* Tetrimino */ endregion

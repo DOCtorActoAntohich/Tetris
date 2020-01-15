@@ -70,7 +70,7 @@ namespace tetris {
 		sf::Vector2f getPosition();
 		void setPosition(const sf::Vector2f& position);
 		void setPosition(float x, float y);
-		void draw(sf::RenderWindow& window);
+		void drawOn(sf::RenderWindow& window);
 
 #pragma /* Text and Screen */ endregion
 

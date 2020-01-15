@@ -64,13 +64,13 @@ namespace tetris {
 		Sprite game_blocks;
 
 		// Actual block size (in pixels).
-		static const uint32_t BLOCK_SIZE = 19;
+		static const int32_t BLOCK_SIZE = 19;
 
 		// Distance between blocks (in pixels).
-		static const uint32_t BLOCK_GAP = 2;
+		static const int32_t BLOCK_GAP = 2;
 
 		// Block size needed for calculating screen positions.
-		static const uint32_t BLOCK_SIZE_WITH_GAP = Game::BLOCK_SIZE + Game::BLOCK_GAP;
+		static const int32_t BLOCK_SIZE_WITH_GAP = Game::BLOCK_SIZE + Game::BLOCK_GAP;
 
 
 #pragma /* Textures */ endregion
@@ -123,9 +123,24 @@ namespace tetris {
 		CounterUI game_levelCounter;
 		CounterUI game_droughtCounter;
 
+		CounterUI game_pieceCounter_T;
+		CounterUI game_pieceCounter_J;
+		CounterUI game_pieceCounter_Z;
+		CounterUI game_pieceCounter_O;
+		CounterUI game_pieceCounter_S;
+		CounterUI game_pieceCounter_L;
+		CounterUI game_pieceCounter_I;
+
 		void initializeCounters();
+		void initializePieceCounters();
+		void initializeStaticticsCounters();
 
 		bool shouldCallDrawer;
+
+
+		std::vector<CounterUI> game_pieceCounters;
+		std::vector<std::tuple<const Tetrimino::Matrix::Array*, sf::Vector2f>> game_staticticsBlocksData;
+		void initializeStatisticsPieceData();
 
 #pragma /* Other Data */ endregion
 
@@ -248,6 +263,8 @@ namespace tetris {
 			SHORT_DELAYED_MOVE = 2
 		};
 		DasState game_dasState;
+		Direction game_previousMoveDirection;
+		Direction game_currentMoveDirection;
 
 		// Controls DAS.
 		FrameTimer game_dasTimer;
@@ -267,19 +284,30 @@ namespace tetris {
 		GameField game_field;
 
 		// Offset from (0, 0) for drawing game field.
-		sf::Vector2f game_BlocksDrawingOffset;
-
+		sf::Vector2f game_blocksDrawingOffset;
+		
+		// Offset from (0, 0) for drawing next piece.
+		sf::Vector2f game_nextPieceDrawingOffset;
+		sf::Vector2f game_nextPieceDrawingCenter;
 		
 		void game_update();
 		void game_updateFigureControls();
 		void game_updateFigureDrop();
 		void game_updateDas();
 		void game_moveFigure(Direction direction);
+		void game_updateCounters();
+		void game_updateStatisticsCounters();
+		void game_updatePieceCounters();
 
 		void game_drawCounters();
+		void game_drawStaticticsCounters();
+		void game_drawPieceCounters();
 		void game_drawBlocks();
 		void game_drawField();
 		void game_drawCurrentPiece();
+		void game_drawStaticticsBlocks();
+		void game_drawNextPiece();
+		void game_drawFigure(const Tetrimino::Matrix::Array& matrix, const sf::Vector2f& offset);
 		void game_drawSingleBlock(const sf::Vector2f& position, Tetrimino::Type type);
 		void game_draw();
 

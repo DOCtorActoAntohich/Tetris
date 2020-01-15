@@ -1,9 +1,10 @@
 #include "Game.h"
 
-#include "resource.h"
-
-#include "Helper.h"
 #include <iostream>
+#include <tuple>
+
+#include "resource.h"
+#include "Helper.h"
 
 using namespace tetris;
 
@@ -20,6 +21,7 @@ Game::Game() {
 	this->menu_musicType = 0;
 
 	this->game_softDropTimer.setTimingFrames(this->SOFT_DROP_DELAY);
+	this->game_currentMoveDirection = Direction::NONE;
 
 	this->shouldCallDrawer = true;
 }
@@ -178,41 +180,69 @@ void Game::menu_musicHighlighters_update() {
 void Game::initializeCounters() {
 	CounterUI::setDefaultDisplayOptions(
 		this->font, this->FONT_SIZE,
+		sf::Color::Red, sf::Text::Style::Regular
+	);
+	this->initializePieceCounters();
+
+	CounterUI::setDefaultDisplayOptions(
+		this->font, this->FONT_SIZE,
 		sf::Color::White, sf::Text::Style::Regular
 	);
+	this->initializeStaticticsCounters();
+}
 
-	this->game_tetrisesCounter.applyDefaultDisplayOptions();
-	this->game_tetrisesCounter.setMaximalValue(GameField::MAX_TETRISES);
-	this->game_tetrisesCounter.setPosition(177, 419);
 
-	this->game_burnCounter.applyDefaultDisplayOptions();
-	this->game_burnCounter.setMaximalValue(GameField::MAX_BURN);
-	this->game_burnCounter.setPosition(177, 464);
 
-	this->game_tetrisRateCounter.applyDefaultDisplayOptions();
-	this->game_tetrisRateCounter.setMaximalValue(GameField::MAX_TETRIS_RATE);
-	this->game_tetrisRateCounter.setWidth(2);
-	this->game_tetrisRateCounter.setPosition(177, 510);
+void Game::initializePieceCounters() {
+	std::vector<sf::Vector2f> positions = {
+		{ 166,  73 },
+		{ 166, 118 },
+		{ 166, 164 },
+		{ 166, 211 },
+		{ 166, 258 },
+		{ 166, 305 },
+		{ 166, 349 }
+	};
+	this->game_pieceCounters = std::vector<CounterUI>(GameField::DIFFERENT_PIECES);
+	for (uint32_t i = 0; i < GameField::DIFFERENT_PIECES; ++i) {
+		this->game_pieceCounters[i].applyDefaultDisplayOptions();
+		this->game_pieceCounters[i].setMaximalValue(GameField::MAX_PIECE_AMOUNT);
+		this->game_pieceCounters[i].setPosition(positions[i]);
+	}
+}
 
-	this->game_linesCounter.applyDefaultDisplayOptions();
-	this->game_linesCounter.setMaximalValue(GameField::MAX_LINES);
-	this->game_linesCounter.setPosition(482, 43);
 
-	this->game_topScoreCounter.applyDefaultDisplayOptions();
-	this->game_topScoreCounter.setMaximalValue(Record::MAX_SCORE);
-	this->game_topScoreCounter.setPosition(608, 86);
 
-	this->game_currentScoreCounter.applyDefaultDisplayOptions();
-	this->game_currentScoreCounter.setMaximalValue(Record::MAX_SCORE);
-	this->game_currentScoreCounter.setPosition(608, 166);
+void Game::initializeStaticticsCounters() {
+	std::vector<std::tuple<CounterUI*, int32_t, sf::Vector2f>> data = {
+		{ &this->game_tetrisesCounter, GameField::MAX_TETRISES, { 177, 419 } },
+		{ &this->game_burnCounter, GameField::MAX_BURN, { 177, 464 } },
+		{ &this->game_tetrisRateCounter, GameField::MAX_TETRIS_RATE, { 177, 510 } },
+		{ &this->game_linesCounter, GameField::MAX_LINES, { 482, 43 } },
+		{ &this->game_topScoreCounter, Record::MAX_SCORE, { 608, 86 } },
+		{ &this->game_currentScoreCounter, Record::MAX_SCORE, { 608, 166 } },
+		{ &this->game_droughtCounter, GameField::MAX_DROUGHT, { 642, 519 } },
+	};
+	for (uint32_t i = 0; i < data.size(); ++i) {
+		CounterUI* counter = std::get<0>(data[i]);
+		counter->applyDefaultDisplayOptions();
+		counter->setMaximalValue(std::get<1>(data[i]));
+		counter->setPosition(std::get<2>(data[i]));
+	}
+}
 
-	this->game_levelCounter.applyDefaultDisplayOptions();
-	this->game_levelCounter.setMaximalValue(Record::MAX_LEVEL);
-	this->game_levelCounter.setPosition(642, 431);
 
-	this->game_droughtCounter.applyDefaultDisplayOptions();
-	this->game_droughtCounter.setMaximalValue(99);
-	this->game_droughtCounter.setPosition(642, 519);
+
+void Game::initializeStatisticsPieceData() {
+	this->game_staticticsBlocksData = {
+		{ this->game_field.getPieceMatrix(Piece::T), { 45,  25 } },
+		{ this->game_field.getPieceMatrix(Piece::J), { 45,  72 } },
+		{ this->game_field.getPieceMatrix(Piece::Z), { 45, 119 } },
+		{ this->game_field.getPieceMatrix(Piece::O), { 54, 166 } },
+		{ this->game_field.getPieceMatrix(Piece::S), { 45, 213 } },
+		{ this->game_field.getPieceMatrix(Piece::L), { 45, 260 } },
+		{ this->game_field.getPieceMatrix(Piece::I), { 53, 307 } },
+	};
 }
 
 
@@ -235,7 +265,9 @@ void Game::loadContent() {
 	this->menu_musicHighlighters_initialize();
 
 	this->game_background.loadFromResource(GAME_SCREEN_BMP);
-	this->game_BlocksDrawingOffset = sf::Vector2f(321, 70);
+	this->game_blocksDrawingOffset = sf::Vector2f(321, 70);
+	this->game_nextPieceDrawingOffset = sf::Vector2f(599, 271);
+	this->game_nextPieceDrawingCenter = sf::Vector2f(650, 322);
 
 	this->pause_background.loadFromResource(PAUSE_SCREEN_BMP);
 
@@ -255,6 +287,7 @@ void Game::loadContent() {
 	this->tetriminoLand_sound.loadFromResource(TETRIMINO_LAND_WAV);
 
 	this->initializeCounters();
+	this->initializeStatisticsPieceData();
 
 	this->initializeWindow();
 }
@@ -362,7 +395,7 @@ void Game::splashScreen_update() {
 void Game::splashScreen_draw() {
 	this->window.clear(sf::Color::Black);
 
-	this->splash_background.draw(this->window);
+	this->splash_background.drawOn(this->window);
 	if (this->pressEnter_text_isVisible) {
 		this->window.draw(this->pressEnter_text);
 	}
@@ -396,7 +429,7 @@ void Game::controlsScreen_update() {
 void Game::controlsScreen_draw() {
 	this->window.clear(sf::Color::Black);
 
-	this->controls_background.draw(this->window);
+	this->controls_background.drawOn(this->window);
 
 	this->window.display();
 }
@@ -499,7 +532,7 @@ void Game::menu_setStartLevel() {
 void Game::menu_draw() {
 	this->window.clear(sf::Color::Black);
 
-	this->menu_background.draw(this->window);
+	this->menu_background.drawOn(this->window);
 
 	if (this->menu_isLevelHighlighterVisible) {
 		this->window.draw(this->menu_levelHighlighter);
@@ -575,6 +608,8 @@ void Game::game_updateFigureControls() {
 	else {
 		this->game_updateDas();
 	}
+
+	this->game_updateCounters();
 }
 
 
@@ -589,23 +624,28 @@ void Game::game_updateFigureDrop() {
 
 
 void Game::game_updateDas() {
-	Direction moveDirection = Direction::NONE;
+	this->game_previousMoveDirection = this->game_currentMoveDirection;
+	this->game_currentMoveDirection = Direction::NONE;
 	if (keyboard.isKeyHeld(ControlKey::LEFT)) {
-		moveDirection = Direction::LEFT;
+		this->game_currentMoveDirection = Direction::LEFT;
 	}
 	else if (keyboard.isKeyHeld(ControlKey::RIGHT)) {
-		moveDirection = Direction::RIGHT;
+		this->game_currentMoveDirection = Direction::RIGHT;
 	}
 	
 
-	if (moveDirection == Direction::NONE) {
+	if (this->game_currentMoveDirection == Direction::NONE) {
 		this->game_dasState = DasState::NONE;
 		return;
+	}
+	else if (this->game_currentMoveDirection != this->game_previousMoveDirection &&
+		     this->game_previousMoveDirection != Direction::NONE) {
+		this->game_dasState = DasState::NONE;
 	}
 
 
 	if (this->game_dasState == DasState::NONE) {
-		this->game_moveFigure(moveDirection);
+		this->game_moveFigure(this->game_currentMoveDirection);
 		this->game_dasState = DasState::LONG_DELAYED_MOVE;
 		this->game_dasTimer.setTimingFrames(this->DAS_DELAY_LONG);
 		this->game_dasTimer.reset();
@@ -613,7 +653,7 @@ void Game::game_updateDas() {
 	else if (this->game_dasState == DasState::LONG_DELAYED_MOVE) {
 		this->game_dasTimer.update();
 		if (this->game_dasTimer.isTriggered()) {
-			this->game_moveFigure(moveDirection);
+			this->game_moveFigure(this->game_currentMoveDirection);
 			this->game_dasState = DasState::SHORT_DELAYED_MOVE;
 			this->game_dasTimer.setTimingFrames(this->DAS_DELAY_SHORT);
 			this->game_dasTimer.reset();
@@ -622,7 +662,7 @@ void Game::game_updateDas() {
 	else if (this->game_dasState == DasState::SHORT_DELAYED_MOVE) {
 		this->game_dasTimer.update();
 		if (this->game_dasTimer.isTriggered()) {
-			this->game_moveFigure(moveDirection);
+			this->game_moveFigure(this->game_currentMoveDirection);
 		}
 	}
 }
@@ -637,19 +677,62 @@ void Game::game_moveFigure(Direction direction) {
 
 
 
+void Game::game_updateCounters() {
+	this->game_updateStatisticsCounters();
+	this->game_updatePieceCounters();
+}
+
+
+
+void Game::game_updateStatisticsCounters() {
+	this->game_tetrisesCounter.setNumericValue(this->game_field.getTetrises());
+	this->game_burnCounter.setNumericValue(this->game_field.getBurn());
+	this->game_tetrisRateCounter.setNumericValue(this->game_field.getTetrisRate());
+	this->game_linesCounter.setNumericValue(this->game_field.getLines());
+	this->game_currentScoreCounter.setNumericValue(0); //TODO: Set correct value.
+	this->game_levelCounter.setNumericValue(0); //TODO: Set correct value.
+	this->game_droughtCounter.setNumericValue(this->game_field.getDrought());
+}
+
+
+
+void Game::game_updatePieceCounters() {
+	for (uint32_t piece = 0; piece < GameField::DIFFERENT_PIECES; ++piece) {
+		this->game_pieceCounters[piece].setNumericValue(
+			this->game_field.getPieceAmount(Piece(piece))
+		);
+	}
+}
+
+
+
 void Game::game_drawCounters() {
-	this->game_tetrisesCounter.draw(this->window);
-	this->game_burnCounter.draw(this->window);
-	this->game_tetrisRateCounter.draw(this->window);
+	this->game_drawStaticticsCounters();
+	this->game_drawPieceCounters();
+}
 
-	this->game_linesCounter.draw(this->window);
-	auto a = this->game_linesCounter.getString();
 
-	this->game_topScoreCounter.draw(this->window);
-	this->game_currentScoreCounter.draw(this->window);
 
-	this->game_levelCounter.draw(this->window);
-	this->game_droughtCounter.draw(this->window);
+void Game::game_drawStaticticsCounters() {
+	this->game_tetrisesCounter.drawOn(this->window);
+	this->game_burnCounter.drawOn(this->window);
+	this->game_tetrisRateCounter.drawOn(this->window);
+
+	this->game_linesCounter.drawOn(this->window);
+
+	this->game_topScoreCounter.drawOn(this->window);
+	this->game_currentScoreCounter.drawOn(this->window);
+
+	this->game_levelCounter.drawOn(this->window);
+	this->game_droughtCounter.drawOn(this->window);
+}
+
+
+
+void Game::game_drawPieceCounters() {
+	for (auto& counter : this->game_pieceCounters) {
+		counter.drawOn(this->window);
+	}
 }
 
 
@@ -659,6 +742,8 @@ void Game::game_drawBlocks() {
 	if (this->game_field.doesActivePieceExist()) {
 		this->game_drawCurrentPiece();
 	}
+	this->game_drawNextPiece();
+	this->game_drawStaticticsBlocks();
 }
 
 
@@ -667,12 +752,14 @@ void Game::game_drawField() {
 	const auto& blocks = this->game_field.getBlocks();
 	for (uint32_t y = 2; y < blocks.size(); ++y) {
 		for (uint32_t x = 0; x < blocks[y].size(); ++x) {
-			auto drawPos = sf::Vector2f(
-				this->game_BlocksDrawingOffset.x + float(x * this->BLOCK_SIZE_WITH_GAP),
-				this->game_BlocksDrawingOffset.y + float(y * this->BLOCK_SIZE_WITH_GAP)
-			);
+			if (blocks[y][x] != Tetrimino::Type::E) {
+				auto drawPos = sf::Vector2f(
+					this->game_blocksDrawingOffset.x + float(x * this->BLOCK_SIZE_WITH_GAP),
+					this->game_blocksDrawingOffset.y + float(y * this->BLOCK_SIZE_WITH_GAP)
+				);
 
-			this->game_drawSingleBlock(drawPos, blocks[y][x]);
+				this->game_drawSingleBlock(drawPos, blocks[y][x]);
+			}
 		}
 	}
 }
@@ -688,18 +775,16 @@ void Game::game_drawCurrentPiece() {
 				drawStartPos.x + x,
 				drawStartPos.y + y
 			);
-			
+
 			bool xOut = currentPos.x < 0 || currentPos.x > GameField::FIELD_X_SIZE;
 			bool yOut = currentPos.y < 0 || currentPos.y > GameField::FIELD_Y_SIZE;
-			
-
 			if (!(xOut || yOut)) {
 				bool isDrawPositionSuitable = currentPos.y >= GameField::UPPER_LINES_TO_CLEAR;
 				bool isBlockVisible = pieceMatrix[y][x] != Tetrimino::Type::E;
 				if (isDrawPositionSuitable && isBlockVisible) {
 					auto drawPos = sf::Vector2f(
-						this->game_BlocksDrawingOffset.x + float(currentPos.x * this->BLOCK_SIZE_WITH_GAP),
-						this->game_BlocksDrawingOffset.y + float(currentPos.y * this->BLOCK_SIZE_WITH_GAP)
+						this->game_blocksDrawingOffset.x + float(currentPos.x * this->BLOCK_SIZE_WITH_GAP),
+						this->game_blocksDrawingOffset.y + float(currentPos.y * this->BLOCK_SIZE_WITH_GAP)
 					);
 
 					this->game_drawSingleBlock(drawPos, pieceMatrix[y][x]);
@@ -711,15 +796,71 @@ void Game::game_drawCurrentPiece() {
 
 
 
+void Game::game_drawStaticticsBlocks() {
+	for (uint32_t i = 0; i < this->game_staticticsBlocksData.size(); ++i) {
+		const Tetrimino::Matrix::Array* matrix = std::get<0>(this->game_staticticsBlocksData[i]);
+		for (uint32_t y = 0; y < matrix->size(); ++y) {
+			for (uint32_t x = 0; x < matrix->size(); ++x) {
+				if ((*matrix)[y][x] != Tetrimino::Type::E) {
+					auto& pos = std::get<1>(this->game_staticticsBlocksData[i]);
+					auto drawPos = sf::Vector2f(
+						pos.x + x * this->BLOCK_SIZE_WITH_GAP,
+						pos.y + y * this->BLOCK_SIZE_WITH_GAP
+					);
+					this->game_drawSingleBlock(drawPos, (*matrix)[y][x]);
+				}
+			}
+		}
+	}
+}
+
+
+
+void Game::game_drawNextPiece() {
+	static std::vector<sf::Vector2f> offsets = {
+		{ 600, 261 }, // T.
+		{ 600, 261 }, // J.
+		{ 600, 261 }, // Z.
+		{ 610, 261 }, // O.
+		{ 600, 261 }, // S.
+		{ 600, 261 }, // L.
+		{ 610, 272 }  // I.
+	};
+	auto& pieceMatrix = this->game_field.getNextPieceMatrix();
+	auto type = int32_t(this->game_field.getNextPieceType());
+	for (int32_t y = 0; y < Tetrimino::Matrix::SIZE; ++y) {
+		for (int32_t x = 0; x < Tetrimino::Matrix::SIZE; ++x) {
+			if (pieceMatrix[y][x] != Tetrimino::Type::E) {
+				auto drawPos = sf::Vector2f(
+					offsets[type].x + x * this->BLOCK_SIZE_WITH_GAP,
+					offsets[type].y + y * this->BLOCK_SIZE_WITH_GAP
+				);
+				this->game_drawSingleBlock(drawPos, pieceMatrix[y][x]);
+			}
+		}
+	}
+}
+
+
+
+void Game::game_drawFigure(const Tetrimino::Matrix::Array& matrix, const sf::Vector2f& offset) {
+	for (int32_t y = 0; y < Tetrimino::Matrix::SIZE; ++y) {
+		for (int32_t x = 0; x < Tetrimino::Matrix::SIZE; ++x) {
+			if (matrix[y][x] != Tetrimino::Type::E) {
+				auto drawPos = sf::Vector2f(
+					offset.x + x * this->BLOCK_SIZE_WITH_GAP,
+					offset.y + y * this->BLOCK_SIZE_WITH_GAP
+				);
+				this->game_drawSingleBlock(drawPos, matrix[y][x]);
+			}
+		}
+	}
+}
+
+
+
 void Game::game_drawSingleBlock(const sf::Vector2f& position, Tetrimino::Type type) {
 	this->game_blocks.setPosition(position);
-
-	if (type == Tetrimino::Type::E) {
-		this->game_blocks.setColor(sf::Color::Black);
-	}
-	else {
-		this->game_blocks.setColor(sf::Color::White);
-	}
 
 	this->game_blocks.setTextureRect(sf::IntRect(
 		this->BLOCK_SIZE * (this->game_levelCounter.getNumericValue() % 10),
@@ -728,7 +869,7 @@ void Game::game_drawSingleBlock(const sf::Vector2f& position, Tetrimino::Type ty
 		this->BLOCK_SIZE
 	));
 
-	this->game_blocks.draw(this->window);
+	this->game_blocks.drawOn(this->window);
 }
 
 
@@ -736,9 +877,9 @@ void Game::game_drawSingleBlock(const sf::Vector2f& position, Tetrimino::Type ty
 void Game::game_draw() {
 	this->window.clear(sf::Color::Black);
 
-	this->game_background.draw(this->window);
+	this->game_background.drawOn(this->window);
 
-	this->game_droughtIndicator.draw(this->window);
+	this->game_droughtIndicator.drawOn(this->window);
 
 	this->game_drawCounters();
 
@@ -768,7 +909,7 @@ void Game::pauseScreen_update() {
 void Game::pauseScreen_draw() {
 	this->window.clear(sf::Color::Black);
 
-	this->pause_background.draw(this->window);
+	this->pause_background.drawOn(this->window);
 
 	this->window.display();
 }

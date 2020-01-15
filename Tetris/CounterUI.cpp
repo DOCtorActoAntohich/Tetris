@@ -162,7 +162,7 @@ void CounterUI::setPosition(float x, float y) {
 
 
 
-void CounterUI::draw(sf::RenderWindow& window) {
+void CounterUI::drawOn(sf::RenderWindow& window) {
 	window.draw(this->text);
 }
 

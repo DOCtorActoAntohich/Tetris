@@ -7,10 +7,14 @@ namespace tetris {
 	public:
 		void loadFromResource(int32_t id);
 
-		sf::Vector2f getPosition();
+		const sf::Vector2f& getPosition() const;
 		void setPosition(sf::Vector2f position);
 
 		void setColor(const sf::Color& color);
+
+		const sf::Vector2f& getScale() const;
+		void setScale(const sf::Vector2f& scale);
+		void setScale(float x, float y);
 
 		// Sets the part of texture to be drawn.
 		void setTextureRect(const sf::IntRect& rectangle);
@@ -18,7 +22,7 @@ namespace tetris {
 		// Tells to draw the full texture.
 		void resetTextureRect();
 
-		void draw(sf::RenderWindow& renderTarget);
+		void drawOn(sf::RenderWindow& renderTarget) const;
 	private:
 		sf::Texture texture;
 		sf::Sprite  sprite;
