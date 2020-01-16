@@ -156,6 +156,12 @@ namespace tetris {
 		Sound tetriminoRotate_sound;
 		Sound tetriminoLand_sound;
 
+		Sound lineCleared_sound;
+		Sound tetrisCleared_sound;
+		Sound newLevel_sound;
+
+		Sound gameOver_sound;
+
 #pragma /* Sounds */ endregion
 
 		// Loads data to be used.
@@ -225,20 +231,20 @@ namespace tetris {
 
 		// Boundaries only for level and music select in menu.
 
-		static const uint32_t MINIMAL_LEVEL = 0;
-		static const uint32_t MAXIMAL_LEVEL = 9;
+		static const int32_t MINIMAL_LEVEL = 0;
+		static const int32_t MAXIMAL_LEVEL = 9;
 
 		// Defines how many levels to add if player wants "hard mode".
-		static const uint32_t LEVEL_INCREMENT_HARD_MODE = 10;
+		static const int32_t LEVEL_INCREMENT_HARD_MODE = 10;
 
 		// Controls from which level the game will start.
-		uint32_t menu_startLevel;
+		int32_t menu_startLevel;
 
 		static const int32_t MINIMAL_MUSIC_TYPE = 0;
 		static const int32_t MAXIMAL_MUSIC_TYPE = 3;
 
 		// Controls the music type to be played.
-		uint32_t menu_musicType;
+		int32_t menu_musicType;
 
 
 		void menu_update();
@@ -280,19 +286,18 @@ namespace tetris {
 		static const int32_t SOFT_DROP_DELAY = 2;
 		FrameTimer game_softDropTimer;
 
+		static const int32_t LEVEL_WITH_MAX_SPEED = 29;
+		std::vector<int32_t> framesPerGridcell;
+		FrameTimer game_dropTimer;
 
+		// Handles most of game scene processes.
 		GameField game_field;
 
 		// Offset from (0, 0) for drawing game field.
 		sf::Vector2f game_blocksDrawingOffset;
 		
-		// Offset from (0, 0) for drawing next piece.
-		sf::Vector2f game_nextPieceDrawingOffset;
-		sf::Vector2f game_nextPieceDrawingCenter;
-		
 		void game_update();
 		void game_updateFigureControls();
-		void game_updateFigureDrop();
 		void game_updateDas();
 		void game_moveFigure(Direction direction);
 		void game_updateCounters();

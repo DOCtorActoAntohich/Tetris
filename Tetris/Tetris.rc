@@ -76,6 +76,12 @@ TETRIMINO_MOVE_WAV			RCDATA			"Resources\\Sounds\\TETRIMINO_MOVE.wav"
 TETRIMINO_ROTATE_WAV		RCDATA			"Resources\\Sounds\\TETRIMINO_ROTATE.wav"
 TETRIMINO_LAND_WAV			RCDATA			"Resources\\Sounds\\TETRIMINO_LAND.wav"
 
+LINE_CLEARED_WAV			RCDATA			"Resources\\Sounds\\LINE_CLEARED.wav"
+TETRIS_CLEARED_WAV			RCDATA			"Resources\\Sounds\\TETRIS_CLEARED.wav"
+NEW_LEVEL_WAV				RCDATA			"Resources\\Sounds\\NEW_LEVEL.wav"
+
+GAME_OVER_WAV				RCDATA			"Resources\\Sounds\\GAME_OVER.wav"
+
 
 
 

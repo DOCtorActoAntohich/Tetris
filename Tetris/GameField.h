@@ -48,9 +48,12 @@ namespace tetris {
 		static const int32_t MAX_TETRIS_RATE = 100;
 		static const int32_t MAX_DROUGHT = 99;
 		static const int32_t MAX_PIECE_AMOUNT = 999;
+		static const int32_t MAX_LEVEL = 99;
+		static const int32_t MAX_SCORE = 999999;
 
 		static const int32_t UPPER_LINES_TO_CLEAR = 2;
 		static const int32_t LINES_PER_TETRIS = 4;
+		static const int32_t LINES_PER_LEVEL = 10;
 		static const int32_t DIFFERENT_PIECES = 7;
 
 #pragma /* Constants */ endregion
@@ -126,6 +129,12 @@ namespace tetris {
 
 #pragma region Statistics
 
+		// Sets a level value.
+		void setLevel(int32_t level);
+
+		// Returns a level value.
+		int32_t getLevel() const;
+
 		// Returns how many lines are cleared.
 		int32_t getLines() const;
 
@@ -140,6 +149,15 @@ namespace tetris {
 
 		// Returns for how many pieces there were not I piece.
 		int32_t getDrought() const;
+
+		// Returns current score value.
+		int32_t getScore() const;
+
+		// Returns current top score value.
+		int32_t getTopScore() const;
+
+		// Sets new value of top score.
+		void setTopScore(int32_t topScore);
 
 		// Returns the amount of specified pieces.
 		int32_t getPieceAmount(Piece piece) const;
@@ -215,8 +233,15 @@ namespace tetris {
 		int32_t burn;
 		int32_t tetrisRate;
 		int32_t drought;
+		int32_t score;
+		int32_t topScore;
+
+		int32_t level;
 
 		std::vector<int32_t> piecesAmount;
+
+		// Updates game statistics after any line is cleared.
+		void updateStatistics();
 
 #pragma /* Statistics */ endregion 
 		

@@ -111,6 +111,8 @@ void GameField::clear() {
 	this->tetrisRate = 0;
 	this->drought = 0;
 
+	this->level = 0;
+
 	this->piecesAmount = std::vector<int32_t>(this->DIFFERENT_PIECES, 0);
 
 	this->prepareNextPiece();
@@ -189,15 +191,7 @@ void GameField::clearLines() {
 	}
 
 
-	if (this->linesToClear.size() == this->LINES_PER_TETRIS) {
-		++this->tetrises;
-		this->burn = 0;
-	}
-	else {
-		this->burn += this->linesToClear.size();
-	}
-	this->lines += this->linesToClear.size();
-	this->tetrisRate = 100 * (this->tetrises * this->LINES_PER_TETRIS) / this->lines;
+	this->updateStatistics();
 
 
 	this->linesToClear.clear();
@@ -269,6 +263,18 @@ const std::vector<int32_t>& GameField::getLinesToClear() const {
 #pragma region Statistics
 
 
+void GameField::setLevel(int32_t level) {
+	this->level = level;
+}
+
+
+
+int32_t GameField::getLevel() const {
+	return this->level;
+}
+
+
+
 int32_t GameField::getLines() const {
 	return this->lines;
 }
@@ -295,6 +301,30 @@ int32_t GameField::getTetrisRate() const {
 
 int32_t GameField::getDrought() const {
 	return this->drought;
+}
+
+
+
+int32_t GameField::getScore() const {
+	return this->score;
+}
+
+
+
+int32_t GameField::getTopScore() const {
+	return this->topScore;
+}
+
+
+
+void GameField::setTopScore(int32_t topScore) {
+	if (topScore > this->MAX_SCORE) {
+		topScore = this->MAX_SCORE;
+	}
+	else if (topScore < 0) {
+		topScore = 0;
+	}
+	this->topScore = topScore;
 }
 
 
@@ -403,6 +433,49 @@ bool GameField::doesPieceCollide(const Tetrimino::Matrix::Array& pieceMatrix,
 
 
 #pragma /* Collision And Management */ endregion
+
+
+#pragma region Statistics
+
+
+void GameField::updateStatistics() {
+	if (this->linesToClear.size() == this->LINES_PER_TETRIS) {
+		++this->tetrises;
+		this->burn = 0;
+	}
+	else {
+		this->burn += this->linesToClear.size();
+	}
+	this->lines += this->linesToClear.size();
+	this->tetrisRate = 100 * (this->tetrises * this->LINES_PER_TETRIS) / this->lines;
+
+
+	// Coefficients for formula. Scoring depends on lines burnt.
+	static std::vector<int32_t> coefficients = {
+		40,
+		100,
+		300,
+		1200,
+		0
+	};
+	this->score += coefficients[this->linesToClear.size() - 1] * (this->level + 1);
+	if (this->score > this->MAX_SCORE) {
+		this->score = this->MAX_SCORE;
+	}
+	if (this->score >= this->topScore) {
+		this->topScore = this->score;
+	}
+
+
+	int32_t newLevel = lines / this->LINES_PER_LEVEL;
+	this->level = newLevel > this->level ? newLevel : this->level;
+	if (this->level > this->MAX_LEVEL) {
+		this->level = this->MAX_LEVEL;
+	}
+}
+
+
+#pragma /* Statistics */ endregion
 
 
 

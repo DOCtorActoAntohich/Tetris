@@ -23,6 +23,12 @@
 #define TETRIMINO_ROTATE_WAV			207
 #define TETRIMINO_LAND_WAV				208
 
+#define LINE_CLEARED_WAV				209
+#define TETRIS_CLEARED_WAV				210
+#define NEW_LEVEL_WAV					211
+
+#define GAME_OVER_WAV					212
+
 // Fonts.
 #define GAME_FONT						303
 

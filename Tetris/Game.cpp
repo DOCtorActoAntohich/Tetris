@@ -221,6 +221,7 @@ void Game::initializeStaticticsCounters() {
 		{ &this->game_linesCounter, GameField::MAX_LINES, { 482, 43 } },
 		{ &this->game_topScoreCounter, Record::MAX_SCORE, { 608, 86 } },
 		{ &this->game_currentScoreCounter, Record::MAX_SCORE, { 608, 166 } },
+		{ &this->game_levelCounter, GameField::MAX_LEVEL, { 642, 431 } },
 		{ &this->game_droughtCounter, GameField::MAX_DROUGHT, { 642, 519 } },
 	};
 	for (uint32_t i = 0; i < data.size(); ++i) {
@@ -251,6 +252,32 @@ void Game::initializeStatisticsPieceData() {
 
 
 void Game::loadContent() {
+	this->framesPerGridcell = {
+		48, // Level 0.
+		43,
+		38,
+		33,
+		28,
+		23, // Level 5.
+		18,
+		13,
+		8,
+		6,
+		5,  // Level 10.
+		5,
+		5,
+		4,  // Level 13.
+		4,
+		4,
+		3,  // Level 16.
+		3,
+		3
+	};
+	for (int32_t i = 19; i <= 28; ++i) {
+		this->framesPerGridcell.push_back(2);
+	}
+	this->framesPerGridcell.push_back(1);
+
 	loadFont(GAME_FONT, this->fontBytes, this->font);
 
 
@@ -266,14 +293,12 @@ void Game::loadContent() {
 
 	this->game_background.loadFromResource(GAME_SCREEN_BMP);
 	this->game_blocksDrawingOffset = sf::Vector2f(321, 70);
-	this->game_nextPieceDrawingOffset = sf::Vector2f(599, 271);
-	this->game_nextPieceDrawingCenter = sf::Vector2f(650, 322);
 
 	this->pause_background.loadFromResource(PAUSE_SCREEN_BMP);
 
 
 	this->game_droughtIndicator.loadFromResource(DROUGHT_INDICATOR_BMP);
-	this->game_droughtIndicator.setPosition({ 640, 490 });
+	this->game_droughtIndicator.setPosition({ 624, 491 });
 
 	this->game_blocks.loadFromResource(BLOCKS_BMP);
 
@@ -285,6 +310,12 @@ void Game::loadContent() {
 	this->tetriminoMove_sound.loadFromResource(TETRIMINO_MOVE_WAV);
 	this->tetriminoRotate_sound.loadFromResource(TETRIMINO_ROTATE_WAV);
 	this->tetriminoLand_sound.loadFromResource(TETRIMINO_LAND_WAV);
+	
+	this->lineCleared_sound.loadFromResource(LINE_CLEARED_WAV);
+	this->tetrisCleared_sound.loadFromResource(TETRIS_CLEARED_WAV);
+	this->newLevel_sound.loadFromResource(NEW_LEVEL_WAV);
+
+	this->gameOver_sound.loadFromResource(GAME_OVER_WAV);
 
 	this->initializeCounters();
 	this->initializeStatisticsPieceData();
@@ -511,8 +542,8 @@ void Game::menu_updateMusicSelection() {
 
 
 void Game::menu_prepareForGame() {
-	this->menu_setStartLevel();
 	this->game_field.clear();
+	this->menu_setStartLevel();
 	this->game_field.spawnNewFigure();
 	this->game_dasState = DasState::NONE;
 }
@@ -520,11 +551,13 @@ void Game::menu_prepareForGame() {
 
 
 void Game::menu_setStartLevel() {
-	int32_t newLevel = int32_t(this->menu_startLevel);
+	int32_t newLevel = this->menu_startLevel;
 	if (keyboard.isKeyHeld(ControlKey::A)) {
 		newLevel += this->LEVEL_INCREMENT_HARD_MODE;
 	}
+	this->game_field.setLevel(newLevel);
 	this->game_levelCounter.setNumericValue(newLevel);
+	this->game_dropTimer.setTimingFrames(this->framesPerGridcell[newLevel]);
 }
 
 
@@ -568,6 +601,7 @@ void Game::game_update() {
 		this->tetriminoLand_sound.play();
 		bool spawned = this->game_field.spawnNewFigure();
 		if (!spawned) {
+			this->gameOver_sound.play();
 			this->changeScene(Scene::SPLASH_SCREEN);
 			return;
 		}
@@ -578,6 +612,12 @@ void Game::game_update() {
 	this->game_field.checkFullLines();
 	std::vector<int32_t> linesToClear = this->game_field.getLinesToClear();
 	if (linesToClear.size() != 0) {
+		if (linesToClear.size() == 4) {
+			this->tetrisCleared_sound.play();
+		}
+		else {
+			this->lineCleared_sound.play();
+		}
 		this->game_field.clearLines();
 	}
 }
@@ -596,6 +636,11 @@ void Game::game_updateFigureControls() {
 		}
 	}
 
+	this->game_dropTimer.update();
+	if (this->game_dropTimer.isTriggered()) {
+		this->game_field.dropFigureDown(false);
+	}
+
 	bool down = keyboard.isKeyHeld(ControlKey::DOWN);
 	bool left = keyboard.isKeyHeld(ControlKey::LEFT);
 	bool right = keyboard.isKeyHeld(ControlKey::RIGHT);
@@ -603,22 +648,16 @@ void Game::game_updateFigureControls() {
 		return;
 	}
 	else if (down) {
-		this->game_updateFigureDrop();
+		this->game_softDropTimer.update();
+		if (this->game_softDropTimer.isTriggered()) {
+			this->game_field.dropFigureDown();
+		}
 	}
 	else {
 		this->game_updateDas();
 	}
 
 	this->game_updateCounters();
-}
-
-
-
-void Game::game_updateFigureDrop() {
-	this->game_softDropTimer.update();
-	if (this->game_softDropTimer.isTriggered()) {
-		this->game_field.dropFigureDown();
-	}
 }
 
 
@@ -689,9 +728,16 @@ void Game::game_updateStatisticsCounters() {
 	this->game_burnCounter.setNumericValue(this->game_field.getBurn());
 	this->game_tetrisRateCounter.setNumericValue(this->game_field.getTetrisRate());
 	this->game_linesCounter.setNumericValue(this->game_field.getLines());
-	this->game_currentScoreCounter.setNumericValue(0); //TODO: Set correct value.
-	this->game_levelCounter.setNumericValue(0); //TODO: Set correct value.
 	this->game_droughtCounter.setNumericValue(this->game_field.getDrought());
+	this->game_currentScoreCounter.setNumericValue(this->game_field.getScore());
+	this->game_topScoreCounter.setNumericValue(this->game_field.getTopScore());
+
+	int32_t level = this->game_field.getLevel();
+	if (level != this->game_levelCounter.getNumericValue()) {
+		this->game_dropTimer.setTimingFrames(this->framesPerGridcell[level]);
+		this->newLevel_sound.play();
+	}
+	this->game_levelCounter.setNumericValue(level);
 }
 
 
