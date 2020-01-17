@@ -650,7 +650,7 @@ void Game::game_updateFigureControls() {
 	else if (down) {
 		this->game_softDropTimer.update();
 		if (this->game_softDropTimer.isTriggered()) {
-			this->game_field.dropFigureDown();
+			this->game_field.dropFigureDown(true);
 		}
 	}
 	else {

@@ -82,6 +82,10 @@ void GameField::dropFigureDown(bool isSoftDrop) {
 		return;
 	}
 
+	if (!isSoftDrop) {
+		this->softDropScore = 0;
+	}
+
 	sf::Vector2i newCenter(
 		this->currentPieceCenter.x,
 		this->currentPieceCenter.y + 1
@@ -90,8 +94,14 @@ void GameField::dropFigureDown(bool isSoftDrop) {
 	bool isCollisionFound = doesPieceCollide(this->currentPiece.getCurrentMatrix(), newCenter);
 	if (isPositionCorrect & !isCollisionFound) {
 		this->currentPieceCenter = newCenter;
+		if (isSoftDrop) {
+			++this->softDropScore;
+		}
 	}
 	else {
+		this->score += this->softDropScore;
+		this->softDropScore = 0;
+
 		this->placeCurrentPiece();
 	}
 }

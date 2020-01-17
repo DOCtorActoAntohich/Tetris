@@ -238,6 +238,8 @@ namespace tetris {
 
 		int32_t level;
 
+		int32_t softDropScore;
+
 		std::vector<int32_t> piecesAmount;
 
 		// Updates game statistics after any line is cleared.
