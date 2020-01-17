@@ -262,10 +262,42 @@ namespace tetris {
 
 #pragma region Game
 
+		static const int32_t FIRST_SPAWN_DROP_DELAY = 120;
+		FrameTimer game_firstSpawnTimer;
+		bool game_isFirstSpawn;
+
+		// How fast figures fall on soft drop.
+		static const int32_t SOFT_DROP_DELAY = 2;
+		FrameTimer game_softDropTimer;
+		bool game_allowSoftDrop;
+
+		static const int32_t LEVEL_WITH_MAX_SPEED = 29;
+		std::vector<int32_t> framesPerGridcell;
+		FrameTimer game_dropTimer;
+
+		// Handles most of game scene processes.
+		GameField game_field;
+
+		// Offset from (0, 0) for drawing game field.
+		sf::Vector2f game_blocksDrawingOffset;
+
+		static const int32_t RESPAWN_DELAY = 10;
+		FrameTimer game_respawnTimer;
+		bool game_hasPieceLanded;
+		bool game_hasLandSoundPlayed;
+		
+
+#pragma region DAS
+
 		// States for DAS (Delayed Auto Shift).
 		enum class DasState {
+			// Not applied.
 			NONE = 0,
+
+			// Move piece for the first time with long delay.
 			LONG_DELAYED_MOVE = 1,
+
+			// Move piece for the second (and other) time with short delay.
 			SHORT_DELAYED_MOVE = 2
 		};
 		DasState game_dasState;
@@ -281,25 +313,15 @@ namespace tetris {
 		// Delay for 2nd and other tetrimino moves.
 		static const int32_t DAS_DELAY_SHORT = 6;
 
-
-		// How fast figures fall on soft drop.
-		static const int32_t SOFT_DROP_DELAY = 2;
-		FrameTimer game_softDropTimer;
-
-		static const int32_t LEVEL_WITH_MAX_SPEED = 29;
-		std::vector<int32_t> framesPerGridcell;
-		FrameTimer game_dropTimer;
-
-		// Handles most of game scene processes.
-		GameField game_field;
-
-		// Offset from (0, 0) for drawing game field.
-		sf::Vector2f game_blocksDrawingOffset;
-		
-		void game_update();
-		void game_updateFigureControls();
 		void game_updateDas();
-		void game_moveFigure(Direction direction);
+		void game_updateDas_controls();
+		void game_updateDas_movePiece();
+
+#pragma /* DAS */ endregion
+
+		void game_update();
+		void game_updatePieceControls();
+		void game_movePiece(Direction direction);
 		void game_updateCounters();
 		void game_updateStatisticsCounters();
 		void game_updatePieceCounters();
@@ -312,7 +334,7 @@ namespace tetris {
 		void game_drawCurrentPiece();
 		void game_drawStaticticsBlocks();
 		void game_drawNextPiece();
-		void game_drawFigure(const Tetrimino::Matrix::Array& matrix, const sf::Vector2f& offset);
+		void game_drawPiece(const Tetrimino::Matrix::Array& matrix, const sf::Vector2f& offset);
 		void game_drawSingleBlock(const sf::Vector2f& position, Tetrimino::Type type);
 		void game_draw();
 

@@ -359,9 +359,7 @@ void Game::runMainLoop() {
 			if (this->shouldCallDrawer) {
 				(this->*draw)();
 			}
-			if (!this->shouldCallDrawer) {
-				this->shouldCallDrawer = true;
-			}
+			this->shouldCallDrawer = true;
 		}
 	}
 }
@@ -544,8 +542,18 @@ void Game::menu_updateMusicSelection() {
 void Game::menu_prepareForGame() {
 	this->game_field.clear();
 	this->menu_setStartLevel();
-	this->game_field.spawnNewFigure();
+	this->game_field.spawnNewPiece();
 	this->game_dasState = DasState::NONE;
+	this->game_allowSoftDrop = true;
+
+	this->game_hasPieceLanded = false;
+	this->game_hasLandSoundPlayed = true;
+	this->game_respawnTimer.setTimingFrames(this->RESPAWN_DELAY);
+	this->game_respawnTimer.reset();
+
+	this->game_isFirstSpawn = true;
+	this->game_firstSpawnTimer.setTimingFrames(this->FIRST_SPAWN_DROP_DELAY);
+	this->game_firstSpawnTimer.reset();
 }
 
 
@@ -595,53 +603,70 @@ void Game::game_update() {
 	if (keyboard.isKeyPushed(ControlKey::START)) {
 		this->pause_sound.play();
 		this->changeScene(Scene::PAUSE_SCREEN);
+		return;
+	}
+
+	// Updates delay on first piece spawn.
+	if (this->game_isFirstSpawn) {
+		this->game_firstSpawnTimer.update();
+		if (this->game_firstSpawnTimer.isTriggered() ||
+			keyboard.isKeyHeld(ControlKey::DOWN)) {
+			this->game_isFirstSpawn = false;
+		}
 	}
 
 	if (!this->game_field.doesActivePieceExist()) {
-		this->tetriminoLand_sound.play();
-		bool spawned = this->game_field.spawnNewFigure();
-		if (!spawned) {
-			this->gameOver_sound.play();
-			this->changeScene(Scene::SPLASH_SCREEN);
-			return;
+		if (this->game_hasPieceLanded) {
+			if (!this->game_hasLandSoundPlayed) {
+				this->tetriminoLand_sound.play();
+				this->game_hasLandSoundPlayed = true;
+			}
+		}
+		this->game_respawnTimer.update();
+		if (this->game_respawnTimer.isTriggered()) {
+			bool spawned = this->game_field.spawnNewPiece();
+			if (!spawned) {
+				this->gameOver_sound.play();
+				this->changeScene(Scene::SPLASH_SCREEN);
+				return;
+			}
 		}
 	}
 
-	this->game_updateFigureControls();
+	if (this->game_field.doesActivePieceExist()) {
+		this->game_updatePieceControls();
 
-	this->game_field.checkFullLines();
-	std::vector<int32_t> linesToClear = this->game_field.getLinesToClear();
-	if (linesToClear.size() != 0) {
-		if (linesToClear.size() == 4) {
-			this->tetrisCleared_sound.play();
+		this->game_field.checkFullLines();
+		const std::vector<int32_t>& linesToClear = this->game_field.getLinesToClear();
+		if (linesToClear.size() != 0) {
+			if (linesToClear.size() == 4) {
+				this->tetrisCleared_sound.play();
+			}
+			else {
+				this->lineCleared_sound.play();
+			}
+			this->game_field.clearLines();
 		}
-		else {
-			this->lineCleared_sound.play();
-		}
-		this->game_field.clearLines();
 	}
 }
 
 
 
-void Game::game_updateFigureControls() {
+void Game::game_updatePieceControls() {
 	if (keyboard.isKeyPushed(ControlKey::B)) {
-		if (this->game_field.rotateFigure(Rotation::COUNTERCLOCKWISE)) {
+		if (this->game_field.rotatePiece(Rotation::COUNTERCLOCKWISE)) {
 			this->tetriminoRotate_sound.play();
 		}
 	}
 	else if (keyboard.isKeyPushed(ControlKey::A)) {
-		if (this->game_field.rotateFigure(Rotation::CLOCKWISE)) {
+		if (this->game_field.rotatePiece(Rotation::CLOCKWISE)) {
 			this->tetriminoRotate_sound.play();
 		}
 	}
 
-	this->game_dropTimer.update();
-	if (this->game_dropTimer.isTriggered()) {
-		this->game_field.dropFigureDown(false);
-	}
+	
 
-	bool down = keyboard.isKeyHeld(ControlKey::DOWN);
+	bool down = keyboard.isKeyHeld(ControlKey::DOWN) && this->game_allowSoftDrop;
 	bool left = keyboard.isKeyHeld(ControlKey::LEFT);
 	bool right = keyboard.isKeyHeld(ControlKey::RIGHT);
 	if (down && (left || right)) {
@@ -650,11 +675,24 @@ void Game::game_updateFigureControls() {
 	else if (down) {
 		this->game_softDropTimer.update();
 		if (this->game_softDropTimer.isTriggered()) {
-			this->game_field.dropFigureDown(true);
+			this->game_hasPieceLanded = this->game_field.dropPieceDown(true);
+			if (this->game_hasPieceLanded) {
+				this->game_hasLandSoundPlayed = false;
+			}
 		}
 	}
 	else {
 		this->game_updateDas();
+	}
+
+	if (!down && !this->game_isFirstSpawn) {
+		this->game_dropTimer.update();
+		if (this->game_dropTimer.isTriggered()) {
+			this->game_hasPieceLanded = this->game_field.dropPieceDown(false);
+			if (this->game_hasPieceLanded) {
+				this->game_hasLandSoundPlayed = false;
+			}
+		}
 	}
 
 	this->game_updateCounters();
@@ -662,7 +700,17 @@ void Game::game_updateFigureControls() {
 
 
 
+#pragma region DAS
+
+
 void Game::game_updateDas() {
+	this->game_updateDas_controls();
+	this->game_updateDas_movePiece();
+}
+
+
+
+void Game::game_updateDas_controls() {
 	this->game_previousMoveDirection = this->game_currentMoveDirection;
 	this->game_currentMoveDirection = Direction::NONE;
 	if (keyboard.isKeyHeld(ControlKey::LEFT)) {
@@ -671,45 +719,55 @@ void Game::game_updateDas() {
 	else if (keyboard.isKeyHeld(ControlKey::RIGHT)) {
 		this->game_currentMoveDirection = Direction::RIGHT;
 	}
-	
+}
 
-	if (this->game_currentMoveDirection == Direction::NONE) {
+
+
+void Game::game_updateDas_movePiece() {
+	bool currentlyPressed = this->game_currentMoveDirection != Direction::NONE;
+	bool previouslyPressed = this->game_previousMoveDirection != Direction::NONE;
+	bool directionsDiffer = this->game_currentMoveDirection != this->game_previousMoveDirection;
+	if (!currentlyPressed) {
 		this->game_dasState = DasState::NONE;
 		return;
 	}
-	else if (this->game_currentMoveDirection != this->game_previousMoveDirection &&
-		     this->game_previousMoveDirection != Direction::NONE) {
+	else if (previouslyPressed && directionsDiffer) {
 		this->game_dasState = DasState::NONE;
 	}
 
 
 	if (this->game_dasState == DasState::NONE) {
-		this->game_moveFigure(this->game_currentMoveDirection);
+		this->game_movePiece(this->game_currentMoveDirection);
 		this->game_dasState = DasState::LONG_DELAYED_MOVE;
 		this->game_dasTimer.setTimingFrames(this->DAS_DELAY_LONG);
 		this->game_dasTimer.reset();
 	}
+
 	else if (this->game_dasState == DasState::LONG_DELAYED_MOVE) {
 		this->game_dasTimer.update();
 		if (this->game_dasTimer.isTriggered()) {
-			this->game_moveFigure(this->game_currentMoveDirection);
+			this->game_movePiece(this->game_currentMoveDirection);
 			this->game_dasState = DasState::SHORT_DELAYED_MOVE;
 			this->game_dasTimer.setTimingFrames(this->DAS_DELAY_SHORT);
 			this->game_dasTimer.reset();
 		}
 	}
+
 	else if (this->game_dasState == DasState::SHORT_DELAYED_MOVE) {
 		this->game_dasTimer.update();
 		if (this->game_dasTimer.isTriggered()) {
-			this->game_moveFigure(this->game_currentMoveDirection);
+			this->game_movePiece(this->game_currentMoveDirection);
 		}
 	}
 }
 
 
+#pragma /* DAS */ endregion
 
-void Game::game_moveFigure(Direction direction) {
-	if (this->game_field.moveFigure(direction)) {
+
+
+void Game::game_movePiece(Direction direction) {
+	if (this->game_field.movePiece(direction)) {
 		this->tetriminoMove_sound.play();
 	}
 }
@@ -889,7 +947,7 @@ void Game::game_drawNextPiece() {
 
 
 
-void Game::game_drawFigure(const Tetrimino::Matrix::Array& matrix, const sf::Vector2f& offset) {
+void Game::game_drawPiece(const Tetrimino::Matrix::Array& matrix, const sf::Vector2f& offset) {
 	for (int32_t y = 0; y < Tetrimino::Matrix::SIZE; ++y) {
 		for (int32_t x = 0; x < Tetrimino::Matrix::SIZE; ++x) {
 			if (matrix[y][x] != Tetrimino::Type::E) {

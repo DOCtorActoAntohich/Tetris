@@ -64,22 +64,23 @@ namespace tetris {
 
 		// Moves figure 1 block left of right.
 		// Returns true if successfully moved.
-		bool moveFigure(Direction direction);
+		bool movePiece(Direction direction);
 
 		// Rotates figure clockwise or counterclockwise.
 		// Returns true if successfully rotated.
-		bool rotateFigure(Rotation rotation);
+		bool rotatePiece(Rotation rotation);
 		
 		// Moves piece 1 block down.
 		// If piece is being soft dropped, score is increased.
-		void dropFigureDown(bool isSoftDrop = false);
+		// Returns true if piece collides (unable to move).
+		bool dropPieceDown(bool isSoftDrop = false);
 
 		// Clears the field from any blocks and resets counters.
 		void clear();
 
 		// Spawns new figure.
 		// Returns true is it is possible, false is figure collides on spawn.
-		bool spawnNewFigure();
+		bool spawnNewPiece();
 
 		// Checks if there are lines to be cleared.
 		// Has no effect if lines are not cleared previously.

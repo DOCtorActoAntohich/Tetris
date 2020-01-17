@@ -18,7 +18,7 @@ GameField::GameField() {
 #pragma region Controls
 
 
-bool GameField::moveFigure(Direction direction) {
+bool GameField::movePiece(Direction direction) {
 	if (!this->doesCurrentPieceExist || direction == Direction::NONE) {
 		return false;
 	}
@@ -38,7 +38,7 @@ bool GameField::moveFigure(Direction direction) {
 
 
 
-bool GameField::rotateFigure(Rotation rotation) {
+bool GameField::rotatePiece(Rotation rotation) {
 	if (!this->doesCurrentPieceExist) {
 		return false;
 	}
@@ -77,9 +77,9 @@ bool GameField::rotateFigure(Rotation rotation) {
 
 
 
-void GameField::dropFigureDown(bool isSoftDrop) {
+bool GameField::dropPieceDown(bool isSoftDrop) {
 	if (!this->doesCurrentPieceExist) {
-		return;
+		return false;
 	}
 
 	if (!isSoftDrop) {
@@ -103,7 +103,9 @@ void GameField::dropFigureDown(bool isSoftDrop) {
 		this->softDropScore = 0;
 
 		this->placeCurrentPiece();
+		return true;
 	}
+	return false;
 }
 
 
@@ -130,7 +132,7 @@ void GameField::clear() {
 
 
 
-bool GameField::spawnNewFigure() {
+bool GameField::spawnNewPiece() {
 	if (this->doesCurrentPieceExist) {
 		return false;
 	}
