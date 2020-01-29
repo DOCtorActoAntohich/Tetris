@@ -1,12 +1,12 @@
-#include "CounterUI.h"
+#include "tetris/wrapper/CounterUI.h"
 
 #include <SFML/System.hpp>
 
 #include <string>
 
-#include "Helper.h"
+#include "tetris/helper/Helper.h"
 
-using namespace tetris;
+using namespace tetris::wrapper;
 
 
 #pragma region Static Members Initialization
@@ -51,7 +51,7 @@ void CounterUI::setMaximalValue(int32_t maxValue) {
 	this->maximalValue = maxValue;
 	this->validateCounterValue();
 
-	size_t digits = Helper::countDigits(maxValue);
+	size_t digits = helper::countDigits(maxValue);
 	this->setWidth(digits); // Text is updated here.
 }
 

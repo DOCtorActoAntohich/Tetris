@@ -2,8 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 
-namespace tetris {
-	class SpriteWrapper {
+namespace tetris::wrapper {
+	class Sprite {
 	public:
 		void loadFromResource(int32_t id);
 

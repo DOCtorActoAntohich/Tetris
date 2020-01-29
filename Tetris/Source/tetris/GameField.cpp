@@ -1,8 +1,8 @@
-#include "GameField.h"
+#include "tetris/GameField.h"
 
 #include <vector>
 
-#include "Helper.h"
+#include "tetris/helper/Helper.h"
 
 using namespace tetris;
 
@@ -57,7 +57,7 @@ bool GameField::rotatePiece(Rotation rotation) {
 			this->currentPiece.switchToPreviousMatrix();
 			return false;
 		}
-		return true; // We don't need break here.
+		return true;
 
 	case Rotation::COUNTERCLOCKWISE :
 		this->currentPiece.switchToPreviousMatrix();
@@ -69,7 +69,7 @@ bool GameField::rotatePiece(Rotation rotation) {
 			this->currentPiece.switchToNextMatrix();
 			return false;
 		}
-		return true; // We don't need break here.
+		return true;
 	default:
 		return false;
 	}
@@ -373,7 +373,7 @@ void GameField::clearUpperLines() {
 
 
 void GameField::prepareNextPiece() {
-	size_t type = Helper::getRandomNumber(0, this->PIECES_LIST.size() - 1);
+	size_t type = helper::getRandomNumber(0, this->PIECES_LIST.size() - 1);
 	this->nextPiece = *(this->PIECES_LIST[type]);
 	this->nextPieceType = Piece(type);
 }
@@ -530,15 +530,15 @@ void GameField::initializePiece_T() {
 
 	this->piece_T.addMatrix(matrixArray); // T down.
 
-	Helper::rotateArray(matrixArray);
+	helper::rotateArray(matrixArray);
 	matrix.setArray(matrixArray);
 	this->piece_T.addMatrix(matrixArray); // T left.
 
-	Helper::rotateArray(matrixArray);
+	helper::rotateArray(matrixArray);
 	matrix.setArray(matrixArray);
 	this->piece_T.addMatrix(matrixArray); // T up.
 
-	Helper::rotateArray(matrixArray);
+	helper::rotateArray(matrixArray);
 	matrix.setArray(matrixArray);
 	this->piece_T.addMatrix(matrixArray); // T right.
 }
@@ -559,15 +559,15 @@ void GameField::initializePiece_J() {
 
 	this->piece_J.addMatrix(matrixArray); // J down.
 
-	Helper::rotateArray(matrixArray);
+	helper::rotateArray(matrixArray);
 	matrix.setArray(matrixArray);
 	this->piece_J.addMatrix(matrixArray); // J left.
 
-	Helper::rotateArray(matrixArray);
+	helper::rotateArray(matrixArray);
 	matrix.setArray(matrixArray);
 	this->piece_J.addMatrix(matrixArray); // J up.
 
-	Helper::rotateArray(matrixArray);
+	helper::rotateArray(matrixArray);
 	matrix.setArray(matrixArray);
 	this->piece_J.addMatrix(matrixArray); // J right.
 }
@@ -653,15 +653,15 @@ void GameField::initializePiece_L() {
 
 	this->piece_L.addMatrix(matrixArray); // L down.
 
-	Helper::rotateArray(matrixArray);
+	helper::rotateArray(matrixArray);
 	matrix.setArray(matrixArray);
 	this->piece_L.addMatrix(matrixArray); // L left.
 
-	Helper::rotateArray(matrixArray);
+	helper::rotateArray(matrixArray);
 	matrix.setArray(matrixArray);
 	this->piece_L.addMatrix(matrixArray); // L up.
 
-	Helper::rotateArray(matrixArray);
+	helper::rotateArray(matrixArray);
 	matrix.setArray(matrixArray);
 	this->piece_L.addMatrix(matrixArray); // L right.
 }

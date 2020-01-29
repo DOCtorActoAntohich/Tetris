@@ -8,20 +8,18 @@
 #include <filesystem>
 #include <ResourceIndexer.h>
 
-#include "Scene.h"
-#include "Keyboard.h"
-#include "GameField.h"
-#include "Score.h"
-#include "SpriteWrapper.h"
-#include "SoundWrapper.h"
-#include "CounterUI.h"
-#include "FrameTimer.h"
+#include "tetris/scene_handling/Scene.h"
+#include "tetris/wrapper/Keyboard.h"
+#include "tetris/GameField.h"
+#include "tetris/Score.h"
+#include "tetris/wrapper/Sprite.h"
+#include "tetris/wrapper/Sound.h"
+#include "tetris/wrapper/CounterUI.h"
+#include "tetris/wrapper/FrameTimer.h"
 
 
 namespace tetris {
-	using Sound = SoundWrapper;
-	using Sprite = SpriteWrapper;
-
+	using GamePadKey = wrapper::ControlKey;
 
 	class Game {
 	public:
@@ -53,15 +51,15 @@ namespace tetris {
 
 #pragma region Textures
 
-		Sprite splash_background;
-		Sprite controls_background;
-		Sprite menu_background;
-		Sprite game_background;
-		Sprite pause_background;
+		wrapper::Sprite splash_background;
+		wrapper::Sprite controls_background;
+		wrapper::Sprite menu_background;
+		wrapper::Sprite game_background;
+		wrapper::Sprite pause_background;
 
-		Sprite game_droughtIndicator;
+		wrapper::Sprite game_droughtIndicator;
 
-		Sprite game_blocks;
+		wrapper::Sprite game_blocks;
 
 		// Actual block size (in pixels).
 		static const int32_t BLOCK_SIZE = 19;
@@ -114,22 +112,22 @@ namespace tetris {
 
 
 
-		CounterUI game_tetrisesCounter;
-		CounterUI game_burnCounter;
-		CounterUI game_tetrisRateCounter;
-		CounterUI game_linesCounter;
-		CounterUI game_topScoreCounter;
-		CounterUI game_currentScoreCounter;
-		CounterUI game_levelCounter;
-		CounterUI game_droughtCounter;
+		wrapper::CounterUI game_tetrisesCounter;
+		wrapper::CounterUI game_burnCounter;
+		wrapper::CounterUI game_tetrisRateCounter;
+		wrapper::CounterUI game_linesCounter;
+		wrapper::CounterUI game_topScoreCounter;
+		wrapper::CounterUI game_currentScoreCounter;
+		wrapper::CounterUI game_levelCounter;
+		wrapper::CounterUI game_droughtCounter;
 
-		CounterUI game_pieceCounter_T;
-		CounterUI game_pieceCounter_J;
-		CounterUI game_pieceCounter_Z;
-		CounterUI game_pieceCounter_O;
-		CounterUI game_pieceCounter_S;
-		CounterUI game_pieceCounter_L;
-		CounterUI game_pieceCounter_I;
+		wrapper::CounterUI game_pieceCounter_T;
+		wrapper::CounterUI game_pieceCounter_J;
+		wrapper::CounterUI game_pieceCounter_Z;
+		wrapper::CounterUI game_pieceCounter_O;
+		wrapper::CounterUI game_pieceCounter_S;
+		wrapper::CounterUI game_pieceCounter_L;
+		wrapper::CounterUI game_pieceCounter_I;
 
 		void initializeCounters();
 		void initializePieceCounters();
@@ -138,7 +136,7 @@ namespace tetris {
 		bool shouldCallDrawer;
 
 
-		std::vector<CounterUI> game_pieceCounters;
+		std::vector<wrapper::CounterUI> game_pieceCounters;
 		std::vector<std::tuple<const Tetrimino::Matrix::Array*, sf::Vector2f>> game_staticticsBlocksData;
 		void initializeStatisticsPieceData();
 
@@ -147,20 +145,20 @@ namespace tetris {
 
 #pragma region Sounds
 
-		Sound menuClickMajor_sound;
-		Sound menuClickMinor_sound;
+		wrapper::Sound menuClickMajor_sound;
+		wrapper::Sound menuClickMinor_sound;
 
-		Sound pause_sound;
+		wrapper::Sound pause_sound;
 
-		Sound tetriminoMove_sound;
-		Sound tetriminoRotate_sound;
-		Sound tetriminoLand_sound;
+		wrapper::Sound tetriminoMove_sound;
+		wrapper::Sound tetriminoRotate_sound;
+		wrapper::Sound tetriminoLand_sound;
 
-		Sound lineCleared_sound;
-		Sound tetrisCleared_sound;
-		Sound newLevel_sound;
+		wrapper::Sound lineCleared_sound;
+		wrapper::Sound tetrisCleared_sound;
+		wrapper::Sound newLevel_sound;
 
-		Sound gameOver_sound;
+		wrapper::Sound gameOver_sound;
 
 #pragma /* Sounds */ endregion
 
@@ -178,8 +176,8 @@ namespace tetris {
 		// Closes the game window.
 		void exit();
 
-		Scene scene;
-		Keyboard keyboard;
+		scene_handling::Scene scene;
+		wrapper::Keyboard keyboard;
 
 		static const int32_t FPS = 60;
 
@@ -193,11 +191,11 @@ namespace tetris {
 		void (Game::* draw)();
 
 		// Changes scene handlers.
-		void changeScene(Scene scene);
+		void changeScene(scene_handling::Scene scene);
 
 		// Returns pointers to handlers of a specified scene.
 		// First handler is updater, second is drawer.
-		std::pair<void(Game::*)(), void(Game::*)()> chooseUpdaters(Scene scene);
+		std::pair<void(Game::*)(), void(Game::*)()> chooseUpdaters(scene_handling::Scene scene);
 
 #pragma region Scene Handlers
 
@@ -207,7 +205,7 @@ namespace tetris {
 		static const int32_t SPLASH_TEXT_BLINK_TIMING = 30;
 
 		// Frames counter for blinking text.
-		FrameTimer splashScreen_textBlinkTimer;
+		wrapper::FrameTimer splashScreen_textBlinkTimer;
 
 		void splashScreen_update();
 		void splashScreen_draw();
@@ -227,7 +225,7 @@ namespace tetris {
 		static const int32_t MENU_HIGHLIGHTERS_BLINK_TIMING = 15;
 
 		// Frames counter for blinking menu highlighters.
-		FrameTimer menu_highlightersBlinkTimer;
+		wrapper::FrameTimer menu_highlightersBlinkTimer;
 
 		// Boundaries only for level and music select in menu.
 
@@ -261,19 +259,27 @@ namespace tetris {
 #pragma /* Menu */ endregion
 
 #pragma region Game
+		
+		// For timing animations of clearing lines and curtain.
+		static const int32_t ANIMATION_TIMING = 4;
+		wrapper::FrameTimer game_animationTimer;
+		bool game_isPerformingAnimation;
+
+		int32_t game_blocksToCover;
+		static const int32_t MAX_BLOCKS_TO_COVER = 5;
 
 		static const int32_t FIRST_SPAWN_DROP_DELAY = 120;
-		FrameTimer game_firstSpawnTimer;
+		wrapper::FrameTimer game_firstSpawnTimer;
 		bool game_isFirstSpawn;
 
 		// How fast figures fall on soft drop.
 		static const int32_t SOFT_DROP_DELAY = 2;
-		FrameTimer game_softDropTimer;
+		wrapper::FrameTimer game_softDropTimer;
 		bool game_allowSoftDrop;
 
 		static const int32_t LEVEL_WITH_MAX_SPEED = 29;
 		std::vector<int32_t> framesPerGridcell;
-		FrameTimer game_dropTimer;
+		wrapper::FrameTimer game_dropTimer;
 
 		// Handles most of game scene processes.
 		GameField game_field;
@@ -282,9 +288,8 @@ namespace tetris {
 		sf::Vector2f game_blocksDrawingOffset;
 
 		static const int32_t RESPAWN_DELAY = 10;
-		FrameTimer game_respawnTimer;
+		wrapper::FrameTimer game_respawnTimer;
 		bool game_hasPieceLanded;
-		bool game_hasLandSoundPlayed;
 		
 
 #pragma region DAS
@@ -305,7 +310,7 @@ namespace tetris {
 		Direction game_currentMoveDirection;
 
 		// Controls DAS.
-		FrameTimer game_dasTimer;
+		wrapper::FrameTimer game_dasTimer;
 
 		// Delay for 1st tetrimino moves.
 		static const int32_t DAS_DELAY_LONG = 16;
@@ -321,16 +326,19 @@ namespace tetris {
 
 		void game_update();
 		void game_updatePieceControls();
+		void game_dropPieceDown(bool isSoftDrop);
 		void game_movePiece(Direction direction);
 		void game_updateCounters();
 		void game_updateStatisticsCounters();
 		void game_updatePieceCounters();
+		
 
 		void game_drawCounters();
 		void game_drawStaticticsCounters();
 		void game_drawPieceCounters();
 		void game_drawBlocks();
 		void game_drawField();
+		void game_drawFieldCovered();
 		void game_drawCurrentPiece();
 		void game_drawStaticticsBlocks();
 		void game_drawNextPiece();

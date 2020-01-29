@@ -2,9 +2,9 @@
 
 #include <SFML/Audio.hpp>
 
-namespace tetris {
+namespace tetris::wrapper {
 	// A wrapper for sf::Sound.
-	class SoundWrapper {
+	class Sound {
 	public:
 		// Loads sound from embedded resource.
 		// Stores data in soundBuffer and links it to sound.

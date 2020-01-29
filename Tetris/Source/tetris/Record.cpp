@@ -1,8 +1,8 @@
-#include "Record.h"
+#include "tetris/Record.h"
 
 #include <fstream>
 
-#include "Helper.h"
+#include "tetris/helper/Helper.h"
 
 using namespace tetris;
 
@@ -21,7 +21,7 @@ Record::Record(std::string name, uint32_t score, uint8_t level) {
 
 
 std::string Record::getName() {
-	return Helper::replace(this->name, "_", " ");
+	return helper::replace(this->name, "_", " ");
 }
 
 
@@ -34,7 +34,7 @@ void Record::setName(std::string name) {
 	else if (name.size() > this->NAME_LENGTH) {
 		name = name.substr(0, this->NAME_LENGTH);
 	}
-	this->name = Helper::replace(name, " ", "_");
+	this->name = helper::replace(name, " ", "_");
 }
 
 
@@ -91,7 +91,7 @@ std::istream& tetris::operator>>(std::istream& input, Record& record) {
 	uint32_t score;
 	uint32_t level;
 	input >> name >> score >> level;
-	record.setName(Helper::tuUpperCase(name));
+	record.setName(helper::toUpperCase(name));
 	record.setScore(~score);
 	record.setLevel(~static_cast<uint8_t>(level));
 	return input;

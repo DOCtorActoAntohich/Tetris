@@ -1,6 +1,6 @@
-#include "Tetrimino.h"
+#include "tetris/Tetrimino.h"
 
-#include "Helper.h"
+#include "tetris/helper/Helper.h"
 
 using namespace tetris;
 
@@ -123,13 +123,13 @@ void Tetrimino::removeMatrix(size_t index) {
 
 
 void Tetrimino::switchToNextMatrix() {
-	this->currentMatrixIndex = Helper::mod(
+	this->currentMatrixIndex = helper::mod(
 		this->currentMatrixIndex + 1, this->matrices.size()
 	);
 }
 
 void Tetrimino::switchToPreviousMatrix() {
-	this->currentMatrixIndex = Helper::mod(
+	this->currentMatrixIndex = helper::mod(
 		this->currentMatrixIndex - 1, this->matrices.size()
 	);
 }

@@ -1,9 +1,9 @@
-#include "Score.h"
+#include "tetris/Score.h"
 
 #include <filesystem>
 #include <fstream>
 
-#include "Helper.h"
+#include "tetris/helper/Helper.h"
 
 using namespace tetris;
 
@@ -20,7 +20,7 @@ void Score::setDefaultScores() {
 
 
 void Score::loadFromFile(std::string fileName) {
-	std::filesystem::path path = Helper::getGameFolderPath();
+	std::filesystem::path path = helper::getGameFolderPath();
 	path /= fileName;
 	std::list<Record> records;
 	std::ifstream in(path);
@@ -59,7 +59,7 @@ void Score::saveData(std::list<Record>& records)
 
 
 void Score::saveToFile(std::string fileName) {
-	std::filesystem::path path = Helper::getGameFolderPath();
+	std::filesystem::path path = helper::getGameFolderPath();
 	path /= fileName;
 	std::ofstream out(path, std::ofstream::trunc);
 	for (auto record : this->records) {

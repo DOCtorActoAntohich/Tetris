@@ -7,11 +7,7 @@ using namespace tetris;
 
 
 
-Helper::Helper() { }
-
-
-
-std::vector<byte> Helper::loadEmbeddedResource(int32_t id) {
+std::vector<byte> helper::loadEmbeddedResource(int32_t id) {
 	// Took code from link bellow and rewrote a bit.
 	// https://smacdo.com/programming/embedding-user-defined-resources-in-visual-c-binaries/
 
@@ -50,7 +46,7 @@ std::vector<byte> Helper::loadEmbeddedResource(int32_t id) {
 
 
 
-std::filesystem::path Helper::getProgramDataPath() {
+std::filesystem::path helper::getProgramDataPath() {
 	PWSTR pathPointer;
 	SHGetKnownFolderPath(FOLDERID_ProgramData, 0, 0, &pathPointer);
 	std::wstring pathString(pathPointer);
@@ -60,16 +56,16 @@ std::filesystem::path Helper::getProgramDataPath() {
 
 
 
-std::filesystem::path Helper::getGameFolderPath() {
+std::filesystem::path helper::getGameFolderPath() {
 	static const std::string GAME_DATA_FOLDER = "Tetris by DOCtorActoAntohich";
-	auto path = Helper::getProgramDataPath();
+	auto path = helper::getProgramDataPath();
 	path /= GAME_DATA_FOLDER;
 	return path;
 }
 
 
 
-void Helper::writeToBinaryFile(const std::filesystem::path& path, const std::vector<byte>& bytes) {
+void helper::writeToBinaryFile(const std::filesystem::path& path, const std::vector<byte>& bytes) {
 	std::ofstream file(path, std::fstream::out | std::fstream::binary | std::fstream::trunc);
 	file.write((char*)&bytes[0], bytes.size());
 	file.close();
@@ -77,19 +73,19 @@ void Helper::writeToBinaryFile(const std::filesystem::path& path, const std::vec
 
 
 
-void Helper::deleteFile(const std::filesystem::path& path) {
+void helper::deleteFile(const std::filesystem::path& path) {
 	std::filesystem::remove(path);
 }
 
 
 
-void Helper::createDirectory(const std::filesystem::path& path) {
+void helper::createDirectory(const std::filesystem::path& path) {
 	std::filesystem::create_directories(path);
 }
 
 
 
-std::string Helper::replace(std::string string, const std::string& from, const std::string& to) {
+std::string helper::replace(std::string string, const std::string& from, const std::string& to) {
 	size_t index = 0;
 	while (true) {
 		index = string.find(from, index);
@@ -104,7 +100,7 @@ std::string Helper::replace(std::string string, const std::string& from, const s
 
 
 
-std::string Helper::tuUpperCase(std::string string) {
+std::string helper::toUpperCase(std::string string) {
 	for (auto& chr : string) {
 		chr = std::toupper(chr);
 	}
@@ -113,7 +109,7 @@ std::string Helper::tuUpperCase(std::string string) {
 
 
 
-size_t Helper::countDigits(uint32_t number) {
+size_t helper::countDigits(uint32_t number) {
 	size_t digits = 0;
 	while (number != 0) {
 		number /= 10;
@@ -124,14 +120,14 @@ size_t Helper::countDigits(uint32_t number) {
 
 
 
-int32_t Helper::mod(int32_t number, int32_t module)
+int32_t helper::mod(int32_t number, int32_t module)
 {
 	return ((number % module) + module) % module;
 }
 
 
 
-int32_t Helper::getRandomNumber(int32_t lowerBound, int32_t upperBound) {
+int32_t helper::getRandomNumber(int32_t lowerBound, int32_t upperBound) {
 	if (lowerBound < 0) {
 		lowerBound = 0;
 	}

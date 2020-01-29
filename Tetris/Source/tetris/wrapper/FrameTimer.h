@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace tetris {
+namespace tetris::wrapper {
 	// Frame timer that will trigger once per specified amount of frames.
 	// How to use:
 	// 1) Create timer and set how often to trigger.

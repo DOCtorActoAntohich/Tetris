@@ -1,6 +1,6 @@
-#include "Keyboard.h"
+#include "tetris/wrapper/Keyboard.h"
 
-using namespace tetris;
+using namespace tetris::wrapper;
 
 
 

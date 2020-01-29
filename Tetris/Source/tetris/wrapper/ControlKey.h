@@ -1,6 +1,6 @@
 #pragma once
 
-namespace tetris {
+namespace tetris::wrapper {
 	// Helps to avoid long names like sf::Keyboard::Key::Enter.
 	enum class ControlKey {
 		UP = 0,

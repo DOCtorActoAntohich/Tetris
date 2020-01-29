@@ -1,6 +1,6 @@
-#include "FrameTimer.h"
+#include "tetris/wrapper/FrameTimer.h"
 
-using namespace tetris;
+using namespace tetris::wrapper;
 
 
 

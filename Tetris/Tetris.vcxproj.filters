@@ -1,99 +1,116 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
+    <Filter Include="Source">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="Source\tetris">
+      <UniqueIdentifier>{a847a313-7800-439a-89fb-f64c9e505b54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\tetris\scene_handling">
+      <UniqueIdentifier>{9112e73b-d02e-467c-b264-f573050657c3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source\tetris\wrapper">
+      <UniqueIdentifier>{851f5ea0-0d18-4402-aa25-a4d996d012a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\tetris\helper">
+      <UniqueIdentifier>{615b4e70-2e88-4d6a-835c-a2393d4fd898}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\tetris\scene_handling\SplashScreen.cpp">
+      <Filter>Source\tetris\scene_handling</Filter>
     </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\main.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Keyboard.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\tetris\Game.cpp">
+      <Filter>Source\tetris</Filter>
     </ClCompile>
-    <ClCompile Include="Helper.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\tetris\GameField.cpp">
+      <Filter>Source\tetris</Filter>
     </ClCompile>
-    <ClCompile Include="GameField.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\tetris\Record.cpp">
+      <Filter>Source\tetris</Filter>
     </ClCompile>
-    <ClCompile Include="Score.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\tetris\Score.cpp">
+      <Filter>Source\tetris</Filter>
     </ClCompile>
-    <ClCompile Include="Record.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\tetris\Tetrimino.cpp">
+      <Filter>Source\tetris</Filter>
     </ClCompile>
-    <ClCompile Include="SoundWrapper.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\tetris\wrapper\CounterUI.cpp">
+      <Filter>Source\tetris\wrapper</Filter>
     </ClCompile>
-    <ClCompile Include="SpriteWrapper.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\tetris\wrapper\FrameTimer.cpp">
+      <Filter>Source\tetris\wrapper</Filter>
     </ClCompile>
-    <ClCompile Include="CounterUI.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\tetris\wrapper\Keyboard.cpp">
+      <Filter>Source\tetris\wrapper</Filter>
     </ClCompile>
-    <ClCompile Include="Tetrimino.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\tetris\wrapper\Sound.cpp">
+      <Filter>Source\tetris\wrapper</Filter>
     </ClCompile>
-    <ClCompile Include="FrameTimer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\tetris\wrapper\Sprite.cpp">
+      <Filter>Source\tetris\wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\tetris\helper\Helper.cpp">
+      <Filter>Source\tetris\helper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\tetris\scene_handling\SceneHandler.h">
+      <Filter>Source\tetris\scene_handling</Filter>
     </ClInclude>
-    <ClInclude Include="ControlKey.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\tetris\scene_handling\SplashScreen.h">
+      <Filter>Source\tetris\scene_handling</Filter>
     </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\tetris\scene_handling\Scene.h">
+      <Filter>Source\tetris\scene_handling</Filter>
     </ClInclude>
-    <ClInclude Include="Keyboard.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\tetris\Game.h">
+      <Filter>Source\tetris</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\tetris\GameField.h">
+      <Filter>Source\tetris</Filter>
     </ClInclude>
-    <ClInclude Include="Helper.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\tetris\Record.h">
+      <Filter>Source\tetris</Filter>
     </ClInclude>
-    <ClInclude Include="GameField.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\tetris\Score.h">
+      <Filter>Source\tetris</Filter>
     </ClInclude>
-    <ClInclude Include="Score.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\tetris\Tetrimino.h">
+      <Filter>Source\tetris</Filter>
     </ClInclude>
-    <ClInclude Include="Record.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\tetris\wrapper\ControlKey.h">
+      <Filter>Source\tetris\wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="SoundWrapper.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\tetris\wrapper\CounterUI.h">
+      <Filter>Source\tetris\wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteWrapper.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\tetris\wrapper\FrameTimer.h">
+      <Filter>Source\tetris\wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="CounterUI.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\tetris\wrapper\Keyboard.h">
+      <Filter>Source\tetris\wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="Tetrimino.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\resource.h">
+      <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="FrameTimer.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\tetris\wrapper\Sound.h">
+      <Filter>Source\tetris\wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\tetris\wrapper\Sprite.h">
+      <Filter>Source\tetris\wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\tetris\helper\Helper.h">
+      <Filter>Source\tetris\helper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

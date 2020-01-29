@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "Tetrimino.h"
+#include "tetris/Tetrimino.h"
 
 namespace tetris {
 	enum class Rotation : int32_t {

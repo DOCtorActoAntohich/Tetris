@@ -5,9 +5,9 @@
 #include <map>
 #include <vector>
 
-#include "ControlKey.h"
+#include "tetris/wrapper/ControlKey.h"
 
-namespace tetris {
+namespace tetris::wrapper {
 	// Small Wrapper over sf::Keyboard to make it a bit more comfortable.
 	class Keyboard {
 	public:

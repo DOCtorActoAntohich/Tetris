@@ -4,7 +4,7 @@
 #include <vector>
 #include <list>
 
-#include "Record.h"
+#include "tetris/Record.h"
 
 namespace tetris {
 	class Score {

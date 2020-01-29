@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 
-namespace tetris {
+namespace tetris::wrapper {
 	class CounterUI {
 	public:
 		static const size_t MAX_WIDTH = 10;

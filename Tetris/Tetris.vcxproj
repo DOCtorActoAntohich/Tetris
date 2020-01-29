@@ -79,7 +79,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)SFML-2.5.1\include;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <EnablePREfast>false</EnablePREfast>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -154,34 +154,37 @@ xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-window-2.dll" "$(OutDir)" /Y</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CounterUI.cpp" />
-    <ClCompile Include="FrameTimer.cpp" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameField.cpp" />
-    <ClCompile Include="Helper.cpp" />
-    <ClCompile Include="Keyboard.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Record.cpp" />
-    <ClCompile Include="Score.cpp" />
-    <ClCompile Include="SoundWrapper.cpp" />
-    <ClCompile Include="SpriteWrapper.cpp" />
-    <ClCompile Include="Tetrimino.cpp" />
+    <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\tetris\Game.cpp" />
+    <ClCompile Include="Source\tetris\GameField.cpp" />
+    <ClCompile Include="Source\tetris\helper\Helper.cpp" />
+    <ClCompile Include="Source\tetris\Record.cpp" />
+    <ClCompile Include="Source\tetris\scene_handling\SplashScreen.cpp" />
+    <ClCompile Include="Source\tetris\Score.cpp" />
+    <ClCompile Include="Source\tetris\Tetrimino.cpp" />
+    <ClCompile Include="Source\tetris\wrapper\CounterUI.cpp" />
+    <ClCompile Include="Source\tetris\wrapper\FrameTimer.cpp" />
+    <ClCompile Include="Source\tetris\wrapper\Keyboard.cpp" />
+    <ClCompile Include="Source\tetris\wrapper\Sound.cpp" />
+    <ClCompile Include="Source\tetris\wrapper\Sprite.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ControlKey.h" />
-    <ClInclude Include="CounterUI.h" />
-    <ClInclude Include="FrameTimer.h" />
-    <ClInclude Include="Game.h" />
-    <ClInclude Include="GameField.h" />
-    <ClInclude Include="Helper.h" />
-    <ClInclude Include="Keyboard.h" />
-    <ClInclude Include="Record.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="Score.h" />
-    <ClInclude Include="SoundWrapper.h" />
-    <ClInclude Include="SpriteWrapper.h" />
-    <ClInclude Include="Tetrimino.h" />
+    <ClInclude Include="Source\resource.h" />
+    <ClInclude Include="Source\tetris\Game.h" />
+    <ClInclude Include="Source\tetris\GameField.h" />
+    <ClInclude Include="Source\tetris\helper\Helper.h" />
+    <ClInclude Include="Source\tetris\Record.h" />
+    <ClInclude Include="Source\tetris\scene_handling\Scene.h" />
+    <ClInclude Include="Source\tetris\scene_handling\SceneHandler.h" />
+    <ClInclude Include="Source\tetris\scene_handling\SplashScreen.h" />
+    <ClInclude Include="Source\tetris\Score.h" />
+    <ClInclude Include="Source\tetris\Tetrimino.h" />
+    <ClInclude Include="Source\tetris\wrapper\ControlKey.h" />
+    <ClInclude Include="Source\tetris\wrapper\CounterUI.h" />
+    <ClInclude Include="Source\tetris\wrapper\FrameTimer.h" />
+    <ClInclude Include="Source\tetris\wrapper\Keyboard.h" />
+    <ClInclude Include="Source\tetris\wrapper\Sound.h" />
+    <ClInclude Include="Source\tetris\wrapper\Sprite.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Tetris.rc" />

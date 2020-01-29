@@ -1,17 +1,19 @@
-#include "Game.h"
+#include "tetris/Game.h"
 
 #include <iostream>
 #include <tuple>
 
+
 #include "resource.h"
-#include "Helper.h"
+
+#include "tetris/helper/Helper.h"
 
 using namespace tetris;
 
 
 
 Game::Game() {
-	changeScene(Scene::SPLASH_SCREEN);
+	changeScene(scene_handling::Scene::SPLASH_SCREEN);
 
 	this->splashScreen_textBlinkTimer.setTimingFrames(this->SPLASH_TEXT_BLINK_TIMING);
 
@@ -54,15 +56,14 @@ void Game::initializeWindow() {
 
 
 void Game::loadFont(int32_t id, std::vector<byte>& bytes, sf::Font& font) {
-	bytes = Helper::loadEmbeddedResource(id);
+	bytes = helper::loadEmbeddedResource(id);
 	font.loadFromMemory(&bytes[0], bytes.size());
 }
 
 
 
-void Game::openMusic(int32_t id, std::vector<byte>& musicBytes,
-						sf::Music& music) {
-	musicBytes = Helper::loadEmbeddedResource(id);
+void Game::openMusic(int32_t id, std::vector<byte>& musicBytes, sf::Music& music) {
+	musicBytes = helper::loadEmbeddedResource(id);
 	music.openFromMemory(&musicBytes[0], musicBytes.size());
 }
 
@@ -178,13 +179,13 @@ void Game::menu_musicHighlighters_update() {
 
 
 void Game::initializeCounters() {
-	CounterUI::setDefaultDisplayOptions(
+	wrapper::CounterUI::setDefaultDisplayOptions(
 		this->font, this->FONT_SIZE,
 		sf::Color::Red, sf::Text::Style::Regular
 	);
 	this->initializePieceCounters();
 
-	CounterUI::setDefaultDisplayOptions(
+	wrapper::CounterUI::setDefaultDisplayOptions(
 		this->font, this->FONT_SIZE,
 		sf::Color::White, sf::Text::Style::Regular
 	);
@@ -203,7 +204,7 @@ void Game::initializePieceCounters() {
 		{ 166, 305 },
 		{ 166, 349 }
 	};
-	this->game_pieceCounters = std::vector<CounterUI>(GameField::DIFFERENT_PIECES);
+	this->game_pieceCounters = std::vector<wrapper::CounterUI>(GameField::DIFFERENT_PIECES);
 	for (uint32_t i = 0; i < GameField::DIFFERENT_PIECES; ++i) {
 		this->game_pieceCounters[i].applyDefaultDisplayOptions();
 		this->game_pieceCounters[i].setMaximalValue(GameField::MAX_PIECE_AMOUNT);
@@ -214,7 +215,7 @@ void Game::initializePieceCounters() {
 
 
 void Game::initializeStaticticsCounters() {
-	std::vector<std::tuple<CounterUI*, int32_t, sf::Vector2f>> data = {
+	std::vector<std::tuple<wrapper::CounterUI*, int32_t, sf::Vector2f>> data = {
 		{ &this->game_tetrisesCounter, GameField::MAX_TETRISES, { 177, 419 } },
 		{ &this->game_burnCounter, GameField::MAX_BURN, { 177, 464 } },
 		{ &this->game_tetrisRateCounter, GameField::MAX_TETRIS_RATE, { 177, 510 } },
@@ -225,7 +226,7 @@ void Game::initializeStaticticsCounters() {
 		{ &this->game_droughtCounter, GameField::MAX_DROUGHT, { 642, 519 } },
 	};
 	for (uint32_t i = 0; i < data.size(); ++i) {
-		CounterUI* counter = std::get<0>(data[i]);
+		wrapper::CounterUI* counter = std::get<0>(data[i]);
 		counter->applyDefaultDisplayOptions();
 		counter->setMaximalValue(std::get<1>(data[i]));
 		counter->setPosition(std::get<2>(data[i]));
@@ -365,7 +366,7 @@ void Game::runMainLoop() {
 }
 
 
-void Game::changeScene(Scene scene) {
+void Game::changeScene(scene_handling::Scene scene) {
 	auto [update, draw] = this->chooseUpdaters(scene);
 	this->update = update;
 	this->draw = draw;
@@ -376,8 +377,9 @@ void Game::changeScene(Scene scene) {
 }
 
 
-std::pair<void(Game::*)(), void(Game::*)()> Game::chooseUpdaters(Scene scene) {
+std::pair<void(Game::*)(), void(Game::*)()> Game::chooseUpdaters(scene_handling::Scene scene) {
 	using voidfunc = void(Game::*)();
+	using Scene = scene_handling::Scene;
 	static std::map<Scene, std::pair<voidfunc, voidfunc>> handlers = {
 		{ Scene::SPLASH_SCREEN,
 		{ &Game::splashScreen_update, &Game::splashScreen_draw }},
@@ -411,11 +413,11 @@ void Game::splashScreen_update() {
 		this->pressEnter_text_isVisible = !this->pressEnter_text_isVisible;
 	}
 
-	if (keyboard.isKeyPushed(ControlKey::START)) {
+	if (keyboard.isKeyPushed(GamePadKey::START)) {
 		this->menuClickMajor_sound.play();
-		this->changeScene(Scene::CONTROLS_SCREEN);
+		this->changeScene(scene_handling::Scene::CONTROLS_SCREEN);
 	}
-	else if (keyboard.isKeyPushed(ControlKey::EXIT)) {
+	else if (keyboard.isKeyPushed(GamePadKey::EXIT)) {
 		this->window.close();
 	}
 }
@@ -439,17 +441,17 @@ void Game::splashScreen_draw() {
 #pragma region Controls Screen
 
 void Game::controlsScreen_update() {
-	if (keyboard.isKeyPushed(ControlKey::START)) {
+	if (keyboard.isKeyPushed(GamePadKey::START)) {
 		this->menu_highlightersBlinkTimer.reset();
 		this->menuClickMajor_sound.play();
-		this->changeScene(Scene::MENU);
+		this->changeScene(scene_handling::Scene::MENU);
 	}
-	else if (keyboard.isKeyPushed(ControlKey::B)) {
+	else if (keyboard.isKeyPushed(GamePadKey::B)) {
 		this->splashScreen_textBlinkTimer.reset();
 		this->menuClickMajor_sound.play();
-		this->changeScene(Scene::SPLASH_SCREEN);
+		this->changeScene(scene_handling::Scene::SPLASH_SCREEN);
 	}
-	else if (keyboard.isKeyPushed(ControlKey::EXIT)) {
+	else if (keyboard.isKeyPushed(GamePadKey::EXIT)) {
 		this->window.close();
 	}
 }
@@ -472,16 +474,16 @@ void Game::controlsScreen_draw() {
 void Game::menu_update() {
 	this->menu_highlightersBlinkTimer.update();
 
-	if (keyboard.isKeyPushed(ControlKey::START)) {
+	if (keyboard.isKeyPushed(GamePadKey::START)) {
 		this->menu_prepareForGame();
 		this->menuClickMajor_sound.play();
-		this->changeScene(Scene::GAME);
+		this->changeScene(scene_handling::Scene::GAME);
 	}
-	else if (keyboard.isKeyPushed(ControlKey::B)) {
+	else if (keyboard.isKeyPushed(GamePadKey::B)) {
 		this->menuClickMajor_sound.play();
-		this->changeScene(Scene::CONTROLS_SCREEN);
+		this->changeScene(scene_handling::Scene::CONTROLS_SCREEN);
 	}
-	else if (keyboard.isKeyPushed(ControlKey::EXIT)) {
+	else if (keyboard.isKeyPushed(GamePadKey::EXIT)) {
 		this->window.close();
 	}
 
@@ -497,14 +499,14 @@ void Game::menu_updateLevelSelection() {
 			!this->menu_isLevelHighlighterVisible;
 	}
 
-	if (keyboard.isKeyPushed(ControlKey::LEFT)) {
+	if (keyboard.isKeyPushed(GamePadKey::LEFT)) {
 		this->menuClickMinor_sound.play();
 		if (this->menu_startLevel > MINIMAL_LEVEL) {
 			--this->menu_startLevel;
 			this->menu_levelHighlighter_update();
 		}
 	}
-	else if (keyboard.isKeyPushed(ControlKey::RIGHT)) {
+	else if (keyboard.isKeyPushed(GamePadKey::RIGHT)) {
 		this->menuClickMinor_sound.play();
 		if (this->menu_startLevel < MAXIMAL_LEVEL) {
 			++this->menu_startLevel;
@@ -521,14 +523,14 @@ void Game::menu_updateMusicSelection() {
 			!this->menu_areMusicHighlightersVisible;
 	}
 
-	if (keyboard.isKeyPushed(ControlKey::UP)) {
+	if (keyboard.isKeyPushed(GamePadKey::UP)) {
 		this->menuClickMinor_sound.play();
 		if (this->menu_musicType > MINIMAL_MUSIC_TYPE) {
 			--this->menu_musicType;
 			this->menu_musicHighlighters_update();
 		}
 	}
-	else if (keyboard.isKeyPushed(ControlKey::DOWN)) {
+	else if (keyboard.isKeyPushed(GamePadKey::DOWN)) {
 		this->menuClickMinor_sound.play();
 		if (this->menu_musicType < MAXIMAL_MUSIC_TYPE) {
 			++this->menu_musicType;
@@ -547,20 +549,23 @@ void Game::menu_prepareForGame() {
 	this->game_allowSoftDrop = true;
 
 	this->game_hasPieceLanded = false;
-	this->game_hasLandSoundPlayed = true;
 	this->game_respawnTimer.setTimingFrames(this->RESPAWN_DELAY);
 	this->game_respawnTimer.reset();
 
 	this->game_isFirstSpawn = true;
 	this->game_firstSpawnTimer.setTimingFrames(this->FIRST_SPAWN_DROP_DELAY);
 	this->game_firstSpawnTimer.reset();
+
+	this->game_isPerformingAnimation = false;
+	this->game_animationTimer.setTimingFrames(this->ANIMATION_TIMING);
+	this->game_animationTimer.reset();
 }
 
 
 
 void Game::menu_setStartLevel() {
 	int32_t newLevel = this->menu_startLevel;
-	if (keyboard.isKeyHeld(ControlKey::A)) {
+	if (keyboard.isKeyHeld(GamePadKey::A)) {
 		newLevel += this->LEVEL_INCREMENT_HARD_MODE;
 	}
 	this->game_field.setLevel(newLevel);
@@ -600,45 +605,35 @@ void Game::menu_draw() {
 
 
 void Game::game_update() {
-	if (keyboard.isKeyPushed(ControlKey::START)) {
+	if (keyboard.isKeyPushed(GamePadKey::START)) {
 		this->pause_sound.play();
-		this->changeScene(Scene::PAUSE_SCREEN);
+		this->changeScene(scene_handling::Scene::PAUSE_SCREEN);
 		return;
 	}
+
+
+	if (this->game_isPerformingAnimation) {
+		return;
+	}
+	this->game_animationTimer.reset();
 
 	// Updates delay on first piece spawn.
 	if (this->game_isFirstSpawn) {
 		this->game_firstSpawnTimer.update();
 		if (this->game_firstSpawnTimer.isTriggered() ||
-			keyboard.isKeyHeld(ControlKey::DOWN)) {
+			keyboard.isKeyHeld(GamePadKey::DOWN)) {
 			this->game_isFirstSpawn = false;
 		}
 	}
 
-	if (!this->game_field.doesActivePieceExist()) {
-		if (this->game_hasPieceLanded) {
-			if (!this->game_hasLandSoundPlayed) {
-				this->tetriminoLand_sound.play();
-				this->game_hasLandSoundPlayed = true;
-			}
-		}
-		this->game_respawnTimer.update();
-		if (this->game_respawnTimer.isTriggered()) {
-			bool spawned = this->game_field.spawnNewPiece();
-			if (!spawned) {
-				this->gameOver_sound.play();
-				this->changeScene(Scene::SPLASH_SCREEN);
-				return;
-			}
-		}
-	}
-
+	
 	if (this->game_field.doesActivePieceExist()) {
 		this->game_updatePieceControls();
 
 		this->game_field.checkFullLines();
 		const std::vector<int32_t>& linesToClear = this->game_field.getLinesToClear();
 		if (linesToClear.size() != 0) {
+			
 			if (linesToClear.size() == 4) {
 				this->tetrisCleared_sound.play();
 			}
@@ -648,17 +643,31 @@ void Game::game_update() {
 			this->game_field.clearLines();
 		}
 	}
+
+
+	// Spawns new piece
+	if (!this->game_field.doesActivePieceExist()) {
+		this->game_respawnTimer.update();
+		if (this->game_respawnTimer.isTriggered()) {
+			bool spawned = this->game_field.spawnNewPiece();
+			if (!spawned) {
+				this->gameOver_sound.play();
+				this->changeScene(scene_handling::Scene::SPLASH_SCREEN);
+				return;
+			}
+		}
+	}
 }
 
 
 
 void Game::game_updatePieceControls() {
-	if (keyboard.isKeyPushed(ControlKey::B)) {
+	if (keyboard.isKeyPushed(GamePadKey::B)) {
 		if (this->game_field.rotatePiece(Rotation::COUNTERCLOCKWISE)) {
 			this->tetriminoRotate_sound.play();
 		}
 	}
-	else if (keyboard.isKeyPushed(ControlKey::A)) {
+	else if (keyboard.isKeyPushed(GamePadKey::A)) {
 		if (this->game_field.rotatePiece(Rotation::CLOCKWISE)) {
 			this->tetriminoRotate_sound.play();
 		}
@@ -666,19 +675,16 @@ void Game::game_updatePieceControls() {
 
 	
 
-	bool down = keyboard.isKeyHeld(ControlKey::DOWN) && this->game_allowSoftDrop;
-	bool left = keyboard.isKeyHeld(ControlKey::LEFT);
-	bool right = keyboard.isKeyHeld(ControlKey::RIGHT);
+	bool down = keyboard.isKeyHeld(GamePadKey::DOWN) && this->game_allowSoftDrop;
+	bool left = keyboard.isKeyHeld(GamePadKey::LEFT);
+	bool right = keyboard.isKeyHeld(GamePadKey::RIGHT);
 	if (down && (left || right)) {
 		return;
 	}
 	else if (down) {
 		this->game_softDropTimer.update();
 		if (this->game_softDropTimer.isTriggered()) {
-			this->game_hasPieceLanded = this->game_field.dropPieceDown(true);
-			if (this->game_hasPieceLanded) {
-				this->game_hasLandSoundPlayed = false;
-			}
+			this->game_dropPieceDown(true);
 		}
 	}
 	else {
@@ -688,14 +694,22 @@ void Game::game_updatePieceControls() {
 	if (!down && !this->game_isFirstSpawn) {
 		this->game_dropTimer.update();
 		if (this->game_dropTimer.isTriggered()) {
-			this->game_hasPieceLanded = this->game_field.dropPieceDown(false);
-			if (this->game_hasPieceLanded) {
-				this->game_hasLandSoundPlayed = false;
-			}
+			this->game_dropPieceDown(false);
 		}
 	}
 
 	this->game_updateCounters();
+}
+
+
+
+void Game::game_dropPieceDown(bool isSoftDrop) {
+	this->game_hasPieceLanded = this->game_field.dropPieceDown(isSoftDrop);
+	if (this->game_hasPieceLanded) {
+		this->tetriminoLand_sound.play();
+		this->game_isPerformingAnimation = true;
+		this->game_blocksToCover = 0;
+	}
 }
 
 
@@ -713,10 +727,10 @@ void Game::game_updateDas() {
 void Game::game_updateDas_controls() {
 	this->game_previousMoveDirection = this->game_currentMoveDirection;
 	this->game_currentMoveDirection = Direction::NONE;
-	if (keyboard.isKeyHeld(ControlKey::LEFT)) {
+	if (keyboard.isKeyHeld(GamePadKey::LEFT)) {
 		this->game_currentMoveDirection = Direction::LEFT;
 	}
-	else if (keyboard.isKeyHeld(ControlKey::RIGHT)) {
+	else if (keyboard.isKeyHeld(GamePadKey::RIGHT)) {
 		this->game_currentMoveDirection = Direction::RIGHT;
 	}
 }
@@ -866,6 +880,52 @@ void Game::game_drawField() {
 			}
 		}
 	}
+	if (this->game_isPerformingAnimation) {
+		this->game_drawFieldCovered();
+	}
+}
+
+
+
+void Game::game_drawFieldCovered() {
+	this->game_animationTimer.update();
+	if (this->game_animationTimer.isTriggered()) {
+		++this->game_blocksToCover;
+		if (this->game_blocksToCover == MAX_BLOCKS_TO_COVER) {
+			this->game_isPerformingAnimation = false;
+		}
+	}
+
+	this->game_blocks.setColor(sf::Color::Black);
+
+	const std::vector<int32_t>& linesToClear = this->game_field.getLinesToClear();
+	for (auto y : linesToClear) {
+		int32_t coverLeft = 0;
+		for (int32_t x = 4; x >= 0; --x) {
+			if (coverLeft == this->game_blocksToCover) {
+				break;
+			}
+			++coverLeft;
+			auto drawPos = sf::Vector2f(
+				this->game_blocksDrawingOffset.x + float(x * this->BLOCK_SIZE_WITH_GAP),
+				this->game_blocksDrawingOffset.y + float(y * this->BLOCK_SIZE_WITH_GAP)
+			);
+			this->game_drawSingleBlock(drawPos, Tetrimino::Type::W);
+		}
+		int32_t coverRight = 0;
+		for (int32_t x = 5; x < this->game_field.FIELD_X_SIZE; ++x) {
+			if (coverRight == this->game_blocksToCover) {
+				break;
+			}
+			++coverRight;
+			auto drawPos = sf::Vector2f(
+				this->game_blocksDrawingOffset.x + float(x * this->BLOCK_SIZE_WITH_GAP),
+				this->game_blocksDrawingOffset.y + float(y * this->BLOCK_SIZE_WITH_GAP)
+			);
+			this->game_drawSingleBlock(drawPos, Tetrimino::Type::W);
+		}
+	}
+	this->game_blocks.setColor(sf::Color::White);
 }
 
 
@@ -1000,10 +1060,10 @@ void Game::game_draw() {
 #pragma region Pause Screen
 
 void Game::pauseScreen_update() {
-	if (keyboard.isKeyPushed(ControlKey::START)) {
-		this->changeScene(Scene::GAME);
+	if (keyboard.isKeyPushed(GamePadKey::START)) {
+		this->changeScene(scene_handling::Scene::GAME);
 	}
-	else if (keyboard.isKeyPushed(ControlKey::EXIT)) {
+	else if (keyboard.isKeyPushed(GamePadKey::EXIT)) {
 		this->exit();
 	}
 }
