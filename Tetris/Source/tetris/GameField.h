@@ -12,7 +12,7 @@ namespace tetris {
 		COUNTERCLOCKWISE = -1
 	};
 
-
+	
 
 	enum class Direction : int32_t {
 		LEFT = -1,

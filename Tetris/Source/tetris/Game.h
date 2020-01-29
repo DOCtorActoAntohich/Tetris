@@ -19,9 +19,9 @@
 
 
 namespace tetris {
-	using GamePadKey = wrapper::ControlKey;
-
 	class Game {
+		using GamePadKey = wrapper::ControlKey;
+
 	public:
 		Game();
 
