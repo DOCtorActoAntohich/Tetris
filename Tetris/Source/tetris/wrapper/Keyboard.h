@@ -9,40 +9,38 @@
 
 namespace tetris::wrapper {
 	// Small Wrapper over sf::Keyboard to make it a bit more comfortable.
+	// Must be initialized first. Will not do anything otherwise.
+	// This class is STATIC.
 	class Keyboard {
 	public:
-		Keyboard();
+		// Initializes keyboard to make it
+		static void initialize();
 
 		// Saves current state to previous and updates key states.
-		void update();
+		static void update();
 
 		// Checks if key has state DOWN (pressed for a while).
-		bool isKeyHeld(ControlKey key);
+		static bool isKeyHeld(ControlKey key);
 
 		// Checks if key changed state from UP to DOWN.
-		bool isKeyPushed(ControlKey key);
+		static bool isKeyPushed(ControlKey key);
 
 		// Checks if key changed state from DOWN to UP.
-		bool isKeyReleased(ControlKey key);
+		static bool isKeyReleased(ControlKey key);
 	private:
-		// Returns the list of sensitive keys (that should be checked).
-		std::vector<sf::Keyboard::Key> getKeysList();
+		Keyboard();
 
-
-		std::map<ControlKey, sf::Keyboard::Key> keysMap_;
-
-		// Defines a default map from "ControlKey" to "sf::Keyboard::Key".
-		std::map<ControlKey, sf::Keyboard::Key> defineKeyMap();
+		// Saves current state of keyboard to previous.
+		static void saveState();
 
 		// Transforms input key using defined map.
-		sf::Keyboard::Key transformKey(ControlKey key);
+		static sf::Keyboard::Key transformKey(ControlKey key);
 
+		static const std::map<ControlKey, sf::Keyboard::Key>& getKeysMap();
 
-		// Saves current state of pressed keys to previous state.
-		void saveState();
+		static bool isInitialized;
 
-
-		std::map<sf::Keyboard::Key, bool> currentState_;
-		std::map<sf::Keyboard::Key, bool> previousState_;
+		static std::map<sf::Keyboard::Key, bool> currentState;
+		static std::map<sf::Keyboard::Key, bool> previousState;
 	};
 }

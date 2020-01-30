@@ -159,7 +159,9 @@ xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-window-2.dll" "$(OutDir)" /Y</Command>
     <ClCompile Include="Source\tetris\GameField.cpp" />
     <ClCompile Include="Source\tetris\helper\Helper.cpp" />
     <ClCompile Include="Source\tetris\Record.cpp" />
+    <ClCompile Include="Source\tetris\scene_handling\SceneHandlerBase.cpp" />
     <ClCompile Include="Source\tetris\scene_handling\SplashScreen.cpp" />
+    <ClCompile Include="Source\tetris\scene_handling\ResourceManager.cpp" />
     <ClCompile Include="Source\tetris\Score.cpp" />
     <ClCompile Include="Source\tetris\Tetrimino.cpp" />
     <ClCompile Include="Source\tetris\wrapper\CounterUI.cpp" />
@@ -175,8 +177,9 @@ xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-window-2.dll" "$(OutDir)" /Y</Command>
     <ClInclude Include="Source\tetris\helper\Helper.h" />
     <ClInclude Include="Source\tetris\Record.h" />
     <ClInclude Include="Source\tetris\scene_handling\Scene.h" />
-    <ClInclude Include="Source\tetris\scene_handling\SceneHandler.h" />
+    <ClInclude Include="Source\tetris\scene_handling\SceneHandlerBase.h" />
     <ClInclude Include="Source\tetris\scene_handling\SplashScreen.h" />
+    <ClInclude Include="Source\tetris\scene_handling\ResourceManager.h" />
     <ClInclude Include="Source\tetris\Score.h" />
     <ClInclude Include="Source\tetris\Tetrimino.h" />
     <ClInclude Include="Source\tetris\wrapper\ControlKey.h" />

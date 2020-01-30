@@ -13,6 +13,8 @@ using namespace tetris;
 
 
 Game::Game() {
+	Keyboard::initialize();
+
 	changeScene(scene_handling::Scene::SPLASH_SCREEN);
 
 	this->splashScreen_textBlinkTimer.setTimingFrames(this->SPLASH_TEXT_BLINK_TIMING);
@@ -354,7 +356,7 @@ void Game::runMainLoop() {
 		}
 
 		if (this->window.hasFocus()) {
-			this->keyboard.update();
+			Keyboard::update();
 
 			(this->*update)();
 			if (this->shouldCallDrawer) {
@@ -413,11 +415,11 @@ void Game::splashScreen_update() {
 		this->pressEnter_text_isVisible = !this->pressEnter_text_isVisible;
 	}
 
-	if (keyboard.isKeyPushed(GamePadKey::START)) {
+	if (Keyboard::isKeyPushed(GamePadKey::START)) {
 		this->menuClickMajor_sound.play();
 		this->changeScene(scene_handling::Scene::CONTROLS_SCREEN);
 	}
-	else if (keyboard.isKeyPushed(GamePadKey::EXIT)) {
+	else if (Keyboard::isKeyPushed(GamePadKey::EXIT)) {
 		this->window.close();
 	}
 }
@@ -441,17 +443,17 @@ void Game::splashScreen_draw() {
 #pragma region Controls Screen
 
 void Game::controlsScreen_update() {
-	if (keyboard.isKeyPushed(GamePadKey::START)) {
+	if (Keyboard::isKeyPushed(GamePadKey::START)) {
 		this->menu_highlightersBlinkTimer.reset();
 		this->menuClickMajor_sound.play();
 		this->changeScene(scene_handling::Scene::MENU);
 	}
-	else if (keyboard.isKeyPushed(GamePadKey::B)) {
+	else if (Keyboard::isKeyPushed(GamePadKey::B)) {
 		this->splashScreen_textBlinkTimer.reset();
 		this->menuClickMajor_sound.play();
 		this->changeScene(scene_handling::Scene::SPLASH_SCREEN);
 	}
-	else if (keyboard.isKeyPushed(GamePadKey::EXIT)) {
+	else if (Keyboard::isKeyPushed(GamePadKey::EXIT)) {
 		this->window.close();
 	}
 }
@@ -474,16 +476,16 @@ void Game::controlsScreen_draw() {
 void Game::menu_update() {
 	this->menu_highlightersBlinkTimer.update();
 
-	if (keyboard.isKeyPushed(GamePadKey::START)) {
+	if (Keyboard::isKeyPushed(GamePadKey::START)) {
 		this->menu_prepareForGame();
 		this->menuClickMajor_sound.play();
 		this->changeScene(scene_handling::Scene::GAME);
 	}
-	else if (keyboard.isKeyPushed(GamePadKey::B)) {
+	else if (Keyboard::isKeyPushed(GamePadKey::B)) {
 		this->menuClickMajor_sound.play();
 		this->changeScene(scene_handling::Scene::CONTROLS_SCREEN);
 	}
-	else if (keyboard.isKeyPushed(GamePadKey::EXIT)) {
+	else if (Keyboard::isKeyPushed(GamePadKey::EXIT)) {
 		this->window.close();
 	}
 
@@ -499,14 +501,14 @@ void Game::menu_updateLevelSelection() {
 			!this->menu_isLevelHighlighterVisible;
 	}
 
-	if (keyboard.isKeyPushed(GamePadKey::LEFT)) {
+	if (Keyboard::isKeyPushed(GamePadKey::LEFT)) {
 		this->menuClickMinor_sound.play();
 		if (this->menu_startLevel > MINIMAL_LEVEL) {
 			--this->menu_startLevel;
 			this->menu_levelHighlighter_update();
 		}
 	}
-	else if (keyboard.isKeyPushed(GamePadKey::RIGHT)) {
+	else if (Keyboard::isKeyPushed(GamePadKey::RIGHT)) {
 		this->menuClickMinor_sound.play();
 		if (this->menu_startLevel < MAXIMAL_LEVEL) {
 			++this->menu_startLevel;
@@ -523,14 +525,14 @@ void Game::menu_updateMusicSelection() {
 			!this->menu_areMusicHighlightersVisible;
 	}
 
-	if (keyboard.isKeyPushed(GamePadKey::UP)) {
+	if (Keyboard::isKeyPushed(GamePadKey::UP)) {
 		this->menuClickMinor_sound.play();
 		if (this->menu_musicType > MINIMAL_MUSIC_TYPE) {
 			--this->menu_musicType;
 			this->menu_musicHighlighters_update();
 		}
 	}
-	else if (keyboard.isKeyPushed(GamePadKey::DOWN)) {
+	else if (Keyboard::isKeyPushed(GamePadKey::DOWN)) {
 		this->menuClickMinor_sound.play();
 		if (this->menu_musicType < MAXIMAL_MUSIC_TYPE) {
 			++this->menu_musicType;
@@ -565,7 +567,7 @@ void Game::menu_prepareForGame() {
 
 void Game::menu_setStartLevel() {
 	int32_t newLevel = this->menu_startLevel;
-	if (keyboard.isKeyHeld(GamePadKey::A)) {
+	if (Keyboard::isKeyHeld(GamePadKey::A)) {
 		newLevel += this->LEVEL_INCREMENT_HARD_MODE;
 	}
 	this->game_field.setLevel(newLevel);
@@ -605,7 +607,7 @@ void Game::menu_draw() {
 
 
 void Game::game_update() {
-	if (keyboard.isKeyPushed(GamePadKey::START)) {
+	if (Keyboard::isKeyPushed(GamePadKey::START)) {
 		this->pause_sound.play();
 		this->changeScene(scene_handling::Scene::PAUSE_SCREEN);
 		return;
@@ -621,7 +623,7 @@ void Game::game_update() {
 	if (this->game_isFirstSpawn) {
 		this->game_firstSpawnTimer.update();
 		if (this->game_firstSpawnTimer.isTriggered() ||
-			keyboard.isKeyHeld(GamePadKey::DOWN)) {
+			Keyboard::isKeyHeld(GamePadKey::DOWN)) {
 			this->game_isFirstSpawn = false;
 		}
 	}
@@ -662,12 +664,12 @@ void Game::game_update() {
 
 
 void Game::game_updatePieceControls() {
-	if (keyboard.isKeyPushed(GamePadKey::B)) {
+	if (Keyboard::isKeyPushed(GamePadKey::B)) {
 		if (this->game_field.rotatePiece(Rotation::COUNTERCLOCKWISE)) {
 			this->tetriminoRotate_sound.play();
 		}
 	}
-	else if (keyboard.isKeyPushed(GamePadKey::A)) {
+	else if (Keyboard::isKeyPushed(GamePadKey::A)) {
 		if (this->game_field.rotatePiece(Rotation::CLOCKWISE)) {
 			this->tetriminoRotate_sound.play();
 		}
@@ -675,9 +677,9 @@ void Game::game_updatePieceControls() {
 
 	
 
-	bool down = keyboard.isKeyHeld(GamePadKey::DOWN) && this->game_allowSoftDrop;
-	bool left = keyboard.isKeyHeld(GamePadKey::LEFT);
-	bool right = keyboard.isKeyHeld(GamePadKey::RIGHT);
+	bool down = Keyboard::isKeyHeld(GamePadKey::DOWN) && this->game_allowSoftDrop;
+	bool left = Keyboard::isKeyHeld(GamePadKey::LEFT);
+	bool right = Keyboard::isKeyHeld(GamePadKey::RIGHT);
 	if (down && (left || right)) {
 		return;
 	}
@@ -727,10 +729,10 @@ void Game::game_updateDas() {
 void Game::game_updateDas_controls() {
 	this->game_previousMoveDirection = this->game_currentMoveDirection;
 	this->game_currentMoveDirection = Direction::NONE;
-	if (keyboard.isKeyHeld(GamePadKey::LEFT)) {
+	if (Keyboard::isKeyHeld(GamePadKey::LEFT)) {
 		this->game_currentMoveDirection = Direction::LEFT;
 	}
-	else if (keyboard.isKeyHeld(GamePadKey::RIGHT)) {
+	else if (Keyboard::isKeyHeld(GamePadKey::RIGHT)) {
 		this->game_currentMoveDirection = Direction::RIGHT;
 	}
 }
@@ -1060,10 +1062,10 @@ void Game::game_draw() {
 #pragma region Pause Screen
 
 void Game::pauseScreen_update() {
-	if (keyboard.isKeyPushed(GamePadKey::START)) {
+	if (Keyboard::isKeyPushed(GamePadKey::START)) {
 		this->changeScene(scene_handling::Scene::GAME);
 	}
-	else if (keyboard.isKeyPushed(GamePadKey::EXIT)) {
+	else if (Keyboard::isKeyPushed(GamePadKey::EXIT)) {
 		this->exit();
 	}
 }

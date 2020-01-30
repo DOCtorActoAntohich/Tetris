@@ -3,88 +3,117 @@
 using namespace tetris::wrapper;
 
 
+#pragma region Static Members Initialization
+
+bool Keyboard::isInitialized = false;
+
+std::map<sf::Keyboard::Key, bool> Keyboard::currentState;
+std::map<sf::Keyboard::Key, bool> Keyboard::previousState;
+
+#pragma /* Static Members Initialization */ endregion
+
+
+
+Keyboard::Keyboard()
+{ }
+
+
+
+#pragma region State Management
+
 
 #pragma warning(push)
 // I can do nothing with this warning since it's caused by SFML.
 #pragma warning(disable : 26812)
 
-Keyboard::Keyboard() {
-	this->keysMap_ = this->defineKeyMap();
-
-	for (auto key : this->getKeysList()) {
-		this->currentState_[key] = false;
+void Keyboard::initialize() {
+	auto& keysMap = Keyboard::getKeysMap();
+	for (auto [_, sfKey] : keysMap) {
+		Keyboard::currentState[sfKey] = false;
 	}
-	this->saveState();
+	Keyboard::saveState();
+	Keyboard::isInitialized = true;
 }
 
 #pragma warning(pop)
 
 
 
-std::map<ControlKey, sf::Keyboard::Key> Keyboard::defineKeyMap() {
-	return std::map<ControlKey, sf::Keyboard::Key>{
-		{ ControlKey::UP,	 sf::Keyboard::Key::W		},
-		{ ControlKey::DOWN,  sf::Keyboard::Key::S		},
-		{ ControlKey::LEFT,  sf::Keyboard::Key::A		},
-		{ ControlKey::RIGHT, sf::Keyboard::Key::D		},
-		{ ControlKey::START, sf::Keyboard::Key::Enter	},
-		{ ControlKey::B,	 sf::Keyboard::Key::Left	},
-		{ ControlKey::A,	 sf::Keyboard::Key::Right	},
-		{ ControlKey::EXIT,	 sf::Keyboard::Key::Escape	}
-	};
-}
-
-
-
 void Keyboard::update() {
-	this->saveState();
+	if (!Keyboard::isInitialized) {
+		return;
+	}
 
-	for (auto key : this->getKeysList()) {
-		this->currentState_[key] = sf::Keyboard::isKeyPressed(key);
+	Keyboard::saveState();
+	
+	auto& keysMap = Keyboard::getKeysMap();
+	for (auto [_, sfKey] : keysMap) {
+		Keyboard::currentState[sfKey] = sf::Keyboard::isKeyPressed(sfKey);
 	}
 }
+
+
 
 void Keyboard::saveState() {
-	this->previousState_ = std::map<sf::Keyboard::Key, bool>(this->currentState_);
+	Keyboard::previousState = Keyboard::currentState;
 }
 
-
-
-std::vector<sf::Keyboard::Key> Keyboard::getKeysList() {
-	static std::vector<sf::Keyboard::Key> keys;
-	static bool isInitialized = false;
-	if (!isInitialized) {
-		for (auto [_, value] : this->keysMap_) {
-			keys.push_back(value);
-		}
-		isInitialized = true;
-	}
-	return keys;
-}
+#pragma /* State Management */ endregion
 
 
 
-sf::Keyboard::Key Keyboard::transformKey(ControlKey key) {
-	return this->keysMap_[key];
-}
-
+#pragma region State Checking
 
 
 bool Keyboard::isKeyHeld(ControlKey key) {
-	sf::Keyboard::Key sfKey = this->transformKey(key);
-	return this->currentState_[sfKey];
+	if (!Keyboard::isInitialized) {
+		return false;
+	}
+	sf::Keyboard::Key sfKey = Keyboard::transformKey(key);
+	return Keyboard::currentState[sfKey];
 }
 
 
 
 bool Keyboard::isKeyPushed(ControlKey key) {
-	sf::Keyboard::Key sfKey = this->transformKey(key);
-	return this->currentState_[sfKey] && !this->previousState_[sfKey];
+	if (!Keyboard::isInitialized) {
+		return false;
+	}
+	sf::Keyboard::Key sfKey = Keyboard::transformKey(key);
+	return Keyboard::currentState[sfKey] && !Keyboard::previousState[sfKey];
 }
 
 
 
 bool Keyboard::isKeyReleased(ControlKey key) {
-	sf::Keyboard::Key sfKey = this->transformKey(key);
-	return !this->currentState_[sfKey] && this->previousState_[sfKey];
+	if (!Keyboard::isInitialized) {
+		return false;
+	}
+	sf::Keyboard::Key sfKey = Keyboard::transformKey(key);
+	return !Keyboard::currentState[sfKey] && Keyboard::previousState[sfKey];
 }
+
+
+
+sf::Keyboard::Key Keyboard::transformKey(ControlKey key) {
+	auto& keysMap = Keyboard::getKeysMap();
+	return keysMap.at(key);
+}
+
+
+
+const std::map<ControlKey, sf::Keyboard::Key>& Keyboard::getKeysMap() {
+	static std::map<ControlKey, sf::Keyboard::Key> keysMap = {
+		{ ControlKey::UP,	 sf::Keyboard::Key::W },
+		{ ControlKey::DOWN,  sf::Keyboard::Key::S },
+		{ ControlKey::LEFT,  sf::Keyboard::Key::A },
+		{ ControlKey::RIGHT, sf::Keyboard::Key::D },
+		{ ControlKey::START, sf::Keyboard::Key::Enter },
+		{ ControlKey::B,	 sf::Keyboard::Key::Left },
+		{ ControlKey::A,	 sf::Keyboard::Key::Right },
+		{ ControlKey::EXIT,	 sf::Keyboard::Key::Escape }
+	};
+	return keysMap;
+}
+
+#pragma /* State Checking */ endregion

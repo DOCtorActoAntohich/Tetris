@@ -21,6 +21,7 @@
 namespace tetris {
 	class Game {
 		using GamePadKey = wrapper::ControlKey;
+		using Keyboard = wrapper::Keyboard;
 
 	public:
 		Game();
@@ -177,7 +178,6 @@ namespace tetris {
 		void exit();
 
 		scene_handling::Scene scene;
-		wrapper::Keyboard keyboard;
 
 		static const int32_t FPS = 60;
 

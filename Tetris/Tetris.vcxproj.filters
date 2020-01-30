@@ -62,11 +62,14 @@
     <ClCompile Include="Source\tetris\helper\Helper.cpp">
       <Filter>Source\tetris\helper</Filter>
     </ClCompile>
+    <ClCompile Include="Source\tetris\scene_handling\ResourceManager.cpp">
+      <Filter>Source\tetris\scene_handling</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\tetris\scene_handling\SceneHandlerBase.cpp">
+      <Filter>Source\tetris\scene_handling</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\tetris\scene_handling\SceneHandler.h">
-      <Filter>Source\tetris\scene_handling</Filter>
-    </ClInclude>
     <ClInclude Include="Source\tetris\scene_handling\SplashScreen.h">
       <Filter>Source\tetris\scene_handling</Filter>
     </ClInclude>
@@ -111,6 +114,12 @@
     </ClInclude>
     <ClInclude Include="Source\tetris\helper\Helper.h">
       <Filter>Source\tetris\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\tetris\scene_handling\SceneHandlerBase.h">
+      <Filter>Source\tetris\scene_handling</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\tetris\scene_handling\ResourceManager.h">
+      <Filter>Source\tetris\scene_handling</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
