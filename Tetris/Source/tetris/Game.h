@@ -20,7 +20,7 @@
 
 namespace tetris {
 	class Game {
-		using GamePadKey = wrapper::ControlKey;
+		using GamePadKey = wrapper::GamePadKey;
 		using Keyboard = wrapper::Keyboard;
 
 	public:

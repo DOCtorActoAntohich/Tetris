@@ -1,9 +1,12 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 
 #include <map>
+
+#include "resource.h"
 
 
 

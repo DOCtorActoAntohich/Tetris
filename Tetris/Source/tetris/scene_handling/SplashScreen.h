@@ -14,11 +14,15 @@ namespace tetris::scene_handling {
 
 		void update() override;
 		void draw(sf::RenderWindow& window) override;
+
+		void reset() override;
 	private:
 		sf::Sprite background;
 		sf::Sound click_sound;
 		void initializeResources();
 		void initializeText();
+
+		void update_sceneControls();
 
 		static const int32_t FONT_SIZE = 18;
 
@@ -27,7 +31,5 @@ namespace tetris::scene_handling {
 		wrapper::FrameTimer textBlinkTimer;
 		bool isTextVisible;
 		sf::Text pressEnter_text;
-
-		static const Scene NEXT_SCENE = Scene::CONTROLS_SCREEN;
 	};
 }

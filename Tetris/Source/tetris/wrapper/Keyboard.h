@@ -20,13 +20,13 @@ namespace tetris::wrapper {
 		static void update();
 
 		// Checks if key has state DOWN (pressed for a while).
-		static bool isKeyHeld(ControlKey key);
+		static bool isKeyHeld(GamePadKey key);
 
 		// Checks if key changed state from UP to DOWN.
-		static bool isKeyPushed(ControlKey key);
+		static bool isKeyPushed(GamePadKey key);
 
 		// Checks if key changed state from DOWN to UP.
-		static bool isKeyReleased(ControlKey key);
+		static bool isKeyReleased(GamePadKey key);
 	private:
 		Keyboard();
 
@@ -34,9 +34,9 @@ namespace tetris::wrapper {
 		static void saveState();
 
 		// Transforms input key using defined map.
-		static sf::Keyboard::Key transformKey(ControlKey key);
+		static sf::Keyboard::Key transformKey(GamePadKey key);
 
-		static const std::map<ControlKey, sf::Keyboard::Key>& getKeysMap();
+		static const std::map<GamePadKey, sf::Keyboard::Key>& getKeysMap();
 
 		static bool isInitialized;
 

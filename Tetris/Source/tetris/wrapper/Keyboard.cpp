@@ -65,7 +65,7 @@ void Keyboard::saveState() {
 #pragma region State Checking
 
 
-bool Keyboard::isKeyHeld(ControlKey key) {
+bool Keyboard::isKeyHeld(GamePadKey key) {
 	if (!Keyboard::isInitialized) {
 		return false;
 	}
@@ -75,7 +75,7 @@ bool Keyboard::isKeyHeld(ControlKey key) {
 
 
 
-bool Keyboard::isKeyPushed(ControlKey key) {
+bool Keyboard::isKeyPushed(GamePadKey key) {
 	if (!Keyboard::isInitialized) {
 		return false;
 	}
@@ -85,7 +85,7 @@ bool Keyboard::isKeyPushed(ControlKey key) {
 
 
 
-bool Keyboard::isKeyReleased(ControlKey key) {
+bool Keyboard::isKeyReleased(GamePadKey key) {
 	if (!Keyboard::isInitialized) {
 		return false;
 	}
@@ -95,23 +95,23 @@ bool Keyboard::isKeyReleased(ControlKey key) {
 
 
 
-sf::Keyboard::Key Keyboard::transformKey(ControlKey key) {
+sf::Keyboard::Key Keyboard::transformKey(GamePadKey key) {
 	auto& keysMap = Keyboard::getKeysMap();
 	return keysMap.at(key);
 }
 
 
 
-const std::map<ControlKey, sf::Keyboard::Key>& Keyboard::getKeysMap() {
-	static std::map<ControlKey, sf::Keyboard::Key> keysMap = {
-		{ ControlKey::UP,	 sf::Keyboard::Key::W },
-		{ ControlKey::DOWN,  sf::Keyboard::Key::S },
-		{ ControlKey::LEFT,  sf::Keyboard::Key::A },
-		{ ControlKey::RIGHT, sf::Keyboard::Key::D },
-		{ ControlKey::START, sf::Keyboard::Key::Enter },
-		{ ControlKey::B,	 sf::Keyboard::Key::Left },
-		{ ControlKey::A,	 sf::Keyboard::Key::Right },
-		{ ControlKey::EXIT,	 sf::Keyboard::Key::Escape }
+const std::map<GamePadKey, sf::Keyboard::Key>& Keyboard::getKeysMap() {
+	static std::map<GamePadKey, sf::Keyboard::Key> keysMap = {
+		{ GamePadKey::UP,	 sf::Keyboard::Key::W },
+		{ GamePadKey::DOWN,  sf::Keyboard::Key::S },
+		{ GamePadKey::LEFT,  sf::Keyboard::Key::A },
+		{ GamePadKey::RIGHT, sf::Keyboard::Key::D },
+		{ GamePadKey::START, sf::Keyboard::Key::Enter },
+		{ GamePadKey::B,	 sf::Keyboard::Key::Left },
+		{ GamePadKey::A,	 sf::Keyboard::Key::Right },
+		{ GamePadKey::EXIT,	 sf::Keyboard::Key::Escape }
 	};
 	return keysMap;
 }

@@ -10,7 +10,7 @@
 
 namespace tetris::scene_handling {
 	class SceneHandlerBase {
-		using GamePadKey = wrapper::ControlKey;
+		using GamePadKey = wrapper::GamePadKey;
 		using Keyboard = wrapper::Keyboard;
 
 	public:
@@ -18,6 +18,8 @@ namespace tetris::scene_handling {
 		
 		virtual void update() = 0;
 		virtual void draw(sf::RenderWindow& window) = 0;
+
+		virtual void reset() = 0;
 
 		Scene getNextScene();
 	protected:

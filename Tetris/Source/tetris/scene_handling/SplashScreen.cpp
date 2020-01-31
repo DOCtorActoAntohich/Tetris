@@ -2,7 +2,6 @@
 
 #include "tetris/wrapper/Keyboard.h"
 #include "tetris/scene_handling/ResourceManager.h"
-#include "resource.h"
 
 using namespace tetris::scene_handling;
 
@@ -21,7 +20,7 @@ void SplashScreen::initializeResources() {
 		ResourceManager::getTexture(SPLASH_SCREEN_BMP)
 	);
 	this->click_sound.setBuffer(
-		ResourceManager::getSoundBuffer(MENU_CLICK_MINOR_WAV)
+		ResourceManager::getSoundBuffer(MENU_CLICK_MAJOR_WAV)
 	);
 }
 
@@ -44,6 +43,7 @@ void SplashScreen::initializeText() {
 #pragma /* Initialization */ endregion
 
 
+
 #pragma region Main Loop
 
 
@@ -53,6 +53,14 @@ void SplashScreen::update() {
 	if (this->textBlinkTimer.isTriggered()) {
 		this->isTextVisible = !this->isTextVisible;
 	}
+	
+	this->update_sceneControls();
+}
+
+
+
+void SplashScreen::update_sceneControls() {
+	this->nextScene = Scene::NONE;
 
 	if (Keyboard::isKeyPushed(GamePadKey::START)) {
 		this->nextScene = Scene::CONTROLS_SCREEN;
@@ -75,6 +83,13 @@ void SplashScreen::draw(sf::RenderWindow& window) {
 	}
 
 	window.display();
+}
+
+
+
+void SplashScreen::reset() {
+	this->textBlinkTimer.reset();
+	this->isTextVisible = true;
 }
 
 #pragma /* Main Loop */ endregion

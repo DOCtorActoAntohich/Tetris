@@ -2,7 +2,7 @@
 
 namespace tetris::wrapper {
 	// Helps to avoid long names like sf::Keyboard::Key::Enter.
-	enum class ControlKey {
+	enum class GamePadKey {
 		UP = 0,
 		DOWN = 1, 
 		LEFT = 2,

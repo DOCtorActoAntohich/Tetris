@@ -2,7 +2,6 @@
 
 #include <vector>
 
-#include "resource.h"
 #include "tetris/helper/Helper.h"
 
 using namespace tetris::scene_handling;
