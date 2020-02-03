@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{23CCB82E-08A2-454A-9D8A-D9D6A4170D80}</ProjectGuid>
-    <RootNamespace>Tetris</RootNamespace>
+    <RootNamespace>tetris</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -83,6 +83,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <EnablePREfast>false</EnablePREfast>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <DisableSpecificWarnings>26812;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -184,6 +185,7 @@ xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-window-2.dll" "$(OutDir)" /Y</Command>
     <ClInclude Include="Source\tetris\scene_handling\ResourceManager.h" />
     <ClInclude Include="Source\tetris\Score.h" />
     <ClInclude Include="Source\tetris\Tetrimino.h" />
+    <ClInclude Include="Source\tetris\wrapper\BlinkingObject.h" />
     <ClInclude Include="Source\tetris\wrapper\ControlKey.h" />
     <ClInclude Include="Source\tetris\wrapper\CounterUI.h" />
     <ClInclude Include="Source\tetris\wrapper\FrameTimer.h" />

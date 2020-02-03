@@ -1,7 +1,8 @@
 #include "tetris/scene_handling/SplashScreen.h"
 
-#include "tetris/wrapper/Keyboard.h"
+#include "tetris/scene_handling/Scene.h"
 #include "tetris/scene_handling/ResourceManager.h"
+#include "tetris/wrapper/Keyboard.h"
 
 using namespace tetris::scene_handling;
 
@@ -27,17 +28,20 @@ void SplashScreen::initializeResources() {
 
 
 void SplashScreen::initializeText() {
-	this->textBlinkTimer.setTimingFrames(this->TEXT_BLINK_TIMING);
-	this->isTextVisible = true;
+	static const int32_t FONT_SIZE = 18;
+	static const int32_t TEXT_BLINK_TIMING = 30;
 
-	this->pressEnter_text.setFont(
+	sf::Text text;
+	text.setFont(
 		ResourceManager::getFont(GAME_FONT)
 	);
-	this->pressEnter_text.setString("PRESS ENTER");
-	this->pressEnter_text.setCharacterSize(this->FONT_SIZE);
-	this->pressEnter_text.setFillColor(sf::Color::White);
-	this->pressEnter_text.setStyle(sf::Text::Regular);
-	this->pressEnter_text.setPosition(256, 326);
+	text.setString("PRESS ENTER");
+	text.setCharacterSize(FONT_SIZE);
+	text.setFillColor(sf::Color::White);
+	text.setStyle(sf::Text::Regular);
+	text.setPosition(256, 326);
+	this->pressEnter_text.setDrawable(text);
+	this->pressEnter_text.setBlinkingTiming(TEXT_BLINK_TIMING);
 }
 
 #pragma /* Initialization */ endregion
@@ -48,11 +52,7 @@ void SplashScreen::initializeText() {
 
 
 void SplashScreen::update() {
-	this->textBlinkTimer.update();
-
-	if (this->textBlinkTimer.isTriggered()) {
-		this->isTextVisible = !this->isTextVisible;
-	}
+	this->pressEnter_text.update();
 	
 	this->update_sceneControls();
 }
@@ -78,9 +78,7 @@ void SplashScreen::draw(sf::RenderWindow& window) {
 
 	window.draw(this->background);
 
-	if (this->isTextVisible) {
-		window.draw(this->pressEnter_text);
-	}
+	this->pressEnter_text.drawOn(window);
 
 	window.display();
 }
@@ -88,8 +86,7 @@ void SplashScreen::draw(sf::RenderWindow& window) {
 
 
 void SplashScreen::reset() {
-	this->textBlinkTimer.reset();
-	this->isTextVisible = true;
+	this->pressEnter_text.reset();
 }
 
 #pragma /* Main Loop */ endregion

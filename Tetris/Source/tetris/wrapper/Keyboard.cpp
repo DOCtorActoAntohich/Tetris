@@ -21,11 +21,6 @@ Keyboard::Keyboard()
 
 #pragma region State Management
 
-
-#pragma warning(push)
-// I can do nothing with this warning since it's caused by SFML.
-#pragma warning(disable : 26812)
-
 void Keyboard::initialize() {
 	auto& keysMap = Keyboard::getKeysMap();
 	for (auto [_, sfKey] : keysMap) {
@@ -34,8 +29,6 @@ void Keyboard::initialize() {
 	Keyboard::saveState();
 	Keyboard::isInitialized = true;
 }
-
-#pragma warning(pop)
 
 
 

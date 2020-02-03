@@ -76,20 +76,22 @@ void Game::openMusic(int32_t id, std::vector<byte>& musicBytes, sf::Music& music
 #pragma region Other Data
 
 
-void Game::pressEnter_text_initialize() {
-	this->pressEnter_text.setFont(this->font);
-	this->pressEnter_text.setString("PRESS ENTER");
-	this->pressEnter_text.setCharacterSize(this->FONT_SIZE);
-	this->pressEnter_text.setFillColor(sf::Color::White);
-	this->pressEnter_text.setStyle(sf::Text::Regular);
-	this->pressEnter_text.setPosition(256, 326);
-	this->pressEnter_text_isVisible = true;
+void Game::splashScreen_initializeText() {
+	sf::Text text;
+	text.setFont(this->font);
+	text.setString("PRESS ENTER");
+	text.setCharacterSize(this->FONT_SIZE);
+	text.setFillColor(sf::Color::White);
+	text.setStyle(sf::Text::Regular);
+	text.setPosition(256, 326);
+
+	this->unnecessaryText.setDrawable(text);
+	this->unnecessaryText.setBlinkingTiming(this->SPLASH_TEXT_BLINK_TIMING);
 }
 
 
 
 void Game::predefinedDigitPositions_initialize() {
-	// Looks like crapcode :(.
 	this->predefinedLevelDigitPositions = {
 		sf::Vector2f(140, 152),
 		sf::Vector2f(188, 152),
@@ -285,7 +287,7 @@ void Game::loadContent() {
 
 
 	this->splash_background.loadFromResource(SPLASH_SCREEN_BMP);
-	this->pressEnter_text_initialize();
+	this->splashScreen_initializeText();
 
 	this->controls_background.loadFromResource(CONTROLS_SCREEN_BMP);
 
@@ -409,11 +411,12 @@ std::pair<void(Game::*)(), void(Game::*)()> Game::chooseUpdaters(scene_handling:
 
 
 void Game::splashScreen_update() {
-	this->splashScreen_textBlinkTimer.update();
+	/*this->splashScreen_textBlinkTimer.update();
 
 	if (this->splashScreen_textBlinkTimer.isTriggered()) {
 		this->pressEnter_text_isVisible = !this->pressEnter_text_isVisible;
-	}
+	}*/
+	this->unnecessaryText.update();
 
 	if (Keyboard::isKeyPushed(GamePadKey::START)) {
 		this->menuClickMajor_sound.play();
@@ -429,9 +432,8 @@ void Game::splashScreen_draw() {
 	this->window.clear(sf::Color::Black);
 
 	this->splash_background.drawOn(this->window);
-	if (this->pressEnter_text_isVisible) {
-		this->window.draw(this->pressEnter_text);
-	}
+
+	this->unnecessaryText.drawOn(this->window);
 
 	this->window.display();
 }

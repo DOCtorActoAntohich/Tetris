@@ -11,19 +11,12 @@ using namespace tetris::wrapper;
 
 #pragma region Static Members Initialization
 
-
-#pragma warning(push)
-// I can do nothing with this warning since it's caused by SFML.
-#pragma warning(disable : 26812)
-
 bool CounterUI::areDefaultsSet = false;
 
 sf::Font		CounterUI::default_font			 = sf::Font();
 size_t			CounterUI::default_characterSize = 24;
 sf::Color		CounterUI::default_color		 = sf::Color::White;
 sf::Text::Style CounterUI::default_textStyle     = sf::Text::Style::Regular;
-
-#pragma warning(pop)
 
 
 #pragma /* Static Members Initialization */ endregion
@@ -108,9 +101,6 @@ void CounterUI::setWidth(size_t width) {
 
 
 
-#pragma warning(push)
-// I can do nothing with this warning since it's caused by SFML.
-#pragma warning(disable : 26812)
 void CounterUI::setDefaultDisplayOptions(const sf::Font& font,
 										 size_t charSize,
 										 const sf::Color& color,
@@ -132,7 +122,7 @@ void CounterUI::setDisplayOptions(const sf::Font& font,
 	this->text.setStyle(style);
 	this->areDisplayOptionsAssigned = true;
 }
-#pragma warning(pop)
+
 
 
 void CounterUI::applyDefaultDisplayOptions() {

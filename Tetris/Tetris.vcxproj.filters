@@ -127,6 +127,9 @@
     <ClInclude Include="Source\tetris\scene_handling\ControlsScreen.h">
       <Filter>Source\tetris\scene_handling</Filter>
     </ClInclude>
+    <ClInclude Include="Source\tetris\wrapper\BlinkingObject.h">
+      <Filter>Source\tetris\wrapper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Tetris.rc">

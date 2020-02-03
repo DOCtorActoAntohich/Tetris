@@ -17,6 +17,8 @@
 #include "tetris/wrapper/CounterUI.h"
 #include "tetris/wrapper/FrameTimer.h"
 
+#include "tetris/wrapper/BlinkingObject.h"
+
 
 namespace tetris {
 	class Game {
@@ -81,9 +83,7 @@ namespace tetris {
 		sf::Font font;
 		static const int32_t FONT_SIZE = 24;
 
-		sf::Text pressEnter_text;
-		bool pressEnter_text_isVisible;
-		void pressEnter_text_initialize();
+		void splashScreen_initializeText();
 
 		
 
@@ -201,6 +201,8 @@ namespace tetris {
 
 #pragma region Splash Screen
 
+		wrapper::BlinkingObject<sf::Text> unnecessaryText;
+
 		// How often splash screen text will blink (in frames).
 		static const int32_t SPLASH_TEXT_BLINK_TIMING = 30;
 
@@ -237,6 +239,7 @@ namespace tetris {
 
 		// Controls from which level the game will start.
 		int32_t menu_startLevel;
+		
 
 		static const int32_t MINIMAL_MUSIC_TYPE = 0;
 		static const int32_t MAXIMAL_MUSIC_TYPE = 3;
