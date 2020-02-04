@@ -6,6 +6,7 @@
 
 #include <map>
 
+#include "tetris/helper/Helper.h"
 #include "resource.h"
 
 
@@ -31,6 +32,6 @@ namespace tetris::scene_handling {
 
 		static std::map<int32_t, sf::Texture>	  textures;
 		static std::map<int32_t, sf::SoundBuffer> soundBuffers;
-		static std::map<int32_t, sf::Font>		  fonts;
+		static std::map<int32_t, std::pair<std::vector<byte>, sf::Font>> fonts;
 	};
 }

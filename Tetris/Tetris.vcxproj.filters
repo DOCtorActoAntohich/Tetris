@@ -71,6 +71,15 @@
     <ClCompile Include="Source\tetris\scene_handling\ControlsScreen.cpp">
       <Filter>Source\tetris\scene_handling</Filter>
     </ClCompile>
+    <ClCompile Include="Source\tetris\scene_handling\Menu.cpp">
+      <Filter>Source\tetris\scene_handling</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\tetris\scene_handling\GameScene.cpp">
+      <Filter>Source\tetris\scene_handling</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\tetris\App.cpp">
+      <Filter>Source\tetris</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\tetris\scene_handling\SplashScreen.h">
@@ -129,6 +138,18 @@
     </ClInclude>
     <ClInclude Include="Source\tetris\wrapper\BlinkingObject.h">
       <Filter>Source\tetris\wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\tetris\scene_handling\Menu.h">
+      <Filter>Source\tetris\scene_handling</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\tetris\scene_handling\GameScene.h">
+      <Filter>Source\tetris\scene_handling</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\tetris\App.h">
+      <Filter>Source\tetris</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\tetris\scene_handling\Scenes.h">
+      <Filter>Source\tetris\scene_handling</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

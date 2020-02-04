@@ -11,7 +11,7 @@ using namespace tetris::scene_handling;
 
 SplashScreen::SplashScreen() : SceneHandlerBase() {
 	this->initializeResources();
-	this->initializeText();
+	this->initializeBlinkingText();
 }
 
 
@@ -27,8 +27,8 @@ void SplashScreen::initializeResources() {
 
 
 
-void SplashScreen::initializeText() {
-	static const int32_t FONT_SIZE = 18;
+void SplashScreen::initializeBlinkingText() {
+	static const int32_t FONT_SIZE = 24;
 	static const int32_t TEXT_BLINK_TIMING = 30;
 
 	sf::Text text;
@@ -54,12 +54,12 @@ void SplashScreen::initializeText() {
 void SplashScreen::update() {
 	this->pressEnter_text.update();
 	
-	this->update_sceneControls();
+	this->updateSceneControls();
 }
 
 
 
-void SplashScreen::update_sceneControls() {
+void SplashScreen::updateSceneControls() {
 	this->nextScene = Scene::NONE;
 
 	if (Keyboard::isKeyPushed(GamePadKey::START)) {

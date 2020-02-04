@@ -8,7 +8,7 @@
 #include "tetris/wrapper/FrameTimer.h"
 
 namespace tetris::scene_handling {
-	class SplashScreen final : SceneHandlerBase {
+	class SplashScreen : public SceneHandlerBase {
 	public:
 		SplashScreen();
 
@@ -22,9 +22,9 @@ namespace tetris::scene_handling {
 		void initializeResources();
 
 		wrapper::BlinkingObject<sf::Text> pressEnter_text;
-		void initializeText();
+		void initializeBlinkingText();
 		
 
-		void update_sceneControls();
+		void updateSceneControls();
 	};
 }

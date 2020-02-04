@@ -14,7 +14,7 @@ ResourceManager::ResourceManager()
 
 std::map<int32_t, sf::Texture>		ResourceManager::textures;
 std::map<int32_t, sf::SoundBuffer>	ResourceManager::soundBuffers;
-std::map<int32_t, sf::Font>			ResourceManager::fonts;
+std::map<int32_t, std::pair<std::vector<byte>, sf::Font>> ResourceManager::fonts;
 
 #pragma /* Static Members Initialization */ endregion
 
@@ -45,10 +45,9 @@ void ResourceManager::loadTextures() {
 	};
 
 	for (auto id : idTextures) {
-		sf::Texture t;
+		ResourceManager::textures[id] = sf::Texture();
 		std::vector<byte> bytes = helper::loadEmbeddedResource(id);
-		t.loadFromMemory(&bytes[0], bytes.size());
-		ResourceManager::textures[id] = t;
+		ResourceManager::textures[id].loadFromMemory(&bytes[0], bytes.size());
 	}
 }
 
@@ -72,10 +71,9 @@ void ResourceManager::loadSounds() {
 	};
 
 	for (auto id : idSounds) {
-		sf::SoundBuffer sb;
+		ResourceManager::soundBuffers[id] = sf::SoundBuffer();
 		std::vector<byte> bytes = helper::loadEmbeddedResource(id);
-		sb.loadFromMemory(&bytes[0], bytes.size());
-		ResourceManager::soundBuffers[id] = sb;
+		ResourceManager::soundBuffers[id].loadFromMemory(&bytes[0], bytes.size());
 	}
 }
 
@@ -87,10 +85,13 @@ void ResourceManager::loadFonts() {
 	};
 
 	for (auto id : idFonts) {
-		sf::Font font;
-		std::vector<byte> bytes = helper::loadEmbeddedResource(id);
-		font.loadFromMemory(&bytes[0], bytes.size());
-		ResourceManager::fonts[id] = font;
+
+		ResourceManager::fonts[id] = { std::vector<byte>(), sf::Font() };
+		ResourceManager::fonts[id].first = helper::loadEmbeddedResource(id);
+		ResourceManager::fonts[id].second.loadFromMemory(
+			&ResourceManager::fonts[id].first[0],
+			ResourceManager::fonts[id].first.size()
+		);
 	}
 }
 
@@ -122,7 +123,7 @@ const sf::Font& ResourceManager::getFont(int32_t id) {
 	if (ResourceManager::fonts.size() == 0) {
 		ResourceManager::loadResources();
 	}
-	return ResourceManager::fonts[id];
+	return ResourceManager::fonts[id].second;
 }
 
 #pragma /* Resource Access */ endregion

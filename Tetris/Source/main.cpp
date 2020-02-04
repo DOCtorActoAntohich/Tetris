@@ -1,9 +1,9 @@
-#include "tetris/Game.h"
+#include "tetris/App.h"
 
 int main()
 {
-	tetris::Game game;
-	game.run();
+	tetris::App app;
+	app.run();
 
 	return 0;
 }
