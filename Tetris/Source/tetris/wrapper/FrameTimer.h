@@ -25,7 +25,7 @@ namespace tetris::wrapper {
 		void setTimingFrames(int32_t frames);
 
 		// Returns how often this timer triggers.
-		int32_t getTimingFrames()const ;
+		int32_t getTimingFrames() const;
 
 		// Updates the state of timer.
 		void update();

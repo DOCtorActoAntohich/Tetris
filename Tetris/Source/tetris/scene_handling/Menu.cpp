@@ -126,9 +126,8 @@ void Menu::updateSceneControls() {
 	this->nextScene = Scene::NONE;
 
 	if (Keyboard::isKeyPushed(GamePadKey::START)) {
-		//TODO: prepare for game.
 		this->majorClickSound.play();
-		//this->nextScene = Scene::GAME;
+		this->nextScene = Scene::GAME;
 	}
 	else if (Keyboard::isKeyPushed(GamePadKey::B)) {
 		this->majorClickSound.play();
@@ -242,4 +241,14 @@ void Menu::reset() {
 
 	this->musicType = 0;
 	this->updateMusicSelectorsPositions();
+}
+
+
+
+std::pair<int32_t, int32_t> Menu::getGameParameters() {
+	auto level = this->startLevel;
+	if (Keyboard::isKeyHeld(GamePadKey::A)) {
+		level += this->LEVEL_INCREMENT_HARD_MODE;
+	}
+	return { level, this->musicType };
 }

@@ -1,10 +1,10 @@
-#include "tetris/GameField.h"
+#include "tetris/scene_handling/GameField.h"
 
 #include <vector>
 
 #include "tetris/helper/Helper.h"
 
-using namespace tetris;
+using namespace tetris::scene_handling;
 
 
 

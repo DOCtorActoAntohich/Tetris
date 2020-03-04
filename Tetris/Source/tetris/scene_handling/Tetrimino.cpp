@@ -1,8 +1,8 @@
-#include "tetris/Tetrimino.h"
+#include "tetris/scene_handling/Tetrimino.h"
 
 #include "tetris/helper/Helper.h"
 
-using namespace tetris;
+using namespace tetris::scene_handling;
 
 
 #pragma region Tetrimino Matrix
@@ -37,7 +37,7 @@ Tetrimino::Matrix::Matrix(std::vector<Type>& matrix) {
 
 
 
-tetris::Tetrimino::Matrix::Matrix(Array& matrix) {
+Tetrimino::Matrix::Matrix(Array& matrix) {
 	this->matrix = matrix;
 }
 
@@ -149,27 +149,28 @@ Tetrimino& Tetrimino::operator=(const Tetrimino& otherTetrimino) {
 
 
 
-bool tetris::operator==(const Tetrimino::Matrix& firstMatrix, const Tetrimino::Matrix& secondMatrix) {
+bool tetris::scene_handling::operator==(const Tetrimino::Matrix& firstMatrix, const Tetrimino::Matrix& secondMatrix) {
 	return firstMatrix.matrix == secondMatrix.matrix;
 }
 
 
 
-bool tetris::operator!=(const Tetrimino::Matrix& firstMatrix, const Tetrimino::Matrix& secondMatrix) {
+bool tetris::scene_handling::operator!=(const Tetrimino::Matrix& firstMatrix, const Tetrimino::Matrix& secondMatrix) {
 	return firstMatrix.matrix != secondMatrix.matrix;
 }
 
 
 
-bool tetris::operator==(const Tetrimino& firstTetrimino, const Tetrimino& secondTetrimino) {
+bool tetris::scene_handling::operator==(const Tetrimino& firstTetrimino, const Tetrimino& secondTetrimino) {
 	return firstTetrimino.matrices == secondTetrimino.matrices;
 }
 
 
 
-bool tetris::operator!=(const Tetrimino& firstTetrimino, const Tetrimino& secondTetrimino) {
+bool tetris::scene_handling::operator!=(const Tetrimino& firstTetrimino, const Tetrimino& secondTetrimino) {
 	return firstTetrimino.matrices != secondTetrimino.matrices;
 }
 
 
 #pragma /* Tetrimino */ endregion
+

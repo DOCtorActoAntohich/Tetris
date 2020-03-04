@@ -9,9 +9,10 @@
 #include <ResourceIndexer.h>
 
 #include "tetris/scene_handling/Scene.h"
-#include "tetris/wrapper/Keyboard.h"
-#include "tetris/GameField.h"
+#include "tetris/scene_handling/Tetrimino.h"
+#include "tetris/scene_handling/GameField.h"
 #include "tetris/Score.h"
+#include "tetris/wrapper/Keyboard.h"
 #include "tetris/wrapper/Sprite.h"
 #include "tetris/wrapper/Sound.h"
 #include "tetris/wrapper/CounterUI.h"
@@ -132,13 +133,13 @@ namespace tetris {
 
 		void initializeCounters();
 		void initializePieceCounters();
-		void initializeStaticticsCounters();
+		void initializeStatisticsCounters();
 
 		bool shouldCallDrawer;
 
 
 		std::vector<wrapper::CounterUI> game_pieceCounters;
-		std::vector<std::tuple<const Tetrimino::Matrix::Array*, sf::Vector2f>> game_staticticsBlocksData;
+		std::vector<std::tuple<const tetris::scene_handling::Tetrimino::Matrix::Array*, sf::Vector2f>> game_staticticsBlocksData;
 		void initializeStatisticsPieceData();
 
 #pragma /* Other Data */ endregion
@@ -285,7 +286,7 @@ namespace tetris {
 		wrapper::FrameTimer game_dropTimer;
 
 		// Handles most of game scene processes.
-		GameField game_field;
+		tetris::scene_handling::GameField game_field;
 
 		// Offset from (0, 0) for drawing game field.
 		sf::Vector2f game_blocksDrawingOffset;
@@ -309,8 +310,8 @@ namespace tetris {
 			SHORT_DELAYED_MOVE = 2
 		};
 		DasState game_dasState;
-		Direction game_previousMoveDirection;
-		Direction game_currentMoveDirection;
+		tetris::scene_handling::Direction game_previousMoveDirection;
+		tetris::scene_handling::Direction game_currentMoveDirection;
 
 		// Controls DAS.
 		wrapper::FrameTimer game_dasTimer;
@@ -330,7 +331,7 @@ namespace tetris {
 		void game_update();
 		void game_updatePieceControls();
 		void game_dropPieceDown(bool isSoftDrop);
-		void game_movePiece(Direction direction);
+		void game_movePiece(tetris::scene_handling::Direction direction);
 		void game_updateCounters();
 		void game_updateStatisticsCounters();
 		void game_updatePieceCounters();
@@ -345,8 +346,8 @@ namespace tetris {
 		void game_drawCurrentPiece();
 		void game_drawStaticticsBlocks();
 		void game_drawNextPiece();
-		void game_drawPiece(const Tetrimino::Matrix::Array& matrix, const sf::Vector2f& offset);
-		void game_drawSingleBlock(const sf::Vector2f& position, Tetrimino::Type type);
+		void game_drawPiece(const tetris::scene_handling::Tetrimino::Matrix::Array& matrix, const sf::Vector2f& offset);
+		void game_drawSingleBlock(const sf::Vector2f& position, tetris::scene_handling::Tetrimino::Type type);
 		void game_draw();
 
 #pragma /* Game */ endregion

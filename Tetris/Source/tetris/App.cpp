@@ -54,25 +54,28 @@ void App::chooseScene() {
 	{
 	case Scene::NONE :
 		break;
-	case Scene::EXIT:
+	case Scene::EXIT :
 		this->exit();
 		break;
-	case Scene::SPLASH_SCREEN:
+	case Scene::SPLASH_SCREEN :
 		this->currentScene = &this->splashScreen;
 		this->currentScene->reset();
 		break;
-	case Scene::CONTROLS_SCREEN:
+	case Scene::CONTROLS_SCREEN :
 		this->currentScene = &this->controlsScreen;
 		this->currentScene->reset();
 		break;
-	case Scene::MENU:
+	case Scene::MENU :
 		this->currentScene = &this->menu;
 		break;
-	case Scene::GAME:
-		this->currentScene = &this->game;
-		this->currentScene->reset();
+	case Scene::GAME :
+		{
+			auto [level, music] = this->menu.getGameParameters();
+			this->currentScene = &this->game;
+			this->currentScene->reset();
+		}
 		break;
-	default:
+	default :
 		break;
 	}
 }

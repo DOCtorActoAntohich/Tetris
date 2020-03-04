@@ -21,6 +21,8 @@ namespace tetris::scene_handling {
 		void draw(sf::RenderWindow& window);
 
 		void reset();
+
+		std::pair<int32_t, int32_t> getGameParameters();
 	private:
 		void updateSceneControls();
 		void updateSelectorsControls();

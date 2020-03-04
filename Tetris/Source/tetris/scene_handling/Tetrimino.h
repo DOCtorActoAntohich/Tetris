@@ -6,7 +6,7 @@
 #include <array>
 
 
-namespace tetris {
+namespace tetris::scene_handling {
 	class Tetrimino {
 	public:
 		enum class Type : int32_t {

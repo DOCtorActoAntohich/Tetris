@@ -32,16 +32,10 @@
     <ClCompile Include="Source\tetris\Game.cpp">
       <Filter>Source\tetris</Filter>
     </ClCompile>
-    <ClCompile Include="Source\tetris\GameField.cpp">
-      <Filter>Source\tetris</Filter>
-    </ClCompile>
     <ClCompile Include="Source\tetris\Record.cpp">
       <Filter>Source\tetris</Filter>
     </ClCompile>
     <ClCompile Include="Source\tetris\Score.cpp">
-      <Filter>Source\tetris</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\tetris\Tetrimino.cpp">
       <Filter>Source\tetris</Filter>
     </ClCompile>
     <ClCompile Include="Source\tetris\wrapper\CounterUI.cpp">
@@ -80,6 +74,12 @@
     <ClCompile Include="Source\tetris\App.cpp">
       <Filter>Source\tetris</Filter>
     </ClCompile>
+    <ClCompile Include="Source\tetris\scene_handling\GameField.cpp">
+      <Filter>Source\tetris\scene_handling</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\tetris\scene_handling\Tetrimino.cpp">
+      <Filter>Source\tetris\scene_handling</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\tetris\scene_handling\SplashScreen.h">
@@ -91,16 +91,10 @@
     <ClInclude Include="Source\tetris\Game.h">
       <Filter>Source\tetris</Filter>
     </ClInclude>
-    <ClInclude Include="Source\tetris\GameField.h">
-      <Filter>Source\tetris</Filter>
-    </ClInclude>
     <ClInclude Include="Source\tetris\Record.h">
       <Filter>Source\tetris</Filter>
     </ClInclude>
     <ClInclude Include="Source\tetris\Score.h">
-      <Filter>Source\tetris</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\tetris\Tetrimino.h">
       <Filter>Source\tetris</Filter>
     </ClInclude>
     <ClInclude Include="Source\tetris\wrapper\ControlKey.h">
@@ -149,6 +143,12 @@
       <Filter>Source\tetris</Filter>
     </ClInclude>
     <ClInclude Include="Source\tetris\scene_handling\Scenes.h">
+      <Filter>Source\tetris\scene_handling</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\tetris\scene_handling\GameField.h">
+      <Filter>Source\tetris\scene_handling</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\tetris\scene_handling\Tetrimino.h">
       <Filter>Source\tetris\scene_handling</Filter>
     </ClInclude>
   </ItemGroup>

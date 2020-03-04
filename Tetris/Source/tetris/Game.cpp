@@ -25,7 +25,7 @@ Game::Game() {
 	this->menu_musicType = 0;
 
 	this->game_softDropTimer.setTimingFrames(this->SOFT_DROP_DELAY);
-	this->game_currentMoveDirection = Direction::NONE;
+	this->game_currentMoveDirection = tetris::scene_handling::Direction::NONE;
 
 	this->shouldCallDrawer = true;
 }
@@ -193,7 +193,7 @@ void Game::initializeCounters() {
 		this->font, this->FONT_SIZE,
 		sf::Color::White, sf::Text::Style::Regular
 	);
-	this->initializeStaticticsCounters();
+	this->initializeStatisticsCounters();
 }
 
 
@@ -208,26 +208,26 @@ void Game::initializePieceCounters() {
 		{ 166, 305 },
 		{ 166, 349 }
 	};
-	this->game_pieceCounters = std::vector<wrapper::CounterUI>(GameField::DIFFERENT_PIECES);
-	for (uint32_t i = 0; i < GameField::DIFFERENT_PIECES; ++i) {
+	this->game_pieceCounters = std::vector<wrapper::CounterUI>(tetris::scene_handling::GameField::DIFFERENT_PIECES);
+	for (uint32_t i = 0; i < tetris::scene_handling::GameField::DIFFERENT_PIECES; ++i) {
 		this->game_pieceCounters[i].applyDefaultDisplayOptions();
-		this->game_pieceCounters[i].setMaximalValue(GameField::MAX_PIECE_AMOUNT);
+		this->game_pieceCounters[i].setMaximalValue(tetris::scene_handling::GameField::MAX_PIECE_AMOUNT);
 		this->game_pieceCounters[i].setPosition(positions[i]);
 	}
 }
 
 
 
-void Game::initializeStaticticsCounters() {
+void Game::initializeStatisticsCounters() {
 	std::vector<std::tuple<wrapper::CounterUI*, int32_t, sf::Vector2f>> data = {
-		{ &this->game_tetrisesCounter, GameField::MAX_TETRISES, { 177, 419 } },
-		{ &this->game_burnCounter, GameField::MAX_BURN, { 177, 464 } },
-		{ &this->game_tetrisRateCounter, GameField::MAX_TETRIS_RATE, { 177, 510 } },
-		{ &this->game_linesCounter, GameField::MAX_LINES, { 482, 43 } },
+		{ &this->game_tetrisesCounter, tetris::scene_handling::GameField::MAX_TETRISES, { 177, 419 } },
+		{ &this->game_burnCounter, tetris::scene_handling::GameField::MAX_BURN, { 177, 464 } },
+		{ &this->game_tetrisRateCounter, tetris::scene_handling::GameField::MAX_TETRIS_RATE, { 177, 510 } },
+		{ &this->game_linesCounter, tetris::scene_handling::GameField::MAX_LINES, { 482, 43 } },
 		{ &this->game_topScoreCounter, Record::MAX_SCORE, { 608, 86 } },
 		{ &this->game_currentScoreCounter, Record::MAX_SCORE, { 608, 166 } },
-		{ &this->game_levelCounter, GameField::MAX_LEVEL, { 642, 431 } },
-		{ &this->game_droughtCounter, GameField::MAX_DROUGHT, { 642, 519 } },
+		{ &this->game_levelCounter, tetris::scene_handling::GameField::MAX_LEVEL, { 642, 431 } },
+		{ &this->game_droughtCounter, tetris::scene_handling::GameField::MAX_DROUGHT, { 642, 519 } },
 	};
 	for (uint32_t i = 0; i < data.size(); ++i) {
 		wrapper::CounterUI* counter = std::get<0>(data[i]);
@@ -241,13 +241,13 @@ void Game::initializeStaticticsCounters() {
 
 void Game::initializeStatisticsPieceData() {
 	this->game_staticticsBlocksData = {
-		{ this->game_field.getPieceMatrix(Piece::T), { 45,  25 } },
-		{ this->game_field.getPieceMatrix(Piece::J), { 45,  72 } },
-		{ this->game_field.getPieceMatrix(Piece::Z), { 45, 119 } },
-		{ this->game_field.getPieceMatrix(Piece::O), { 54, 166 } },
-		{ this->game_field.getPieceMatrix(Piece::S), { 45, 213 } },
-		{ this->game_field.getPieceMatrix(Piece::L), { 45, 260 } },
-		{ this->game_field.getPieceMatrix(Piece::I), { 53, 307 } },
+		{ this->game_field.getPieceMatrix(tetris::scene_handling::Piece::T), { 45,  25 } },
+		{ this->game_field.getPieceMatrix(tetris::scene_handling::Piece::J), { 45,  72 } },
+		{ this->game_field.getPieceMatrix(tetris::scene_handling::Piece::Z), { 45, 119 } },
+		{ this->game_field.getPieceMatrix(tetris::scene_handling::Piece::O), { 54, 166 } },
+		{ this->game_field.getPieceMatrix(tetris::scene_handling::Piece::S), { 45, 213 } },
+		{ this->game_field.getPieceMatrix(tetris::scene_handling::Piece::L), { 45, 260 } },
+		{ this->game_field.getPieceMatrix(tetris::scene_handling::Piece::I), { 53, 307 } },
 	};
 }
 
@@ -667,12 +667,12 @@ void Game::game_update() {
 
 void Game::game_updatePieceControls() {
 	if (Keyboard::isKeyPushed(GamePadKey::B)) {
-		if (this->game_field.rotatePiece(Rotation::COUNTERCLOCKWISE)) {
+		if (this->game_field.rotatePiece(tetris::scene_handling::Rotation::COUNTERCLOCKWISE)) {
 			this->tetriminoRotate_sound.play();
 		}
 	}
 	else if (Keyboard::isKeyPushed(GamePadKey::A)) {
-		if (this->game_field.rotatePiece(Rotation::CLOCKWISE)) {
+		if (this->game_field.rotatePiece(tetris::scene_handling::Rotation::CLOCKWISE)) {
 			this->tetriminoRotate_sound.play();
 		}
 	}
@@ -730,20 +730,20 @@ void Game::game_updateDas() {
 
 void Game::game_updateDas_controls() {
 	this->game_previousMoveDirection = this->game_currentMoveDirection;
-	this->game_currentMoveDirection = Direction::NONE;
+	this->game_currentMoveDirection = tetris::scene_handling::Direction::NONE;
 	if (Keyboard::isKeyHeld(GamePadKey::LEFT)) {
-		this->game_currentMoveDirection = Direction::LEFT;
+		this->game_currentMoveDirection = tetris::scene_handling::Direction::LEFT;
 	}
 	else if (Keyboard::isKeyHeld(GamePadKey::RIGHT)) {
-		this->game_currentMoveDirection = Direction::RIGHT;
+		this->game_currentMoveDirection = tetris::scene_handling::Direction::RIGHT;
 	}
 }
 
 
 
 void Game::game_updateDas_movePiece() {
-	bool currentlyPressed = this->game_currentMoveDirection != Direction::NONE;
-	bool previouslyPressed = this->game_previousMoveDirection != Direction::NONE;
+	bool currentlyPressed = this->game_currentMoveDirection != tetris::scene_handling::Direction::NONE;
+	bool previouslyPressed = this->game_previousMoveDirection != tetris::scene_handling::Direction::NONE;
 	bool directionsDiffer = this->game_currentMoveDirection != this->game_previousMoveDirection;
 	if (!currentlyPressed) {
 		this->game_dasState = DasState::NONE;
@@ -784,7 +784,7 @@ void Game::game_updateDas_movePiece() {
 
 
 
-void Game::game_movePiece(Direction direction) {
+void Game::game_movePiece(tetris::scene_handling::Direction direction) {
 	if (this->game_field.movePiece(direction)) {
 		this->tetriminoMove_sound.play();
 	}
@@ -819,9 +819,9 @@ void Game::game_updateStatisticsCounters() {
 
 
 void Game::game_updatePieceCounters() {
-	for (uint32_t piece = 0; piece < GameField::DIFFERENT_PIECES; ++piece) {
+	for (uint32_t piece = 0; piece < tetris::scene_handling::GameField::DIFFERENT_PIECES; ++piece) {
 		this->game_pieceCounters[piece].setNumericValue(
-			this->game_field.getPieceAmount(Piece(piece))
+			this->game_field.getPieceAmount(tetris::scene_handling::Piece(piece))
 		);
 	}
 }
@@ -874,7 +874,7 @@ void Game::game_drawField() {
 	const auto& blocks = this->game_field.getBlocks();
 	for (uint32_t y = 2; y < blocks.size(); ++y) {
 		for (uint32_t x = 0; x < blocks[y].size(); ++x) {
-			if (blocks[y][x] != Tetrimino::Type::E) {
+			if (blocks[y][x] != tetris::scene_handling::Tetrimino::Type::E) {
 				auto drawPos = sf::Vector2f(
 					this->game_blocksDrawingOffset.x + float(x * this->BLOCK_SIZE_WITH_GAP),
 					this->game_blocksDrawingOffset.y + float(y * this->BLOCK_SIZE_WITH_GAP)
@@ -914,7 +914,7 @@ void Game::game_drawFieldCovered() {
 				this->game_blocksDrawingOffset.x + float(x * this->BLOCK_SIZE_WITH_GAP),
 				this->game_blocksDrawingOffset.y + float(y * this->BLOCK_SIZE_WITH_GAP)
 			);
-			this->game_drawSingleBlock(drawPos, Tetrimino::Type::W);
+			this->game_drawSingleBlock(drawPos, tetris::scene_handling::Tetrimino::Type::W);
 		}
 		int32_t coverRight = 0;
 		for (int32_t x = 5; x < this->game_field.FIELD_X_SIZE; ++x) {
@@ -926,7 +926,7 @@ void Game::game_drawFieldCovered() {
 				this->game_blocksDrawingOffset.x + float(x * this->BLOCK_SIZE_WITH_GAP),
 				this->game_blocksDrawingOffset.y + float(y * this->BLOCK_SIZE_WITH_GAP)
 			);
-			this->game_drawSingleBlock(drawPos, Tetrimino::Type::W);
+			this->game_drawSingleBlock(drawPos, tetris::scene_handling::Tetrimino::Type::W);
 		}
 	}
 	this->game_blocks.setColor(sf::Color::White);
@@ -936,19 +936,19 @@ void Game::game_drawFieldCovered() {
 
 void Game::game_drawCurrentPiece() {
 	auto& pieceMatrix = this->game_field.getCurrentPieceMatrix();
-	auto drawStartPos = this->game_field.getCurrentPieceCenter() - Tetrimino::Matrix::CENTER;
-	for (int32_t y = 0; y < Tetrimino::Matrix::SIZE; ++y) {
-		for (int32_t x = 0; x < Tetrimino::Matrix::SIZE; ++x) {
+	auto drawStartPos = this->game_field.getCurrentPieceCenter() - tetris::scene_handling::Tetrimino::Matrix::CENTER;
+	for (int32_t y = 0; y < tetris::scene_handling::Tetrimino::Matrix::SIZE; ++y) {
+		for (int32_t x = 0; x < tetris::scene_handling::Tetrimino::Matrix::SIZE; ++x) {
 			sf::Vector2i currentPos = sf::Vector2i(
 				drawStartPos.x + x,
 				drawStartPos.y + y
 			);
 
-			bool xOut = currentPos.x < 0 || currentPos.x > GameField::FIELD_X_SIZE;
-			bool yOut = currentPos.y < 0 || currentPos.y > GameField::FIELD_Y_SIZE;
+			bool xOut = currentPos.x < 0 || currentPos.x > tetris::scene_handling::GameField::FIELD_X_SIZE;
+			bool yOut = currentPos.y < 0 || currentPos.y > tetris::scene_handling::GameField::FIELD_Y_SIZE;
 			if (!(xOut || yOut)) {
-				bool isDrawPositionSuitable = currentPos.y >= GameField::UPPER_LINES_TO_CLEAR;
-				bool isBlockVisible = pieceMatrix[y][x] != Tetrimino::Type::E;
+				bool isDrawPositionSuitable = currentPos.y >= tetris::scene_handling::GameField::UPPER_LINES_TO_CLEAR;
+				bool isBlockVisible = pieceMatrix[y][x] != tetris::scene_handling::Tetrimino::Type::E;
 				if (isDrawPositionSuitable && isBlockVisible) {
 					auto drawPos = sf::Vector2f(
 						this->game_blocksDrawingOffset.x + float(currentPos.x * this->BLOCK_SIZE_WITH_GAP),
@@ -966,10 +966,10 @@ void Game::game_drawCurrentPiece() {
 
 void Game::game_drawStaticticsBlocks() {
 	for (uint32_t i = 0; i < this->game_staticticsBlocksData.size(); ++i) {
-		const Tetrimino::Matrix::Array* matrix = std::get<0>(this->game_staticticsBlocksData[i]);
+		const tetris::scene_handling::Tetrimino::Matrix::Array* matrix = std::get<0>(this->game_staticticsBlocksData[i]);
 		for (uint32_t y = 0; y < matrix->size(); ++y) {
 			for (uint32_t x = 0; x < matrix->size(); ++x) {
-				if ((*matrix)[y][x] != Tetrimino::Type::E) {
+				if ((*matrix)[y][x] != tetris::scene_handling::Tetrimino::Type::E) {
 					auto& pos = std::get<1>(this->game_staticticsBlocksData[i]);
 					auto drawPos = sf::Vector2f(
 						pos.x + x * this->BLOCK_SIZE_WITH_GAP,
@@ -996,9 +996,9 @@ void Game::game_drawNextPiece() {
 	};
 	auto& pieceMatrix = this->game_field.getNextPieceMatrix();
 	auto type = int32_t(this->game_field.getNextPieceType());
-	for (int32_t y = 0; y < Tetrimino::Matrix::SIZE; ++y) {
-		for (int32_t x = 0; x < Tetrimino::Matrix::SIZE; ++x) {
-			if (pieceMatrix[y][x] != Tetrimino::Type::E) {
+	for (int32_t y = 0; y < tetris::scene_handling::Tetrimino::Matrix::SIZE; ++y) {
+		for (int32_t x = 0; x < tetris::scene_handling::Tetrimino::Matrix::SIZE; ++x) {
+			if (pieceMatrix[y][x] != tetris::scene_handling::Tetrimino::Type::E) {
 				auto drawPos = sf::Vector2f(
 					offsets[type].x + x * this->BLOCK_SIZE_WITH_GAP,
 					offsets[type].y + y * this->BLOCK_SIZE_WITH_GAP
@@ -1011,10 +1011,10 @@ void Game::game_drawNextPiece() {
 
 
 
-void Game::game_drawPiece(const Tetrimino::Matrix::Array& matrix, const sf::Vector2f& offset) {
-	for (int32_t y = 0; y < Tetrimino::Matrix::SIZE; ++y) {
-		for (int32_t x = 0; x < Tetrimino::Matrix::SIZE; ++x) {
-			if (matrix[y][x] != Tetrimino::Type::E) {
+void Game::game_drawPiece(const tetris::scene_handling::Tetrimino::Matrix::Array& matrix, const sf::Vector2f& offset) {
+	for (int32_t y = 0; y < tetris::scene_handling::Tetrimino::Matrix::SIZE; ++y) {
+		for (int32_t x = 0; x < tetris::scene_handling::Tetrimino::Matrix::SIZE; ++x) {
+			if (matrix[y][x] != tetris::scene_handling::Tetrimino::Type::E) {
 				auto drawPos = sf::Vector2f(
 					offset.x + x * this->BLOCK_SIZE_WITH_GAP,
 					offset.y + y * this->BLOCK_SIZE_WITH_GAP
@@ -1027,7 +1027,7 @@ void Game::game_drawPiece(const Tetrimino::Matrix::Array& matrix, const sf::Vect
 
 
 
-void Game::game_drawSingleBlock(const sf::Vector2f& position, Tetrimino::Type type) {
+void Game::game_drawSingleBlock(const sf::Vector2f& position, tetris::scene_handling::Tetrimino::Type type) {
 	this->game_blocks.setPosition(position);
 
 	this->game_blocks.setTextureRect(sf::IntRect(

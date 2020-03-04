@@ -6,7 +6,7 @@
 
 #include "tetris/scene_handling/Tetrimino.h"
 
-namespace tetris {
+namespace tetris::scene_handling {
 	enum class Rotation : int32_t {
 		CLOCKWISE = 1,
 		COUNTERCLOCKWISE = -1
