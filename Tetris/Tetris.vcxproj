@@ -73,6 +73,14 @@
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\Users\fairy\source\repos\Tetris\Tetris\Source;C:\Users\fairy\source\repos\Tetris\SFML-2.5.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\fairy\source\repos\Tetris\SFML-2.5.1\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>C:\Users\fairy\source\repos\Tetris\Tetris\Source;C:\Users\fairy\source\repos\Tetris\SFML-2.5.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\fairy\source\repos\Tetris\SFML-2.5.1\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -93,11 +101,11 @@
       </EntryPointSymbol>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)SFML-2.5.1\bin\openal32.dll" "$(OutDir)" /Y
-xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-audio-d-2.dll" "$(OutDir)" /Y
-xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-graphics-d-2.dll" "$(OutDir)" /Y
-xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-system-d-2.dll" "$(OutDir)" /Y
-xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-window-d-2.dll" "$(OutDir)" /Y</Command>
+      <Command>xcopy "$(ProjectDir)Resources\DLL\openal32.dll" "$(OutDir)" /Y
+xcopy "$(ProjectDir)Resources\DLL\sfml-audio-d-2.dll" "$(OutDir)" /Y
+xcopy "$(ProjectDir)Resources\DLL\sfml-graphics-d-2.dll" "$(OutDir)" /Y
+xcopy "$(ProjectDir)Resources\DLL\sfml-system-d-2.dll" "$(OutDir)" /Y
+xcopy "$(ProjectDir)Resources\DLL\sfml-window-d-2.dll" "$(OutDir)" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -106,9 +114,11 @@ xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-window-d-2.dll" "$(OutDir)" /Y</Command
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>sfml-system.lib;sfml-window.lib;sfml-graphics.lib;sfml-audio.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -132,11 +142,11 @@ xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-window-d-2.dll" "$(OutDir)" /Y</Command
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)SFML-2.5.1\bin\openal32.dll" "$(OutDir)" /Y
-xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-audio-2.dll" "$(OutDir)" /Y
-xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-graphics-2.dll" "$(OutDir)" /Y
-xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-system-2.dll" "$(OutDir)" /Y
-xcopy "$(SolutionDir)SFML-2.5.1\bin\sfml-window-2.dll" "$(OutDir)" /Y</Command>
+      <Command>xcopy "$(ProjectDir)Resources\DLL\openal32.dll" "$(OutDir)" /Y
+xcopy "$(ProjectDir)Resources\DLL\sfml-audio-2.dll" "$(OutDir)" /Y
+xcopy "$(ProjectDir)Resources\DLL\sfml-graphics-2.dll" "$(OutDir)" /Y
+xcopy "$(ProjectDir)Resources\DLL\sfml-system-2.dll" "$(OutDir)" /Y
+xcopy "$(ProjectDir)Resources\DLL\sfml-window-2.dll" "$(OutDir)" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
