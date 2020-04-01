@@ -22,8 +22,8 @@ const Tetrimino::Matrix::Array Tetrimino::Matrix::EMPTY = {
 
 Tetrimino::Matrix::Matrix() {
 	this->matrix = std::array<std::array<Type, SIZE>, SIZE>();
-	for (size_t y = 0; y < this->SIZE; ++y) {
-		for (size_t x = 0; x < this->SIZE; ++x) {
+	for (uint32_t y = 0; y < this->SIZE; ++y) {
+		for (uint32_t x = 0; x < this->SIZE; ++x) {
 			this->matrix[y][x] = Type::E;
 		}
 	}
@@ -44,9 +44,9 @@ Tetrimino::Matrix::Matrix(Array& matrix) {
 
 
 void Tetrimino::Matrix::setArray(std::vector<Type>& array) {
-	for (size_t y = 0; y < this->SIZE; ++y) {
-		for (size_t x = 0; x < this->SIZE; ++x) {
-			size_t index = this->SIZE * y + x;
+	for (uint32_t y = 0; y < this->SIZE; ++y) {
+		for (uint32_t x = 0; x < this->SIZE; ++x) {
+			uint32_t index = this->SIZE * y + x;
 			if (index < array.size()) {
 				this->matrix[y][x] = array[index];
 			}
@@ -110,7 +110,7 @@ void Tetrimino::addMatrix(Matrix::Array& array) {
 
 
 
-void Tetrimino::removeMatrix(size_t index) {
+void Tetrimino::removeMatrix(uint32_t index) {
 	if (index < this->matrices.size()) {
 		this->matrices.erase(this->matrices.begin() + index);
 	}

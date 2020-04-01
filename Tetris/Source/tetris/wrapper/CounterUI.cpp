@@ -14,7 +14,7 @@ using namespace tetris::wrapper;
 bool CounterUI::areDefaultsSet = false;
 
 sf::Font		CounterUI::default_font			 = sf::Font();
-size_t			CounterUI::default_characterSize = 24;
+uint32_t			CounterUI::default_characterSize = 24;
 sf::Color		CounterUI::default_color		 = sf::Color::White;
 sf::Text::Style CounterUI::default_textStyle     = sf::Text::Style::Regular;
 
@@ -44,7 +44,7 @@ void CounterUI::setMaximalValue(int32_t maxValue) {
 	this->maximalValue = maxValue;
 	this->validateCounterValue();
 
-	size_t digits = helper::countDigits(maxValue);
+	uint32_t digits = helper::countDigits(maxValue);
 	this->setWidth(digits); // Text is updated here.
 }
 
@@ -87,11 +87,11 @@ std::string CounterUI::getString() {
 #pragma region Text and Screen
 
 
-size_t CounterUI::getWidth() {
+uint32_t CounterUI::getWidth() {
 	return this->textWidth;
 }
 
-void CounterUI::setWidth(size_t width) {
+void CounterUI::setWidth(uint32_t width) {
 	if (width > this->MAX_WIDTH) {
 		width = this->MAX_WIDTH;
 	}
@@ -102,7 +102,7 @@ void CounterUI::setWidth(size_t width) {
 
 
 void CounterUI::setDefaultDisplayOptions(const sf::Font& font,
-										 size_t charSize,
+										 uint32_t charSize,
 										 const sf::Color& color,
 										 sf::Text::Style style) {
 	CounterUI::default_font = font;
@@ -113,7 +113,7 @@ void CounterUI::setDefaultDisplayOptions(const sf::Font& font,
 }
 
 void CounterUI::setDisplayOptions(const sf::Font& font,
-								  size_t charSize,
+								  uint32_t charSize,
 								  const sf::Color& color,
 								  sf::Text::Style style) {
 	this->text.setFont(font);

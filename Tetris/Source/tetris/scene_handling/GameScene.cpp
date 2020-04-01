@@ -12,6 +12,9 @@ using namespace tetris::scene_handling;
 GameScene::GameScene() {
 	this->loadResources();
 
+	this->initializeCounters();
+	this->initializeGraphics();
+
 	this->blocksDrawingOffset = sf::Vector2f(321, 70);
 
 	this->reset();
@@ -54,6 +57,12 @@ void GameScene::loadSounds() {
 		auto [sound, id] = pair;
 		sound->setBuffer(ResourceManager::getSoundBuffer(id));
 	}
+}
+
+
+
+void GameScene::initializeGraphics() {
+	this->droughtIndicator.setPosition({ 624, 491 });
 }
 
 
@@ -621,10 +630,14 @@ void GameScene::reset() {
 	this->hasPieceLanded = false;
 	this->respawnTimer.setTimingFrames(RESPAWN_DELAY);
 	this->respawnTimer.reset();
+
+	int32_t frames = this->getDropFrames(this->field.getLevel());
+	this->dropTimer.setTimingFrames(frames);
 }
 
 
 
 void GameScene::applySettings(int32_t level, int32_t music) {
-	
+	this->field.setLevel(level);
+	this->levelCounter.setNumericValue(level);
 }

@@ -86,7 +86,7 @@ void helper::createDirectory(const std::filesystem::path& path) {
 
 
 std::string helper::replace(std::string string, const std::string& from, const std::string& to) {
-	size_t index = 0;
+	uint32_t index = 0;
 	while (true) {
 		index = string.find(from, index);
 		if (index == std::string::npos) {
@@ -109,8 +109,8 @@ std::string helper::toUpperCase(std::string string) {
 
 
 
-size_t helper::countDigits(uint32_t number) {
-	size_t digits = 0;
+uint32_t helper::countDigits(uint32_t number) {
+	uint32_t digits = 0;
 	while (number != 0) {
 		number /= 10;
 		++digits;

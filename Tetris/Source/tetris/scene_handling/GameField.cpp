@@ -363,8 +363,8 @@ const Tetrimino::Matrix::Array* GameField::getPieceMatrix(Piece piece) const {
 
 
 void GameField::clearUpperLines() {
-	for (size_t y = 0; y < this->UPPER_LINES_TO_CLEAR; ++y) {
-		for (size_t x = 0; x < this->FIELD_X_SIZE; ++x) {
+	for (uint32_t y = 0; y < this->UPPER_LINES_TO_CLEAR; ++y) {
+		for (uint32_t x = 0; x < this->FIELD_X_SIZE; ++x) {
 			this->field[y][x] = Tetrimino::Type::E;
 		}
 	}
@@ -373,7 +373,7 @@ void GameField::clearUpperLines() {
 
 
 void GameField::prepareNextPiece() {
-	size_t type = helper::getRandomNumber(0, this->PIECES_LIST.size() - 1);
+	uint32_t type = helper::getRandomNumber(0, this->PIECES_LIST.size() - 1);
 	this->nextPiece = *(this->PIECES_LIST[type]);
 	this->nextPieceType = Piece(type);
 }

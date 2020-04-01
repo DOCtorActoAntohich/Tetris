@@ -169,7 +169,7 @@ void Menu::updateLevelSelect() {
 
 
 void Menu::updateMusicSelect() {
-	for (size_t i = 0; i < this->MUSIC_SELECTORS; ++i) {
+	for (uint32_t i = 0; i < this->MUSIC_SELECTORS; ++i) {
 		this->musicSelectors[i].update();
 	}
 
@@ -205,7 +205,7 @@ void Menu::updateMusicSelectorsPositions() {
 	static std::vector<float> yPositions = {
 		164, 212, 260, 308
 	};
-	for (size_t i = 0; i < this->MUSIC_SELECTORS; ++i) {
+	for (uint32_t i = 0; i < this->MUSIC_SELECTORS; ++i) {
 		this->musicSelectors[i].setPosition({
 			xPositions[i],
 			yPositions[this->musicType]
@@ -221,11 +221,11 @@ void Menu::draw(sf::RenderWindow& window) {
 	window.draw(this->background);
 
 	this->levelSelectorBox.drawOn(window);
-	for (size_t i = 0; i < DIGITS; ++i) {
+	for (uint32_t i = 0; i < DIGITS; ++i) {
 		window.draw(this->levelDigits[i]);
 	}
 
-	for (size_t i = 0; i < MUSIC_SELECTORS; ++i) {
+	for (uint32_t i = 0; i < MUSIC_SELECTORS; ++i) {
 		this->musicSelectors[i].drawOn(window);
 	}
 

@@ -32,17 +32,17 @@ namespace tetris::helper {
 	std::string toUpperCase(std::string string);
 
 	// Counts how many digits are there in number.
-	size_t countDigits(uint32_t number);
+	uint32_t countDigits(uint32_t number);
 
 	int32_t mod(int32_t number, int32_t module);
 
 	template <class ArrayType>
 	void rotateArray(ArrayType& array) {
-		size_t n = array.size();
-		size_t x = n / 2;
-		size_t y = n - 1;
-		for (size_t i = 0; i < x; ++i) {
-			for (size_t j = i; j < y - i; ++j) {
+		uint32_t n = array.size();
+		uint32_t x = n / 2;
+		uint32_t y = n - 1;
+		for (uint32_t i = 0; i < x; ++i) {
+			for (uint32_t j = i; j < y - i; ++j) {
 				auto k = array[i][j];
 				array[i][j] = array[y - j][i];
 				array[y - j][i] = array[y - i][y - j];

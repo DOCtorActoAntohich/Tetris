@@ -45,6 +45,7 @@ namespace tetris::scene_handling {
 		void loadResources();
 		void loadSounds();
 
+		void initializeGraphics();
 		void initializeCounters();
 		void initializePieceCounters();
 		void initializeStatisticsCounters();
@@ -100,10 +101,10 @@ namespace tetris::scene_handling {
 		wrapper::FrameTimer respawnTimer;
 
 		int32_t getDropFrames(int32_t level);
-		wrapper::FrameTimer dropTimer;//TODO:initialize.
+		wrapper::FrameTimer dropTimer;
 
 
-		wrapper::CounterUI tetrisesCounter;//TODO:initialize.
+		wrapper::CounterUI tetrisesCounter;
 		wrapper::CounterUI burnCounter;
 		wrapper::CounterUI tetrisRateCounter;
 		wrapper::CounterUI linesCounter;

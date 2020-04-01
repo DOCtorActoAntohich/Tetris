@@ -34,14 +34,14 @@ void App::run() {
 			}
 		}
 
-		if (this->window.hasFocus()) {
+		//if (this->window.hasFocus()) {
 			wrapper::Keyboard::update();
 
 			this->currentScene->update();
 			this->currentScene->draw(this->window);
 
 			this->chooseScene();
-		}
+		//}
 	}
 }
 
@@ -57,26 +57,33 @@ void App::chooseScene() {
 	case Scene::EXIT :
 		this->exit();
 		break;
+
 	case Scene::SPLASH_SCREEN :
 		this->currentScene = &this->splashScreen;
 		this->currentScene->reset();
 		break;
+
 	case Scene::CONTROLS_SCREEN :
 		this->currentScene = &this->controlsScreen;
 		this->currentScene->reset();
 		break;
+
 	case Scene::MENU :
 		this->currentScene = &this->menu;
 		break;
+
 	case Scene::GAME :
 		{
 			auto [level, music] = this->menu.getGameParameters();
+			this->game.applySettings(level, music);
 			this->currentScene = &this->game;
 			this->currentScene->reset();
 		}
 		break;
-	default :
+
+	default : 
 		break;
+	
 	}
 }
 

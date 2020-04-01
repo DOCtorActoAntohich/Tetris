@@ -7,7 +7,7 @@
 namespace tetris::wrapper {
 	class CounterUI {
 	public:
-		static const size_t MAX_WIDTH = 10;
+		static const uint32_t MAX_WIDTH = 10;
 
 		CounterUI();
 
@@ -40,16 +40,16 @@ namespace tetris::wrapper {
 #pragma region Text and Screen
 
 		// Returns text width in symbols.
-		size_t getWidth();
+		uint32_t getWidth();
 
 		// Set the text width in symbols.
 		// Cannot be more than MAX_WIDTH.
-		void setWidth(size_t width);
+		void setWidth(uint32_t width);
 
 		// Sets DEFAULT options for dislaying text.
 		static void setDefaultDisplayOptions(
 			const sf::Font& font,
-			size_t charSize,
+			uint32_t charSize,
 			const sf::Color& color,
 			sf::Text::Style style
 		);
@@ -57,7 +57,7 @@ namespace tetris::wrapper {
 		// Sets options for dislaying text.
 		void setDisplayOptions(
 			const sf::Font& font,
-			size_t charSize,
+			uint32_t charSize,
 			const sf::Color& color,
 			sf::Text::Style style = sf::Text::Style::Regular
 		);
@@ -78,7 +78,7 @@ namespace tetris::wrapper {
 		int32_t counter;
 		int32_t maximalValue;
 
-		size_t textWidth;
+		uint32_t textWidth;
 		sf::Text text;
 		bool areDisplayOptionsAssigned;
 
@@ -92,7 +92,7 @@ namespace tetris::wrapper {
 
 		static bool areDefaultsSet;
 		static sf::Font		   default_font;
-		static size_t		   default_characterSize;
+		static uint32_t		   default_characterSize;
 		static sf::Color	   default_color;
 		static sf::Text::Style default_textStyle;
 	};

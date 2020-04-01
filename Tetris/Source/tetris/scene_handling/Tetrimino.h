@@ -27,7 +27,7 @@ namespace tetris::scene_handling {
 
 		class Matrix {
 		public:
-			static const size_t SIZE = 5;
+			static const uint32_t SIZE = 5;
 			static sf::Vector2i CENTER;
 
 			using Array = std::array<std::array<Type, SIZE>, SIZE>;
@@ -61,7 +61,7 @@ namespace tetris::scene_handling {
 		};
 
 
-		static const size_t MAX_MATRICES = 4;
+		static const uint32_t MAX_MATRICES = 4;
 
 		Tetrimino();
 
@@ -80,7 +80,7 @@ namespace tetris::scene_handling {
 		// Removes matrix of given index from a list.
 		// Next matrices are shifted to the left.
 		// If index if greater than MAX_MATRICES, this function will not cause effects.
-		void removeMatrix(size_t index);
+		void removeMatrix(uint32_t index);
 
 		// Switches current active matrix to the next one. Matrices are cycled.
 		void switchToNextMatrix();
@@ -96,7 +96,7 @@ namespace tetris::scene_handling {
 		friend bool operator!=(const Tetrimino& firstTetrimino, const Tetrimino& secondTetrimino);
 	private:
 		std::vector<Matrix> matrices;
-		size_t currentMatrixIndex;
+		uint32_t currentMatrixIndex;
 	};
 
 	
