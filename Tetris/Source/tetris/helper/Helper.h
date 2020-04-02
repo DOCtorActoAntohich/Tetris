@@ -13,7 +13,7 @@ namespace tetris::helper {
 	// Returns expected path like "C:\ProgramData".
 	std::filesystem::path getProgramDataPath();
 
-	// Returns path to a game folder (in ProgramData).
+	// Returns path to a game folder (in ProgramData folder).
 	std::filesystem::path getGameFolderPath();
 
 	// Writes given bytes to a file.

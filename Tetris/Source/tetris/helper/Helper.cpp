@@ -120,9 +120,8 @@ uint32_t helper::countDigits(uint32_t number) {
 
 
 
-int32_t helper::mod(int32_t number, int32_t module)
-{
-	return ((number % module) + module) % module;
+int32_t helper::mod(int32_t number, int32_t m) {
+	return ((number % m) + m) % m;
 }
 
 
@@ -133,6 +132,9 @@ int32_t helper::getRandomNumber(int32_t lowerBound, int32_t upperBound) {
 	}
 	if (upperBound < 0) {
 		upperBound = 0;
+	}
+	if (upperBound < lowerBound) {
+		return 0;
 	}
 
 	static std::random_device devive;

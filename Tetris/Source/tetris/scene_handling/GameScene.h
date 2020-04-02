@@ -49,7 +49,6 @@ namespace tetris::scene_handling {
 		void initializeCounters();
 		void initializePieceCounters();
 		void initializeStatisticsCounters();
-		void initializeStatisticsPieceData();
 
 		GameField field;
 

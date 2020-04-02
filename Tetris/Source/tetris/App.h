@@ -20,10 +20,10 @@ namespace tetris {
 
 		scene_handling::SceneHandlerBase* currentScene;
 
-		scene_handling::SplashScreen splashScreen;
-		scene_handling::ControlsScreen controlsScreen;
-		scene_handling::Menu menu;
-		scene_handling::GameScene game;
+		scene_handling::SplashScreen	splashScreen;
+		scene_handling::ControlsScreen  controlsScreen;
+		scene_handling::Menu			menu;
+		scene_handling::GameScene		game;
 
 
 		void (scene_handling::SceneHandlerBase::* update)();

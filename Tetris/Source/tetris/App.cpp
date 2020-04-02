@@ -34,14 +34,14 @@ void App::run() {
 			}
 		}
 
-		//if (this->window.hasFocus()) {
+		if (this->window.hasFocus()) {
 			wrapper::Keyboard::update();
 
 			this->currentScene->update();
 			this->currentScene->draw(this->window);
 
 			this->chooseScene();
-		//}
+		}
 	}
 }
 
@@ -54,6 +54,7 @@ void App::chooseScene() {
 	{
 	case Scene::NONE :
 		break;
+
 	case Scene::EXIT :
 		this->exit();
 		break;

@@ -41,20 +41,19 @@ void GameScene::loadResources() {
 
 void GameScene::loadSounds() {
 	std::vector<std::pair<sf::Sound*, int32_t>> sounds = {
-		{ &this->pauseSound, PAUSE_WAV },
+		{ &this->pauseSound,	PAUSE_WAV },
 		{ &this->gameOverSound, GAME_OVER_WAV },
 		{ &this->newLevelSound, NEW_LEVEL_WAV },
 
-		{ &this->tetriminoMoveSound, TETRIMINO_MOVE_WAV },
-		{ &this->tetriminoRotateSound, TETRIMINO_ROTATE_WAV },
-		{ &this->tetriminoLandSound, TETRIMINO_LAND_WAV },
+		{ &this->tetriminoMoveSound,	TETRIMINO_MOVE_WAV },
+		{ &this->tetriminoRotateSound,	TETRIMINO_ROTATE_WAV },
+		{ &this->tetriminoLandSound,	TETRIMINO_LAND_WAV },
 
-		{ &this->lineClearSound, LINE_CLEARED_WAV },
-		{ &this->tetrisClearSound, TETRIS_CLEARED_WAV }
+		{ &this->lineClearSound,	LINE_CLEARED_WAV },
+		{ &this->tetrisClearSound,	TETRIS_CLEARED_WAV }
 	};
 
-	for (auto pair : sounds) {
-		auto [sound, id] = pair;
+	for (auto [sound, id] : sounds) {
 		sound->setBuffer(ResourceManager::getSoundBuffer(id));
 	}
 }
@@ -63,6 +62,16 @@ void GameScene::loadSounds() {
 
 void GameScene::initializeGraphics() {
 	this->droughtIndicator.setPosition({ 624, 491 });
+
+	this->staticticsBlocksData = {
+		{ this->field.getPieceMatrix(Piece::T), { 45,  25 } },
+		{ this->field.getPieceMatrix(Piece::J), { 45,  72 } },
+		{ this->field.getPieceMatrix(Piece::Z), { 45, 119 } },
+		{ this->field.getPieceMatrix(Piece::O), { 54, 166 } },
+		{ this->field.getPieceMatrix(Piece::S), { 45, 213 } },
+		{ this->field.getPieceMatrix(Piece::L), { 45, 260 } },
+		{ this->field.getPieceMatrix(Piece::I), { 53, 307 } },
+	};
 }
 
 
@@ -108,14 +117,14 @@ void GameScene::initializePieceCounters() {
 
 void GameScene::initializeStatisticsCounters() {
 	std::vector<std::tuple<wrapper::CounterUI*, int32_t, sf::Vector2f>> data = {
-		{ &this->tetrisesCounter, GameField::MAX_TETRISES, { 177, 419 } },
-		{ &this->burnCounter, GameField::MAX_BURN, { 177, 464 } },
-		{ &this->tetrisRateCounter, GameField::MAX_TETRIS_RATE, { 177, 510 } },
-		{ &this->linesCounter, GameField::MAX_LINES, { 482, 43 } },
-		{ &this->topScoreCounter, Record::MAX_SCORE, { 608, 86 } },
-		{ &this->currentScoreCounter, Record::MAX_SCORE, { 608, 166 } },
-		{ &this->levelCounter, GameField::MAX_LEVEL, { 642, 431 } },
-		{ &this->droughtCounter, GameField::MAX_DROUGHT, { 642, 519 } },
+		{ &this->tetrisesCounter,		GameField::MAX_TETRISES,	{ 177, 419 } },
+		{ &this->burnCounter,			GameField::MAX_BURN,		{ 177, 464 } },
+		{ &this->tetrisRateCounter,		GameField::MAX_TETRIS_RATE,	{ 177, 510 } },
+		{ &this->linesCounter,			GameField::MAX_LINES,		{ 482, 43  } },
+		{ &this->topScoreCounter,		Record::MAX_SCORE,			{ 608, 86  } },
+		{ &this->currentScoreCounter,	Record::MAX_SCORE,			{ 608, 166 } },
+		{ &this->levelCounter,			GameField::MAX_LEVEL,		{ 642, 431 } },
+		{ &this->droughtCounter,		GameField::MAX_DROUGHT,		{ 642, 519 } },
 	};
 	for (uint32_t i = 0; i < data.size(); ++i) {
 		wrapper::CounterUI* counter = std::get<0>(data[i]);
@@ -123,20 +132,6 @@ void GameScene::initializeStatisticsCounters() {
 		counter->setMaximalValue(std::get<1>(data[i]));
 		counter->setPosition(std::get<2>(data[i]));
 	}
-}
-
-
-
-void GameScene::initializeStatisticsPieceData() {
-	this->staticticsBlocksData = {
-		{ this->field.getPieceMatrix(Piece::T), { 45,  25 } },
-		{ this->field.getPieceMatrix(Piece::J), { 45,  72 } },
-		{ this->field.getPieceMatrix(Piece::Z), { 45, 119 } },
-		{ this->field.getPieceMatrix(Piece::O), { 54, 166 } },
-		{ this->field.getPieceMatrix(Piece::S), { 45, 213 } },
-		{ this->field.getPieceMatrix(Piece::L), { 45, 260 } },
-		{ this->field.getPieceMatrix(Piece::I), { 53, 307 } },
-	};
 }
 
 
